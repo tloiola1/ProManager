@@ -1,0 +1,14 @@
+
+<div class="articles ">
+	<div class="container">
+		<div class="">
+			{{#if article}}
+				{{#each article}}
+					{{> articles/saved-block}}
+				{{/each}}
+			{{else}}
+					{{> articles/empty-block}}
+			{{/if}}
+      </div>
+	</div>
+</div>

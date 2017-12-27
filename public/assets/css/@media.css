@@ -1,0 +1,61 @@
+@media screen and (max-width: 736px){
+	#user-pic{
+        width: 50px;
+        height: 50px;
+	}
+}
+@media screen and (max-width: 576px){
+	.col-logo, .col-buttons{
+		width: 250px;
+	}
+	.col-buttons{
+		float: right;
+    }
+    #logoff{
+        display: none;
+    }
+}
+@media screen and (max-width: 500px){
+
+	.proManager{
+		width: 100px;
+		height: 110px;
+	}
+}
+
+@media screen and (max-width: 414px){
+	.col-logo{
+		width: 130px;
+		height: 110px;
+    }
+    .col-buttons{
+        width: 240px;
+    }
+}
+
+@media screen and (max-width: 360px){
+	.proManager{
+		width: 100px;
+		height: 110px;
+    }
+    .col-logo{
+		width: 130px;
+    }
+    .col-buttons{
+        width: 200px;
+        height: 100px;
+    }
+}
+@media screen and (max-width: 320px){
+	.proManager{
+		width: 100px;
+		height: 110px;
+    }
+    .col-logo{
+		width: 130px;
+    }
+    .col-buttons{
+        width: 185px;
+        height: 100px;
+    }
+}

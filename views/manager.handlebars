@@ -1,0 +1,84 @@
+<div className="fixed-top fixed-top-custom"></div>
+<header className="fixed-top">
+	<div className="container">
+		<div className="row">
+			<a href="/" className="logo col-lg-4 col-md-6 col-sm-6 col-logo">
+				<div className="proManager">
+					<div className="fa fa-home fa-5x"></div>
+					<br></br>
+					<strong>ProManager</strong>
+				</div>
+			</a>
+			<div className="nav-buttons col-lg-8 col-md-6 col-sm-6 col-buttons">
+				<img id="user-pic" src="assets/images/apt1.jpg" alt="MyImage"></img>
+				<span>
+					<strong> Hello Tarciso </strong>
+				</span>
+				<a id="logoff" href="/">
+					<strong>| Log Off</strong>
+				</a>
+			</div>
+		</div>
+	</div>
+</header>
+
+<div className="margin-top"></div>
+
+<div className="container">
+	<div className="row justify-content-sm-center">
+		<a href="" className="btn-manager btn-add-property btn btn-outline-primary col-md-3 col-sm-4 col" data-toggle="modal" data-target="#add-property-modal">
+			<strong>Add a Property</strong>
+		</a>
+		{/*
+		<a href="" className="btn-manager btn-manage-property btn btn-outline-primary col-md-3 col-sm-4 col" data-toggle="modal"
+		    data-target="#manage-property-modal">
+			<strong>Manage a Property</strong>
+		</a> */}
+	</div>
+</div>
+
+<div className="modal fade" id="add-property-modal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div className="modal-dialog" role="document">
+		<div className="modal-content">
+			<div className="modal-header">
+				<h5 className="modal-title" id="exampleModalLabel">Add a New Property</h5>
+			</div>
+			<div className="modal-body">
+				Property Name:
+				<br></br>
+				<input id="add-property-name" className="col-sm-12" type="text"></input>
+				<br></br>
+				Address:
+				<br></br>
+				<input id="add-property-address" className="col-sm-12" type="text"></input>
+				<br></br>
+				City:
+				<br></br>
+				<input id="add-property-city" className="col-sm-12" type="text"></input>
+				<br></br>
+				State:
+				<br></br>
+				<input id="add-property-state" className="col-sm-12" type="text"></input>
+				<br></br>
+				ZipCode:
+				<br></br>
+				<input id="add-property-zipcode" className="col-sm-12" type="text"></input>
+				<br></br>
+			</div>
+			<div className="modal-footer">
+				<button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+				<button id="submit-add-property" type="button" className="btn btn-primary">Submit</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div className="find-a-home"></div>
+<a href="/findproperty" className="btn btn-large-success">Find a new home.</a> */} {{!--
+<div class="articles ">
+	<div class="container">
+		<div class="">
+			{{#each article}} {{> articles/scraped-block}} {{/each}}
+		</div>
+	</div>
+</div> --}}
