@@ -1,7 +1,7 @@
 //Dependencies
 // =============================================================
-var request = require('request');
-var db = require("../models");
+const request = require('request');
+const db = require("../models");
 
 // Our scraping tools
 // Axios is a promised-based http library, similar to jQuery's Ajax method
@@ -12,98 +12,103 @@ var db = require("../models");
 module.exports = function(app){
   
 // Route for getting all Articles from the db
-app.get("/manager", function(req, res) {
-  // Grab every document in the Articles collection
-  db.Property
-    .find({})
-    .then(function(dbProperty) {
-      // If we were able to successfully find Articles, send them back to the client
-      return dbProperty;
-    })
-    .catch(function(err) {
-      // If an error occurred, send it to the client
-      res.json(err);
-    });
-});
+  app.get("/signin", (req, res) => {
+    // console.log(`Api-Routes SignIn`);
+    console.log(req.query.name, req.query.password);
+    const email = req.query.email;
+    const password = req.query.password;
 
-// Route for post new user to the db
-app.post("/signup", function(req, res) {
-  //
-  console.log(req);
-//   db.User
-//     .create({})
-//     .then(function(dbArticle) {
-//       // If we were able to successfully find Articles, send them back to the client
-//       res.render("saved",{article: dbArticle});
-//     })
-//     .catch(function(err) {
-//       // If an error occurred, send it to the client
-//       res.json(err);
-//     });
-});
-
-// Route for saving Articles into the db
-app.post("/save/:id", function(req, res) {
-  var _id = req.params.id;
-  // Grab every document in the Articles collection
-  console.log(_id);
-  db.Article
-    .find({ _id })
-    .then(function(data){
-      db.Saved
-       .create(data)
-       .then(function(_data){
-         console.log(_data);
-         res.json(_data);
-    }).then(function(){
-      db.Article
-        .delete({ _id })
-        .then(function(result){
-          console.log(result);
-
-        }).catch(function(err) {
+    db.User
+      .find({email: email})
+      .then(function(dbUser) {
+        // console.log(`Response from dbUser SignIn`);
+        // console.log(dbUser);
+        res.json(dbUser);
+      })
+      .catch(function(err) {
         // If an error occurred, send it to the client
         res.json(err);
       });
-    });
   });
-});
+//tarciso@hotmail.com
+// Route for post new user to the db
+  app.post("/signup", (req, res) => {
+    // console.log(`Api-Routes SignUp`);
+    // console.log(req)
+    const firstname = req.body.firstname;
+    const lastname = req.body.lastname;
+    const email = req.body.email;
+    const password = req.body.password;
+    const phone = req.body.phone;
+    const title = req.body.title;
+    
+    db.User
+      .create({
+        firstname: firstname,
+        lastname: lastname,
+        email: email,
+        password: password,
+        phone: phone,
+        title: title
+      })
+      .then((dbUser) => {
+        // console.log(`Response from dbUser SignUp`);
+        // console.log(dbUser);
+        res.json(dbUser);
+      })
+      .catch(function(err) {
+        // If an error occurred, send it to the client
+        res.json(err);
+      });
+  });
 
-// Route for grabbing a specific Article by id, populate it with it's note
-app.get("/articles/:id", function(req, res) {
-  // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
-  db.Article
-    .findOne({ _id: req.params.id })
-    // ..and populate all of the notes associated with it
-    .populate("note")
-    .then(function(dbArticle) {
-      // If we were able to successfully find an Article with the given id, send it back to the client
-      res.json(dbArticle);
-    })
-    .catch(function(err) {
-      // If an error occurred, send it to the client
-      res.json(err);
-    });
-});
+  app.get("/manager", function(req, res) {
+    // Grab every document in the Articles collection
+    db.Property
+      .find({})
+      .then(function(dbProperty) {
+        // If we were able to successfully find Articles, send them back to the client
+        res.render("manager", {property: dbProperty});
+      })
+      .catch(function(err) {
+        // If an error occurred, send it to the client
+        res.json(err);
+      });
+  });
 
-// Route for saving/updating an Article's associated Note
-app.post("/articles/:id", function(req, res) {
-  // Create a new note and pass the req.body to the entry
-  db.Note
-    .create(req.body)
-    .then(function(dbNote) {
-      // If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`. Update the Article to be associated with the new Note
-      // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
-      // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
-      return db.Article.findOneAndUpdate({ _id: req.params.id }, { note: dbNote._id }, { new: true });
-    })
-    .then(function(dbArticle) {
-      // If we were able to successfully update an Article, send it back to the client
-      res.json(dbArticle);
-    })
-    .catch(function(err) {
-      // If an error occurred, send it to the client
-      res.json(err);
-    });
-});
+  app.post("/addproperty", (req, res) => {
+    // console.log(`Api-Routes AddProperty`);
+    console.log(req)
+    const _id = req.body.id;
+    const name = req.body.name;
+    const address = req.body.address;
+    const city = req.body.city;
+    const state = req.body.state;
+    const zipcode = req.body.zipcode;
+    
+    db.Property
+      .create({
+        _id,
+        name,
+        address,
+        city,
+        state,
+        zipcode
+      })
+      .then((dbProperty) => {
+        console.log(`Response from dbProperty AddProperty`);
+        console.log(dbProperty);
+        // res.redirect("/manager");
+      })
+      .catch(function(err) {
+        // If an error occurred, send it to the client
+        res.json(err);
+      });
+  });
+
 };
+//   name: 'Salao IstuArte',
+//   address: 'Rua Miguel Angelo 14',
+//   city: 'Ipatinga',
+//   state: 'MG',
+//   zipcode: 35162348 

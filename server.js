@@ -38,9 +38,9 @@ require("./routes/html-routes.js")(app);
 // Set mongoose to leverage built in JavaScript ES6 Promises
 // Connect to the Mongo DB
 
-var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/promanager_db";
+// var MONGODB_URI = process.env.MONGODB_URI || ;
 mongoose.Promise = Promise;
-mongoose.connect( MONGODB_URI, {
+mongoose.connect( "mongodb://localhost/promanager_db", {//MONGODB_URI
   useMongoClient: true
 });
 

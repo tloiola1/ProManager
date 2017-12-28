@@ -1,15 +1,3 @@
-body{
-	background-image: url("../images/apt1.jpg");
-	background-size: cover;
-	background-repeat: no-repeat;
-}
-/* margin from top */
-.margin-top{
-	width: 100%;
-	height: 300px;
-}
-
-/* Header */
 
 .fixed-top-custom{
 	width: 100%;
@@ -50,7 +38,11 @@ h1{
 	background-color: #ebebeb;
 	text-decoration-line: none;
 }
-/* ========================================= */
 
-/* Footer */
-/* ========================================= */
+#logoff{
+	color: black;
+}
+
+#logoff:hover{
+	text-decoration-line: none;
+}

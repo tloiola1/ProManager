@@ -6,14 +6,34 @@ var Schema = mongoose.Schema;
 // This is similar to a Sequelize model
 var UserSchema = new Schema({
   // `Name` is required and of type String
-  name: {
+  firstname: {
     type: String,
-    required: true
+    trim: true,
+    required: "Name is Required"
+  },
+  //
+  lastname: {
+    type: String,
+    trim: true,
+    required: "Last name is Required"
   },
   // `Address` is required and of type String
   email: {
     type: String,
-    required: true
+    unique: true,
+    match: [/.+\@.+\..+/, "Please enter a valid e-mail address!"]
+  },
+  //
+  password: {
+    type: String,
+    trim: true,
+    required: "Password is Required",
+    validate: [
+      function(input) {
+        return input.length >= 6;
+      },
+      "Password must be longer 5 characters."
+    ]
   },
   //
   phone: {
@@ -21,9 +41,9 @@ var UserSchema = new Schema({
     require: true
   },
   //
-  password: {
-      type: String,
-      require: true
+  title: {
+    type: String,
+    require: true
   }
 });
 

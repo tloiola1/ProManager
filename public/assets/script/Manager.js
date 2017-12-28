@@ -1,5 +1,5 @@
 $(document).on("click", "#submit-add-property", () => {
-  const id = "User Id";
+  const id = localStorage.getItem("id");
   const name = $("#add-property-name").val().trim().trim();
   const address = $("#add-property-address").val().trim().trim();
   const city = $("#add-property-city").val().trim().trim();
@@ -18,11 +18,14 @@ $(document).on("click", "#submit-add-property", () => {
 
   $.ajax({
     url: "/addproperty",
-    method: "PUT",
+    method: "POST",
     data: property
-  }).then((data) => {
-    console.log(data);
-    // res,redirect()
+  }).then((dbProperty) => {
+    // console.log(dbProperty);
+    // res.redirect()
   })
 
-})
+});
+
+$("#userName").text(localStorage.getItem("name"));
+console.log(localStorage.getItem("name"));
