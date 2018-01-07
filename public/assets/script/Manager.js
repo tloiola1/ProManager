@@ -22,7 +22,7 @@ $(document).on("click", "#submit-add-property", () => {
     data: property
   }).then((dbProperty) => {
     // console.log(dbProperty);
-    // res.redirect()
+    location.reload();
   })
 
 });

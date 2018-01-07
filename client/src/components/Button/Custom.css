@@ -1,0 +1,11 @@
+/* Manager */
+.btn-outline-primary{
+	margin: 5px;
+	padding: 10px;
+	color: white;
+	background-color: purple;
+}
+.btn-outline-primary:hover{
+	color: purple;
+	background-color: white;
+}

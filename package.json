@@ -1,23 +1,30 @@
 {
-  "name": "mongoose_skeleton",
+  "name": "promanager",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
   "scripts": {
+    "server": "nodemon server.js",
+    "client": "cd client && yarn start",
+    "start": "npm-run-all --parallel server client",
+    "build": "node scripts/build.js",
+    "proSeed": "node scripts/propertySeedDB.js",
+    "userSeed": "node scripts/UserSeedDB.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "watch": "nodemon server.js"
+    "installDeps": "yarn && cd client && yarn"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.16.2",
     "body-parser": "^1.18.2",
-    "cheerio": "^1.0.0-rc.2",
     "express": "^4.16.1",
     "express-handlebars": "^3.0.0",
     "mongoose": "^4.12.0",
     "morgan": "^1.9.0",
     "request": "^2.83.0"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.2"
   }
 }

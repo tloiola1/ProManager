@@ -13,16 +13,22 @@ $(document).on("click", "#submit-sign-in", () =>{
         url: "/signin",
         method: "GET",
         data: user
-    }).then((User, res)=>{
-        // console.log(`After UserLog SignIn`);
-        // console.log(User);
+    }).then((User)=>{
+        console.log(`After UserLog SignIn`);
+        console.log(User);
         localStorage.setItem("name", User[0].firstname);
         localStorage.setItem("id", User[0]._id);
-
+        const id = localStorage.getItem("id", User[0]._id);
         // const nome = localStorage.getItem("name");
         // console.log(nome);
         if(User[0].title === "manager"){
-            window.location = "/manager";
+            $.ajax({
+                url: "/manager",
+                method: "GET",
+                data: _id
+            }).then((data) => {
+                window.location = "/manager";
+            })
         }
         else{
             res.redirect("/renters");
