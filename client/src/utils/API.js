@@ -1,14 +1,14 @@
-// import axios from "axios";
+import axios from "axios";
 
-// export default {
-//   // Gets all books
-//   getProperty: function() {
-//     return axios.get("/api/books");
-//   },
-//   // Gets the book with the given id
-//   getProperty: function(id) {
-//     return axios.get("/api/books/" + id);
-//   },
+export default {
+  // Gets all properties
+  getProperty: function() {
+    return axios.get("/api/properties");
+  },
+  // Gets the book with the given id
+  getUser: function(id) {
+    return axios.get("/api/users");
+  }//,
 //   // Deletes the book with the given id
 //   deleteProperty: function(id) {
 //     return axios.delete("/api/books/" + id);
@@ -17,4 +17,4 @@
 //   savePoperty: function(bookData) {
 //     return axios.post("/api/books", bookData);
 //   }
-// };
+};

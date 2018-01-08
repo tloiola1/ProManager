@@ -1,7 +1,7 @@
 import React from "react";
 import { Container, Row } from "../../components/Grid";
 import { FixedHeader } from "../../components/Header";
-import { AddProperty } from "../../components/Modal";
+import { Modal } from "../../components/Modal";
 import { InverseButton } from "../../components/Button";
 import { Logo } from "../../components/Logo";
 import { Span, Margin } from "../../components/Tag";
@@ -34,7 +34,7 @@ const Manager = () =>
                 </InverseButton>
             </Row>
         </Container>
-    <AddProperty/>
+    <Modal/>
 </div>
 
 export default Manager;

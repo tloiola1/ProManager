@@ -1,9 +1,9 @@
-// const router = require("express").Router();
-// const userController = require("../../controllers/userController");
+const router = require("express").Router();
+const userController = require("../../controllers/userController");
 
 // Matches with "/api/books"
-// router.route("/")
-//   .get(propertyController.findAll)
+router.route("/")
+  .get(userController.findAll);
 //   .post(propertyController.create);
 
 // // Matches with "/api/books/:id"
@@ -12,4 +12,4 @@
 //   .put(propertyController.update)
 //   .delete(propertyController.remove);
 
-// module.exports = router;
+module.exports = router;

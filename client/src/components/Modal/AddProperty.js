@@ -1,8 +1,13 @@
 import React from "react";
 
-export const AddProperty = ({ children }) =>
-<div>
-    <div className="modal fade" id="add-property-modal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+export const AddProperty = ({children}) => <div>
+    <div
+        className="modal fade"
+        id="add-property-modal"
+        tabIndex="-1"
+        role="dialog"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div className="modal-dialog" role="document">
             <div className="modal-content">
                 <div className="modal-header">

@@ -1,3 +1,4 @@
-export * from "./Login.js";
-export * from "./Register.js";
-export * from "./AddProperty.js";
+export * from "./Modal.js";
+export * from "./ModalHeader.js";
+export * from "./ModalBody.js"; 
+export * from "./ModalFooter.js"; 

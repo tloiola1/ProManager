@@ -10,13 +10,22 @@ const PropertySchema = new Schema({
   // `Name` is required and of type String  
   name: { type: String, required: true },
   // `Address` is required and of type String
+  type: { type: String, required: true},
+  //
   address: { type: String, required: true },
   //
   city: { type: String, require: true },
   //
   state: { type: String, require: true },
   //
-  zipcode: { type: Number, require: true }
+  zipcode: { type: Number, require: true },
+  //
+  // size: {
+  //   enum: []
+  // }
+  description: { type: String, require: true },
+  //
+  photo: { type: String, require: true }
 });
 
 // This creates our model from the above schema, using mongoose's model method
