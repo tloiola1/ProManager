@@ -1,4 +1,4 @@
-import React, { children }from "react";
+import React from "react";
 
 export const ModalButton = props =>
 <button type="button" className="btn" { ...props }>

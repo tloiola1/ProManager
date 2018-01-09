@@ -9,7 +9,7 @@ import {Logo} from "../../components/Logo";
 import {NavButton} from "../../components/Nav";
 import { Card,CardPhoto,CardTitle,CardSubtitle,CardText,CardBlock} from "../../components/Card";
 import API from "../../utils/API";
-import {Input, FormBtn } from "../../components/Form";
+import {Input, FormBtn} from "../../components/Form";
 
 class Home extends Component {
 
@@ -19,19 +19,18 @@ class Home extends Component {
         name: "",
         email: "",
         password: "",
-        title: "",
+        phone: "",
+        title: ""
     };
 
     componentDidMount() {
         this.loadProperties();
     };
-
     loadProperties = () => {
         API
             .getProperty()
             .then(res => {
-                console.log("loadProperty");
-                console.log(res.data);
+                // console.log("loadProperty"); console.log(res.data);
                 this.setState({
                     properties: res.data,
                     name: "",
@@ -40,47 +39,66 @@ class Home extends Component {
                     state: "",
                     zipcode: "",
                     description: "",
+                    available: "",
                     photo: ""
                 });
             })
             .catch(err => console.log(err));
     };
-
-    handleUserLogin = (event) => {
-        const { name, value } = event.target;
-        this.setState({
-          [name]: value
-        });
-        console.log("HUL");
-        console.log(value);
-        // console.log(userCred);
-        // API
-        //     .getUser()
-        //     .then(res => {
-        //         console.log("loadUsers");
-        //         console.log(res.data);
-        //         this.setState({
-        //             users: res.data,
-        //             name: "", 
-        //             email: "", 
-        //             password: "", 
-        //             title: ""});
-        //     })
-        //     .catch(err => console.log(err));
+    handleUserName = (event) => {
+        this.setState({name:  event.target.value});
     };
-
-    handleFormSubmit = event => {
-        event.preventDefault();
-            const email: this.state.email;
-            const password: this.state.password;
-        console.log(email, password);
+    handleUserEmail = (event) => {
+        this.setState({email: event.target.value});
     };
-
-    userRegister = (event) => {
-        event.preventDefault();
-        alert("Register");
+    handleUserPassword = (event) => {
+        this.setState({password: event.target.value});
     };
-
+    handleUserPhone = (event) => {
+        this.setState({phone: event.target.value});
+    };
+    handleUserTitle = (event) => {
+        this.setState({title: event.target.value});
+    };
+    //Login User
+    handleFormLogin = event => {
+        if (this.state.email && this.state.password) {
+            API
+                .getUser({
+                    email: this.state.email, 
+                    password: this.state.password
+                })
+                .then(res => this.allowAccess(res))
+                .catch(err => console.log(err));
+        }
+    };
+    // Create User Function
+    handleFormRegister = event => {
+        if (this.state.name && this.state.email && this.state.password && this.state.phone && this.state.title) {
+            API
+                .postUser({
+                    name: this.state.name, 
+                    email: this.state.email, 
+                    password: this.state.password,
+                    phone: this.state.phone,
+                    title: this.state.title
+                })
+                .then(res => this.newUser(res))
+                .catch(err => console.log(err));
+        }
+    };
+    newUser = (res) => {
+        console.log(res);
+    }
+    allowAccess = (res) => {
+        if (this.state.email === res.data[0].email && this.state.password === res.data[0].password) {
+            alert("Allow Access To User!");
+            return;
+        } else {
+            alert("Not A Valid User!");
+            return;
+        }
+    };
     render() {
         return (
             <Body>
@@ -98,7 +116,7 @@ class Home extends Component {
                         </Row>
                     </Container>
                 </FixedHeader>
-                {/* Login Modal */}
+                {/* ----------Login Modal---------- */}
                 <div
                     className="modal fade"
                     tabIndex="-1"
@@ -112,30 +130,28 @@ class Home extends Component {
                             Email
                             <Input
                                 value={this.state.email}
-                                onChange={this.handleUserLogin}
+                                onChange={this.handleUserEmail}
                                 name="email"
-                                placeholder=""
-                            />
+                                placeholder=""/>
                             Password
                             <Input
-                                type = "password"
+                                type="password"
                                 value={this.state.password}
-                                onChange={this.handleUserLogin}
+                                onChange={this.handleUserPassword}
                                 name="password"
-                                placeholder=""
-                            />
+                                placeholder=""/>
                         </ModalBody>
                         <ModalFooter>
                             <FormBtn className="btn btn-secondary" data-dismiss="modal">
                                 Close
                             </FormBtn>
-                            <FormBtn  className="btn btn-primary">
+                            <FormBtn className="btn btn-primary" onClick={this.handleFormLogin}>
                                 Submit
                             </FormBtn>
                         </ModalFooter>
                     </Modal>
                 </div>
-                {/* Register Modal */}
+                {/* ---------Register Modal-------- */}
                 <div
                     className="modal fade"
                     tabIndex="-1"
@@ -146,41 +162,44 @@ class Home extends Component {
                     <Modal>
                         <ModalHeader>Sign Up</ModalHeader>
                         <ModalBody>
-                            Name:
-                            <Input 
-                                type = "name"
+                            Name
+                            <Input
+                                type="name"
                                 value={this.state.name}
-                                onChange={this.handleInputChange}
+                                onChange={this.handleUserName}
                                 name="name"
-                                placeholder=""
-                            />
-                            Email:
+                                placeholder=""/>
+                            Email
                             <Input
-                                type = "email"
+                                type="email"
                                 value={this.state.email}
-                                onChange={this.handleInputChange}
+                                onChange={this.handleUserEmail}
                                 name="email"
-                                placeholder=""
-                            />
-                            Password:
+                                placeholder=""/>
+                            Password
                             <Input
-                                type = "password"
+                                type="password"
                                 value={this.state.password}
-                                onChange={this.handleInputChange}
+                                onChange={this.handleUserPassword}
                                 name="password"
-                                placeholder=""
-                            />
+                                placeholder=""/>
+                            Phone
+                            <Input
+                                type="text"
+                                value={this.state.phone}
+                                onChange={this.handleUserPhone}
+                                name="phone"
+                                placeholder=""/>
                             <div
-                                className="divRadio col-sm-12"
+                                className="col-sm-12"
                                 style={{
                                 marginLeft: "5px"
                             }}>
                                 <Input
                                     type="radio"
                                     className="form-check-input"
-                                    name="register-radio"
-                                    id="optionsRadios1"
-                                    value="rent"
+                                    value={this.state.title === "rent"}
+                                    onChange={this.handleUserTitle}
                                     style={{
                                     marginTop: "7px"
                                 }}/>
@@ -194,9 +213,8 @@ class Home extends Component {
                                 <Input
                                     type="radio"
                                     className="form-check-input"
-                                    name="register-radio"
-                                    id="optionsRadios2"
-                                    value="manage"
+                                    value={this.state.title === "manager"}
+                                    onChange={this.handleUserTitle}
                                     style={{
                                     marginTop: "7px"
                                 }}/>
@@ -204,16 +222,18 @@ class Home extends Component {
                             </div>
                         </ModalBody>
                         <ModalFooter>
-                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button
-                                type="button"
-                                className="btn btn-primary"
-                                onClick={event => this.userRegister(event)}>Submit</button>
+                            <FormBtn className="btn btn-secondary" data-dismiss="modal">
+                                Close
+                            </FormBtn>
+                            <FormBtn className="btn btn-primary" onClick={this.handleFormRegister}>
+                                Submit
+                            </FormBtn>
                         </ModalFooter>
                     </Modal>
                 </div>
                 {/* Margin Top */}
-                <Margin/> {/* Display Properties available */}
+                <Margin/> 
+                {/* --Display Properties available--*/}
                 <Container>
                     {this.state.properties.length
                         ? (
@@ -259,7 +279,10 @@ class Home extends Component {
                             </span>
                         )
                         : (
-                            <h3>No Results to Display</h3>
+                            <h3
+                                style={{
+                                color: "white"
+                            }}>No Results to Display</h3>
                         )}
                 </Container>
                 <a href="/findproperty" className="btn btn-large-success">Find a new home.</a>

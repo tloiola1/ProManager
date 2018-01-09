@@ -3,8 +3,8 @@ const userController = require("../../controllers/userController");
 
 // Matches with "/api/books"
 router.route("/")
-  .get(userController.findAll);
-//   .post(propertyController.create);
+  .get(userController.findOne)
+  .post(userController.create);
 
 // // Matches with "/api/books/:id"
 // router.route("/:id")

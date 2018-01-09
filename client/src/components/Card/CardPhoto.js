@@ -3,5 +3,5 @@ import "./Card.css"
 
 export const CardPhoto = ({ children }) =>
 <div className="card-photo">
-    <img src={ children } alt="Property-Image"></img>
+    <img src={ children } alt="Property"></img>
 </div>;

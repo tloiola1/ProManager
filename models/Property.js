@@ -25,6 +25,8 @@ const PropertySchema = new Schema({
   // }
   description: { type: String, require: true },
   //
+  available: { type: Boolean, require: true },
+  //  
   photo: { type: String, require: true }
 });
 
