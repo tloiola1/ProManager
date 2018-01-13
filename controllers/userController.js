@@ -4,8 +4,9 @@ const db = require("../models");
 module.exports = {
   findOne: function(req, res) {
     console.log("User Controller FindOne");
+    console.log(req.body);
     db.User
-      .find(req.query)
+      .find(req.body)
       // .sort({ date: -1 })
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
@@ -18,6 +19,7 @@ module.exports = {
   },
   create: function(req, res) {
     console.log("User Controller Create");
+    console.log(req.body);
     db.User
       .create(req.body)
       .then(dbModel => res.json(dbModel))

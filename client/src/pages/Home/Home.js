@@ -28,7 +28,7 @@ class Home extends Component {
     };
     loadProperties = () => {
         API
-            .getProperty()
+            .getAllProperty()
             .then(res => {
                 // console.log("loadProperty"); console.log(res.data);
                 this.setState({
@@ -45,21 +45,11 @@ class Home extends Component {
             })
             .catch(err => console.log(err));
     };
-    handleUserName = (event) => {
-        this.setState({name:  event.target.value});
-    };
-    handleUserEmail = (event) => {
-        this.setState({email: event.target.value});
-    };
-    handleUserPassword = (event) => {
-        this.setState({password: event.target.value});
-    };
-    handleUserPhone = (event) => {
-        this.setState({phone: event.target.value});
-    };
-    handleUserTitle = (event) => {
-        this.setState({title: event.target.value});
-    };
+    handleUserName = (event) => this.setState({name:  event.target.value});
+    handleUserEmail = (event) => this.setState({email: event.target.value});
+    handleUserPassword = (event) => this.setState({password: event.target.value});
+    handleUserPhone = (event) => this.setState({phone: event.target.value});
+    handleUserTitle = (event) => this.setState({title: event.target.value});
     //Login User
     handleFormLogin = event => {
         if (this.state.email && this.state.password) {
@@ -87,18 +77,34 @@ class Home extends Component {
                 .catch(err => console.log(err));
         }
     };
+    //Create New User
     newUser = (res) => {
-        console.log(res);
+        sessionStorage.setItem("path", res.data.title);
+        sessionStorage.setItem("name", res.data.name);
+        sessionStorage.setItem("id", res.data._id);
+        console.log(sessionStorage.getItem("path"));
+        if(sessionStorage.getItem("path") === 'rent'){ window.location = '/tenant'}
+        else if(sessionStorage.getItem("path") === 'manager'){ window.location = '/manager'}
     }
     allowAccess = (res) => {
-        if (this.state.email === res.data[0].email && this.state.password === res.data[0].password) {
-            alert("Allow Access To User!");
-            return;
-        } else {
-            alert("Not A Valid User!");
-            return;
+        // console.log("AllowAccess");
+        // console.log(res);
+        let isValidUser = false;
+        for(var i = 0; i < res.data.length; i++){
+            if(this.state.email === res.data[i].email && this.state.password === res.data[i].password){
+                sessionStorage.setItem("path", res.data[i].title);
+                sessionStorage.setItem("name", res.data[i].name);
+                sessionStorage.setItem("id", res.data[i]._id);
+                isValidUser = true;
+            }
         }
+        console.log(isValidUser);
+        if(isValidUser) window.location = `/${sessionStorage.getItem("path")}`;
+        else this.notAllow();
     };
+    notAllow = () => {
+        console.log("Not Allowed!");
+    }
     render() {
         return (
             <Body>
@@ -156,7 +162,7 @@ class Home extends Component {
                     className="modal fade"
                     tabIndex="-1"
                     role="dialog"
-                    aria-labelledby="exampleModalLabel"
+                    aria-labelledby="RegisterModal"
                     aria-hidden="true"
                     id="register">
                     <Modal>
@@ -198,7 +204,8 @@ class Home extends Component {
                                 <Input
                                     type="radio"
                                     className="form-check-input"
-                                    value={this.state.title === "rent"}
+                                    name= "register-radio"
+                                    value= "rent"
                                     onChange={this.handleUserTitle}
                                     style={{
                                     marginTop: "7px"
@@ -213,7 +220,8 @@ class Home extends Component {
                                 <Input
                                     type="radio"
                                     className="form-check-input"
-                                    value={this.state.title === "manager"}
+                                    name= "register-radio"
+                                    value= "manager"
                                     onChange={this.handleUserTitle}
                                     style={{
                                     marginTop: "7px"
