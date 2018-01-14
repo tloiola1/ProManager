@@ -1,30 +1,23 @@
 import axios from "axios";
 
 export default {
-  // Gets User login
-  getUser: function(data) {
-    console.log("Get Data");
-    console.log(data);
-    return axios.post("/api/users", data);
-  },
-  //Post New User
-  postUser: function(postData) {
-    console.log("Utils API");
-    console.log(postData);
-    return axios.post("/api/users", postData);
-  },
   // Gets all properties
-  getAllProperty: function() {
+  getAllProperties: function() {
+    console.log("Utils API getAllProperty");
     return axios.get("/api/properties");
   },
   // Post New PropertY
   postProperty: function(postData) {
+    console.log("Utils API postProperty");
+    console.log(postData);
     return axios.post("/api/properties", postData);
-  },
+  }//,
   //Get Property with Id
-  getProperty: function(id) {
-    return axios.get("/api/properties/" + id);
-  },
+  // getPropertyById: function(id) {
+  //   console.log("Utils API getProperty by Id");
+  //   console.log(id);
+  //   return axios.get("/api/properties/" + id);
+  // },
 //   // Deletes the book with the given id
 //   deleteProperty: function(id) {
 //     return axios.delete("/api/books/" + id);

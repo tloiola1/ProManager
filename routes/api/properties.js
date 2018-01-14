@@ -3,12 +3,12 @@ const propertyController = require("../../controllers/propertyController");
 
 // Matches with "/api/books"
 router.route("/")
-  .get(propertyController.findAll)
+  // .get(propertyController.findAll)
   .post(propertyController.create);
 
 // Matches with "/api/properties/:id"
-router.route("/:id")
-  .get(propertyController.findById);
+// router.route("/:id")
+//   .get(propertyController.findById);
 //   .put(propertyController.update)
 //   .delete(propertyController.remove);
 

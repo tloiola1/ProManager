@@ -1,5 +1,5 @@
 body{
-	background-image: url("./apt1.jpg");
+	background: fixed no-repeat url("./apt1.jpg");
 	background-size: cover;
 	background-repeat: no-repeat;
 }

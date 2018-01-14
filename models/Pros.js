@@ -1,10 +1,10 @@
-var mongoose = require("mongoose");
+const mongoose = require("mongoose");
 // Save a reference to the Schema constructor
-var Schema = mongoose.Schema;
+const Schema = mongoose.Schema;
 
 // Using the Schema constructor, create a new TenantsSchema object
 // This is similar to a Sequelize model
-var TenantsSchema = new Schema({
+const ProsSchema = new Schema({
   //This _id is associated with the property manager _id where the user resids
   _id: {
     type: String,
@@ -16,7 +16,7 @@ var TenantsSchema = new Schema({
     required: true
   },
   // `Address` is required and of type String
-  email: {
+  address: {
     type: String,
     required: true
   },
@@ -28,7 +28,7 @@ var TenantsSchema = new Schema({
 });
 
 // This creates our model from the above schema, using mongoose's model method
-var Tenants = mongoose.model("Tenants", TenantsSchema);
+const Pros = mongoose.model("Pros", ProsSchema);
 
 // Export the TenantsSchema model
-module.exports = Tenants;
+module.exports = Pros;

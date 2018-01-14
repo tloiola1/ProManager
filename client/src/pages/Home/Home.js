@@ -8,8 +8,10 @@ import {Button} from "../../components/Button";
 import {Logo} from "../../components/Logo";
 import {NavButton} from "../../components/Nav";
 import { Card,CardPhoto,CardTitle,CardSubtitle,CardText,CardBlock} from "../../components/Card";
-import API from "../../utils/API";
 import {Input, FormBtn} from "../../components/Form";
+import PROP from "../../utils/PROP";
+import USER from "../../utils/USER";
+import PROS from "../../utils/PROS";
 
 class Home extends Component {
 
@@ -17,6 +19,8 @@ class Home extends Component {
         properties: [],
         users: [],
         name: "",
+        firstName: "",
+        lastName: "",
         email: "",
         password: "",
         phone: "",
@@ -27,25 +31,18 @@ class Home extends Component {
         this.loadProperties();
     };
     loadProperties = () => {
-        API
-            .getAllProperty()
+        PROP
+            .getAllProperties()
             .then(res => {
-                // console.log("loadProperty"); console.log(res.data);
+                console.log("loadProperty"); console.log(res.data);
                 this.setState({
-                    properties: res.data,
-                    name: "",
-                    address: "",
-                    city: "",
-                    state: "",
-                    zipcode: "",
-                    description: "",
-                    available: "",
-                    photo: ""
+                    properties: res.data
                 });
             })
             .catch(err => console.log(err));
     };
-    handleUserName = (event) => this.setState({name:  event.target.value});
+    handleUserFirstName = (event) => this.setState({firstName:  event.target.value});
+    handleUserLastName = (event) => this.setState({lastName:  event.target.value});
     handleUserEmail = (event) => this.setState({email: event.target.value});
     handleUserPassword = (event) => this.setState({password: event.target.value});
     handleUserPhone = (event) => this.setState({phone: event.target.value});
@@ -53,7 +50,7 @@ class Home extends Component {
     //Login User
     handleFormLogin = event => {
         if (this.state.email && this.state.password) {
-            API
+            USER
                 .getUser({
                     email: this.state.email, 
                     password: this.state.password
@@ -64,10 +61,13 @@ class Home extends Component {
     };
     // Create User Function
     handleFormRegister = event => {
-        if (this.state.name && this.state.email && this.state.password && this.state.phone && this.state.title) {
-            API
+        if (this.state.firstName && this.state.lastName && this.state.email && this.state.password && this.state.phone && this.state.title) {
+            USER
                 .postUser({
-                    name: this.state.name, 
+                    name: {
+                        firstName: this.state.firstName,
+                        lastName: this.state.lastName
+                    },
                     email: this.state.email, 
                     password: this.state.password,
                     phone: this.state.phone,
@@ -80,20 +80,20 @@ class Home extends Component {
     //Create New User
     newUser = (res) => {
         sessionStorage.setItem("path", res.data.title);
-        sessionStorage.setItem("name", res.data.name);
+        sessionStorage.setItem("name", res.data.name.firstName);
         sessionStorage.setItem("id", res.data._id);
         console.log(sessionStorage.getItem("path"));
         if(sessionStorage.getItem("path") === 'rent'){ window.location = '/tenant'}
         else if(sessionStorage.getItem("path") === 'manager'){ window.location = '/manager'}
     }
     allowAccess = (res) => {
-        // console.log("AllowAccess");
-        // console.log(res);
+        console.log("AllowAccess");
+        console.log(res);
         let isValidUser = false;
         for(var i = 0; i < res.data.length; i++){
             if(this.state.email === res.data[i].email && this.state.password === res.data[i].password){
                 sessionStorage.setItem("path", res.data[i].title);
-                sessionStorage.setItem("name", res.data[i].name);
+                sessionStorage.setItem("name", res.data[i].name.firstName);
                 sessionStorage.setItem("id", res.data[i]._id);
                 isValidUser = true;
             }
@@ -103,7 +103,8 @@ class Home extends Component {
         else this.notAllow();
     };
     notAllow = () => {
-        console.log("Not Allowed!");
+        //Neeed to open register modal
+        // document.getElementById("register").then( ()=> console.log("Good"));
     }
     render() {
         return (
@@ -168,12 +169,19 @@ class Home extends Component {
                     <Modal>
                         <ModalHeader>Sign Up</ModalHeader>
                         <ModalBody>
-                            Name
+                            First Name
                             <Input
-                                type="name"
-                                value={this.state.name}
-                                onChange={this.handleUserName}
-                                name="name"
+                                type="text"
+                                value={this.state.firstName}
+                                onChange={this.handleUserFirstName}
+                                name="firstname"
+                                placeholder=""/>
+                            Last Name
+                            <Input
+                                type="text"
+                                value={this.state.lastName}
+                                onChange={this.handleUserLastName}
+                                name="lastname"
                                 placeholder=""/>
                             Email
                             <Input
@@ -242,7 +250,7 @@ class Home extends Component {
                 {/* Margin Top */}
                 <Margin/> 
                 {/* --Display Properties available--*/}
-                <Container>
+                {/* <Container>
                     {this.state.properties.length
                         ? (
                             <span>
@@ -267,10 +275,10 @@ class Home extends Component {
                                                             </CardTitle>
                                                             <CardSubtitle>
                                                                 <strong>
-                                                                    {property.address}
-                                                                    , {property.city}
-                                                                    , {property.state}
-                                                                    , {property.zipcode}
+                                                                    {property.address.address1}
+                                                                    , {property.address.city}
+                                                                    , {property.address.state}
+                                                                    , {property.address.zipcode}
                                                                 </strong>
                                                             </CardSubtitle>
                                                             <CardText>
@@ -292,7 +300,7 @@ class Home extends Component {
                                 color: "white"
                             }}>No Results to Display</h3>
                         )}
-                </Container>
+                </Container> */}
                 <a href="/findproperty" className="btn btn-large-success">Find a new home.</a>
             </Body>
         );
