@@ -1,15 +1,15 @@
-const db = require("../models/Pros");
+const db = require("../models");
 
 // Defining methods for the userController
 module.exports = {
-  // findAll: function(req, res) {
-  //   console.log("Pros Controller FindAll");
-  //   console.log(req.body);
-  //   db.Pros
-  //     .find(req.body)
-  //     .then(dbModel => res.json(dbModel))
-  //     .catch(err => res.status(422).json(err));
-  // },
+  findAll: function(req, res) {
+    console.log("Pros Controller FindAll");
+    console.log(req.body);
+    db.Pros
+      .find(req.body)
+      .then(dbModel => res.json(dbModel))
+      .catch(err => res.status(422).json(err));
+  },
   // findById: function(req, res) {
   //   console.log("Pros Controller FindById");
   //   console.log(req.params.id);
@@ -18,14 +18,14 @@ module.exports = {
   //     .then(dbModel => res.json(dbModel))
   //     .catch(err => res.status(422).json(err));
   // }
-  // create: function(req, res) {
-  //   console.log("Pros Controller Create");
-  //   console.log(req.body);
-  //   db.Pros
-  //     .create(req.body)
-  //     .then(dbModel => res.json(dbModel))
-  //     .catch(err => res.status(422).json(err));
-  // },
+  create: function(req, res) {
+    console.log("Pros Controller Create");
+    console.log(req.body);
+    db.Pros
+      .create(req.body)
+      .then(dbModel => res.json(dbModel))
+      .catch(err => res.status(422).json(err));
+  }
   // update: function(req, res) {
   //   console.log("Pros Controller Update");
   //   console.log(req.params._id);

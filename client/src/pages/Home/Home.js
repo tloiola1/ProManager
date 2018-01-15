@@ -24,7 +24,8 @@ class Home extends Component {
         email: "",
         password: "",
         phone: "",
-        title: ""
+        title: "",
+        search: ""
     };
 
     componentDidMount() {
@@ -47,6 +48,7 @@ class Home extends Component {
     handleUserPassword = (event) => this.setState({password: event.target.value});
     handleUserPhone = (event) => this.setState({phone: event.target.value});
     handleUserTitle = (event) => this.setState({title: event.target.value});
+    handleSearch = (event) => this.setState({search: event.target.value});
     //Login User
     handleFormLogin = event => {
         if (this.state.email && this.state.password) {
@@ -247,10 +249,12 @@ class Home extends Component {
                         </ModalFooter>
                     </Modal>
                 </div>
-                {/* Margin Top */}
+                {/* ------------Margin Top ----------*/}
                 <Margin/> 
                 {/* --Display Properties available--*/}
-                {/* <Container>
+                <Container>
+                    <Row>
+                    <Col size="md-8">
                     {this.state.properties.length
                         ? (
                             <span>
@@ -259,7 +263,6 @@ class Home extends Component {
                                     .properties
                                     .map(property => (
                                         <Card key={property._id}>
-                                            <Container>
                                                 <Row>
                                                     <Col size="md-4">
                                                         <CardPhoto>
@@ -270,9 +273,10 @@ class Home extends Component {
                                                         <CardBlock>
                                                             <CardTitle>
                                                                 <strong>
-                                                                    {property.name}
+                                                                    {property.propertyname}
                                                                 </strong>
                                                             </CardTitle>
+                                                            <hr></hr>
                                                             <CardSubtitle>
                                                                 <strong>
                                                                     {property.address.address1}
@@ -289,7 +293,6 @@ class Home extends Component {
                                                         </CardBlock>
                                                     </Col>
                                                 </Row>
-                                            </Container>
                                         </Card>
                                     ))}
                             </span>
@@ -300,7 +303,26 @@ class Home extends Component {
                                 color: "white"
                             }}>No Results to Display</h3>
                         )}
-                </Container> */}
+                    </Col>
+                    <Col size="md-4">
+                        <div style={{height: "150px", width: "330px", backgroundColor: "black", opacity: ".5", position: "fixed"}}></div>
+                        <div style={{padding: "20px 10px", position: "fixed"}}>
+                            <h5 style={{color: "orange"}}>Search For Acredited Professional</h5>
+                            <Input  
+                                type="text"
+                                value={this.state.search}
+                                onChange={this.handleSearch}
+                                name="search"
+                                placeholder=""/>
+                            <div style={{marginTop: "20px"}}>
+                            <FormBtn className="btn btn-warning">
+                                Search
+                            </FormBtn>
+                            </div>
+                        </div>
+                    </Col>
+                    </Row>
+                </Container>
                 <a href="/findproperty" className="btn btn-large-success">Find a new home.</a>
             </Body>
         );

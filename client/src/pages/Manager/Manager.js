@@ -4,7 +4,7 @@ import { Col, Container, Row } from "../../components/Grid";
 import { FixedHeader } from "../../components/Header";
 import {Modal, ModalHeader, ModalBody, ModalFooter} from "../../components/Modal";
 import { Card,CardPhoto,CardTitle,CardSubtitle,CardText,CardBlock} from "../../components/Card";
-import { InverseButton } from "../../components/Button";
+import { InverseButton, Button, EditBtn, DeleteBtn } from "../../components/Button";
 import { Logo } from "../../components/Logo";
 import {Input, FormBtn, TextArea } from "../../components/Form";
 import { Span, Margin } from "../../components/Tag";
@@ -20,9 +20,8 @@ class Manager extends Component {
         pros: [],
         properties: [],
         name: "",
-        _id: "",
         Name: "",
-        address: "",
+        address1: "",
         city: "",
         state: "",
         zipcode: "",
@@ -30,41 +29,41 @@ class Manager extends Component {
         type: "",
         available: "",
         phone: "",
+        foreignkey: ""
     };
     componentDidMount() {
-        console.log("componentDidMount");
-        console.log(sessionStorage.getItem("id"));
-        this.loadInfo(sessionStorage.getItem("id"));
-        // this.loadProperties(sessionStorage.getItem("id"));
+        this.loadUserInfo();
+        this.loadUserData();
     };
-    loadInfo = (id) => {
+    loadUserInfo = (id) => {
         if(sessionStorage.getItem("name") === null) { window.location = "/"; }
         else { 
             this.setState({name: sessionStorage.getItem("name")});
         }
-        // PROP
-        //     .getPropertyById(sessionStorage.getItem("id"))
-        //     .then(res => {
-        //         this.setState({
-        //             properties: res.data,
-        //         });
-        //         console.log("LoadInfo GetAllProperty");
-        //         console.log(this.state.properties);
-        //     })
-        //     .catch(err => console.log(err));
-        // PROS
-        //     .getProsById(id)
-        //     .then(res => {
-        //         this.setState({
-        //             pros: res.data,
-        //         });
-        //         console.log(this.state.pros);
-        //     })
-        //     .catch(err => console.log(err));
+    };
+    loadUserData = () =>{//sessionStorage.getItem("id")
+        PROP
+            .getAllProperties()
+            .then(res => {
+                console.log("loadProperty"); console.log(res.data);
+                this.setState({
+                    properties: res.data
+                });
+            })
+            .catch(err => console.log(err));
+        PROS
+            .getAllPros()
+            .then(res => {
+                this.setState({
+                    pros: res.data,
+                });
+                console.log(this.state.pros);
+            })
+            .catch(err => console.log(err));
     };
 
     handleInputName = (event) =>  this.setState({ Name: event.target.value });
-    handleAddress = (event) => this.setState({ address: event.target.value });
+    handleAddress1 = (event) => this.setState({ address1: event.target.value });
     handleCity = (event) => this.setState({ city: event.target.value });
     handlePhone = (event) => this.setState({ phone: event.target.value });
     handleState = (event) => this.setState({  state: event.target.value });
@@ -72,41 +71,57 @@ class Manager extends Component {
     handleDescription = (event) => this.setState({ description: event.target.value });
     handlePropertyType = (event) => this.setState({ type: event.target.value })
     handleAvailability = (event) => this.setState({ available: event.target.value });
+    handleForeignkey = (event) => this.setState({ foreignkey: event.target.value });
 
     handleFormAddProperty = event => {
         //The Suites at ATL 2212 Peachtree Rd Atlanta GA 30519 This is a great location for GA Tech students. Catch the Buzz to school just around the corner. true
-        if (this.state.Name )//&& this.state.address && this.state.city && this.state.state && this.state.zipcode && this.state.description && this.state.type && this.state.available 
+        if (this.state.Name && this.state.address1 && this.state.city && this.state.state && this.state.zipcode && this.state.description && this.state.type && this.state.available) 
         {
             PROP
                 .postProperty({
-                    propertyName: this.state.Name, 
-                    // address: this.state.address, 
-                    // city: this.state.city,
-                    // state: this.state.state,
-                    // zipcode: this.state.zipcode,
-                    // description: this.state.description,
-                    // type: this.state.type,
-                    // available: this.state.available,
-                    // foreignkey: sessionStorage.getItem("id")
+                    propertyname: this.state.Name, 
+                    address: {
+                        address1: this.state.address1, 
+                        city: this.state.city,
+                        state: this.state.state,
+                        zipcode: this.state.zipcode
+                    },
+                    description: this.state.description,
+                    type: this.state.type,
+                    available: this.state.available,
+                    foreignkey: sessionStorage.getItem("id")
                 })
-                .then(res => this.newUser(res))
+                .then(res => window.location.reload())
                 .catch(err => console.log(err));
         }
     };
-    handleFormAddPro = event => {
+    handleFormAddPros = event => {
         //Mark Plumber 1221 qwertyuiop street 1234567890
-        // if (this.state.Name && this.state.address && this.state.phone) {
-        //     PROS
-        //         .postPros({
-        //             name: this.state.Name, 
-        //             address: this.state.address,
-        //             phone: this.state.phone,
-        //             foreignkey: sessionStorage.getItem("id")
-        //         })
-        //         .then(res => this.newUser(res))
-        //         .catch(err => console.log(err));
-        // } 
+        if (this.state.Name && this.state.address1 && this.state.phone) {
+            PROS
+                .postPros({
+                    name: this.state.Name, 
+                    address: this.state.address1,
+                    phone: this.state.phone,
+                    foreignkey: sessionStorage.getItem("id")
+                })
+                .then(res => window.location.reload())
+                .catch(err => console.log(err));
+        } 
     };
+    handleProcess = event => {
+        const id = event.target.value;
+        console.log(id);
+    }
+    editProperty = foreignkey =>{
+        console.log(foreignkey);
+    }
+    deleteProperty = id =>{
+        PROP
+                .deleteProperty(id)
+                .then(res => this.loadUserData())
+                .catch(err => console.log(err));
+    }
     render() {
         return (
             <Body>
@@ -127,6 +142,7 @@ class Manager extends Component {
                     </Container>
                 </FixedHeader>
                 <Margin/>
+                {/* Add Property Modal */}
                 <div
                     className="modal fade"
                     tabIndex="-1"
@@ -140,16 +156,16 @@ class Manager extends Component {
                             Name the Property
                             <Input
                                 type="text"
-                                value={this.state.propertyName}
+                                value={this.state.Name}
                                 onChange={this.handleInputName}
                                 name="name"
                                 placeholder=""/>
                             Address
                             <Input
                                 type="text"
-                                value={this.state.address}
-                                onChange={this.handleAddress}
-                                name="address"
+                                value={this.state.address1}
+                                onChange={this.handleAddress1}
+                                name="address1"
                                 placeholder=""/>
                             City
                             <Input
@@ -257,13 +273,14 @@ class Manager extends Component {
                         </ModalFooter>
                     </Modal>
                 </div>
+                {/*   Add Pros Modal   */}
                 <div
                     className="modal fade"
                     tabIndex="-1"
                     role="dialog"
-                    aria-labelledby="AddPro"
+                    aria-labelledby="AddPros"
                     aria-hidden="true"
-                    id="addPro">
+                    id="addPros">
                     <Modal>
                         <ModalHeader>Add Service Provider</ModalHeader>
                         <ModalBody>
@@ -277,9 +294,9 @@ class Manager extends Component {
                             Address
                             <Input
                                 type="text"
-                                value={this.state.address}
-                                onChange={this.handleAddress}
-                                name="address"
+                                value={this.state.address1}
+                                onChange={this.handleAddress1}
+                                name="address1"
                                 placeholder=""/>
                             Phone
                             <Input
@@ -293,60 +310,157 @@ class Manager extends Component {
                             <FormBtn className="btn btn-secondary" data-dismiss="modal">
                                 Close
                             </FormBtn>
-                            <FormBtn className="btn btn-primary" onClick={this.handleFormAddPro}>
+                            <FormBtn className="btn btn-primary" onClick={this.handleFormAddPros}>
                                 Submit
                             </FormBtn>
                         </ModalFooter>
                     </Modal>
                 </div>
-                <Container>
-                    <Row>
-                    <Col size="sm-4">
-                    {/*{this.state.properties.length
+                {/* Edit Property Modal*/}
+                <div
+                    className="modal fade"
+                    tabIndex="-1"
+                    role="dialog"
+                    aria-labelledby="EditModal"
+                    aria-hidden="true"
+                    id="edit">
+                    <Modal>
+                        <ModalHeader>Add Tenant</ModalHeader>
+                        <ModalBody>
+                            {/* First Name
+                            <Input
+                                type="text"
+                                value={this.state.firstName}
+                                onChange={this.handleUserFirstName}
+                                name="firstname"
+                                placeholder=""/>
+                            Last Name
+                            <Input
+                                type="text"
+                                value={this.state.lastName}
+                                onChange={this.handleUserLastName}
+                                name="lastname"
+                                placeholder=""/>
+                            Email
+                            <Input
+                                type="email"
+                                value={this.state.email}
+                                onChange={this.handleUserEmail}
+                                name="email"
+                                placeholder=""/>
+                            Password
+                            <Input
+                                type="password"
+                                value={this.state.password}
+                                onChange={this.handleUserPassword}
+                                name="password"
+                                placeholder=""/>
+                            Phone
+                            <Input
+                                type="text"
+                                value={this.state.phone}
+                                onChange={this.handleUserPhone}
+                                name="phone"
+                                placeholder=""/>
+                            <div
+                                className="col-sm-12"
+                                style={{
+                                marginLeft: "5px"
+                            }}>
+                                <Input
+                                    type="radio"
+                                    className="form-check-input"
+                                    name= "register-radio"
+                                    value= "rent"
+                                    onChange={this.handleUserTitle}
+                                    style={{
+                                    marginTop: "7px"
+                                }}/>
+                                I want to find a new home.
+                            </div>
+                            <div
+                                className="divRadio col-sm-12"
+                                style={{
+                                marginLeft: "5px"
+                            }}>
+                                <Input
+                                    type="radio"
+                                    className="form-check-input"
+                                    name= "register-radio"
+                                    value= "manager"
+                                    onChange={this.handleUserTitle}
+                                    style={{
+                                    marginTop: "7px"
+                                }}/>
+                                I own a property and I want to rent.
+                            </div> */}
+                        </ModalBody>
+                        <ModalFooter>
+                            <FormBtn className="btn btn-secondary" data-dismiss="modal">
+                                Close
+                            </FormBtn>
+                            <FormBtn className="btn btn-primary" onClick={this.handleEdit}>
+                                Submit
+                            </FormBtn>
+                        </ModalFooter>
+                    </Modal>
+                </div>
+                {/* ------------------ */}
+                {/*   Contact Modal    */}
+                <div
+                    className="modal fade"
+                    tabIndex="-1"
+                    role="dialog"
+                    aria-labelledby="Contact"
+                    aria-hidden="true"
+                    id="contact">
+                    {this.state.pros.length
                         ? (
                             <span>
                                 {this
                                     .state
                                     .pros
                                     .map(providers => (
-                                        <Card key={providers._id}>
-                                            <Container>
-                                                <Row>
-                                                    <Col size="md-12">
-                                                        <CardBlock>
-                                                            <CardTitle>
-                                                                <strong>
-                                                                    {providers.name}
-                                                                </strong>
-                                                            </CardTitle>
-                                                            <CardSubtitle>
-                                                                <strong>
-                                                                    {providers.address}
-                                                                </strong>
-                                                            </CardSubtitle>
-                                                            <CardText>
-                                                                <strong>
-                                                                    {providers.phone}
-                                                                </strong>
-                                                            </CardText>
-                                                        </CardBlock>
-                                                    </Col>
-                                                </Row>
-                                            </Container>
-                                        </Card>
+                                        <Modal key={providers._id}>
+                                            <ModalHeader>
+                                                <strong>
+                                                    {providers.name}
+                                                </strong>
+                                            </ModalHeader>
+                                            <ModalBody>
+                                                <strong>
+                                                    Address: {providers.address}
+                                                </strong>
+                                                <hr></hr>
+                                                <strong>
+                                                    Phone: {providers.phone}
+                                                </strong>
+                                            </ModalBody>
+                                            <ModalFooter>
+                                                <FormBtn className="btn btn-secondary" data-dismiss="modal">
+                                                    Close
+                                                </FormBtn>
+                                                <FormBtn className="btn btn-info" value={providers._id} onClick={this.handleProcess}>
+                                                Edit
+                                                </FormBtn>
+                                                <FormBtn className="btn btn-danger" value={providers._id} onClick={this.handleProcess}>
+                                                Delete
+                                                </FormBtn>
+                                            </ModalFooter>
+                                        </Modal>
                                     ))}
                             </span>
                         )
                         : (
                             <h3>Add Some Contacts Here</h3>
-                        )}*/}
-                        <InverseButton toggle="modal" target="#addPro">
-                           Add Sercice Providers
-                        </InverseButton>
-                    </Col>
+                        )}
+                </div>
+                {/* ------------------ */}
+                <Container>
+                    <Row className="justify-content-between">
                     {/* Load Existing Properties Related to User Id */}
-                    <Col size="sm-8">
-                    {/*{this.state.properties.length
+                    <Col size="lg-8 md-9 sm-12">
+                    {this.state.properties.length
                         ? (
                             <span>
                                 {this
@@ -361,11 +475,11 @@ class Manager extends Component {
                                                             {property.photo}
                                                         </CardPhoto>
                                                     </Col>
-                                                    <Col size="md-8">
+                                                    <Col size="md-5">
                                                         <CardBlock>
                                                             <CardTitle>
                                                                 <strong>
-                                                                    {property.name}
+                                                                    {property.propertyname}
                                                                 </strong>
                                                             </CardTitle>
                                                             <CardSubtitle>
@@ -383,6 +497,14 @@ class Manager extends Component {
                                                             </CardText>
                                                         </CardBlock>
                                                     </Col>
+                                                    <Col size="md-3 sm-12">
+                                                        <EditBtn toggle="modal" target="#edit" onClick={() => this.editProperty(property._id)}>
+                                                        Edit
+                                                        </EditBtn>
+                                                        <DeleteBtn onClick={() => this.deleteProperty(property._id)}>
+                                                        Delete
+                                                        </DeleteBtn>
+                                                    </Col>
                                                 </Row>
                                             </Container>
                                         </Card>
@@ -391,9 +513,21 @@ class Manager extends Component {
                         )
                         : (
                             <h3>Add a Property Here</h3>
-                        )}*/}
+                        )}
+                    </Col>
+                    {/* My Add Buttons */}
+                    <Col size="lg-4 md-3 sm-12">
+                        <InverseButton toggle="modal" target="#todo">
+                           ToDo
+                        </InverseButton>
+                        <InverseButton toggle="modal" target="#contact">
+                           My Pros
+                        </InverseButton>
+                        <InverseButton toggle="modal" target="#addPros">
+                           Add Pros
+                        </InverseButton>
                         <InverseButton toggle="modal" target="#addProperty">
-                            Add a Property
+                            Add Property
                         </InverseButton>
                     </Col>
                     </Row>
