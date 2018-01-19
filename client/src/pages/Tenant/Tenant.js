@@ -4,14 +4,14 @@ import { Col, Container, Row } from "../../components/Grid";
 import { FixedHeader } from "../../components/Header";
 import {Modal, ModalHeader, ModalBody, ModalFooter} from "../../components/Modal";
 import { Card,CardPhoto,CardTitle,CardSubtitle,CardText,CardBlock} from "../../components/Card";
-import { InverseButton, Button } from "../../components/Button";
+import { InverseButton } from "../../components/Button";//, Button
 import { Logo } from "../../components/Logo";
 import {Input, FormBtn, TextArea } from "../../components/Form";
 import { Span, Margin } from "../../components/Tag";
 import { NavButton } from "../../components/Nav";
 import { Name } from "../../components/Name";
 import PROP from "../../utils/PROP";
-import USER from "../../utils/USER";
+// import USER from "../../utils/USER";
 import PROS from "../../utils/PROS";
 
 class Manager extends Component {

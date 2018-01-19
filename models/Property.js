@@ -15,7 +15,20 @@ const PropertySchema = new Schema({
   },
   description:  { type: String, require: true },
   available:    { type: String, require: true },
-  foreignkey:   { type: String, require: true }
+  foreignkey:   { type: String, require: true },
+  resId:        { type: Schema.ObjectId, auto: true },
+  resident: {
+      firstName: { type: String },
+      lastName: { type: String },
+      email: { type: String },
+      phone: { type: String }
+  },
+  todos: [
+    {
+    task: {type: String, default: ""},
+    _id: { type: Schema.ObjectId, auto: true }
+    }
+]
 });
 
 // This creates our model from the above schema, using mongoose's model method

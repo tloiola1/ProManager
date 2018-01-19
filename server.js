@@ -1,4 +1,5 @@
-//Dependencies
+//Dependencies $ ssh -v git@heroku.com
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const logger = require("morgan");

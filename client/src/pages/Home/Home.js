@@ -2,9 +2,8 @@ import React, {Component} from "react";
 import {Col, Container, Row} from "../../components/Grid";
 import {FixedHeader} from "../../components/Header";
 import {Body} from "../../components/Body";
-import {Modal, ModalHeader, ModalBody, ModalFooter} from "../../components/Modal";
 import {H1, Margin} from "../../components/Tag";
-import {Button} from "../../components/Button";
+import {Button, Modal, ModalHeader, ModalBody, ModalFooter} from "reactstrap";
 import {Logo} from "../../components/Logo";
 import {NavButton} from "../../components/Nav";
 import { Card,CardPhoto,CardTitle,CardSubtitle,CardText,CardBlock} from "../../components/Card";
@@ -14,6 +13,28 @@ import USER from "../../utils/USER";
 import PROS from "../../utils/PROS";
 
 class Home extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+          loginModal: false,
+          registerModal: false
+        };
+        this.register = this.register.bind(this);
+        this.login = this.login.bind(this);
+      };
+
+      login() {
+              this.setState({
+                loginModal: !this.state.loginModal
+        });
+      };
+
+      register() {
+          this.setState({
+              registerModal: !this.state.registerModal
+          });
+      };
 
     state = {
         properties: [],
@@ -50,7 +71,7 @@ class Home extends Component {
     handleUserTitle = (event) => this.setState({title: event.target.value});
     handleSearch = (event) => this.setState({search: event.target.value});
     //Login User
-    handleFormLogin = event => {
+    formLogin = event => {
         if (this.state.email && this.state.password) {
             USER
                 .getUser({
@@ -62,7 +83,7 @@ class Home extends Component {
         }
     };
     // Create User Function
-    handleFormRegister = event => {
+    formRegister = event => {
         if (this.state.firstName && this.state.lastName && this.state.email && this.state.password && this.state.phone && this.state.title) {
             USER
                 .postUser({
@@ -109,152 +130,125 @@ class Home extends Component {
         // document.getElementById("register").then( ()=> console.log("Good"));
     }
     render() {
-        return (
-            <Body>
-                <div className="fixed-top fixed-top-custom"></div>
-                <FixedHeader>
-                    <Container>
-                        <Row>
-                            <Logo/>
-                            <NavButton>
-                                <H1>
-                                    <Button toggle="modal" target="#login">Login</Button>
-                                    <Button toggle="modal" target="#register">Register</Button>
-                                </H1>
-                            </NavButton>
-                        </Row>
-                    </Container>
-                </FixedHeader>
-                {/* ----------Login Modal---------- */}
-                <div
-                    className="modal fade"
-                    tabIndex="-1"
-                    role="dialog"
-                    aria-labelledby="exampleModalLabel"
-                    aria-hidden="true"
-                    id="login">
-                    <Modal>
-                        <ModalHeader>Login</ModalHeader>
-                        <ModalBody>
-                            Email
-                            <Input
-                                value={this.state.email}
-                                onChange={this.handleUserEmail}
-                                name="email"
-                                placeholder=""/>
-                            Password
-                            <Input
-                                type="password"
-                                value={this.state.password}
-                                onChange={this.handleUserPassword}
-                                name="password"
-                                placeholder=""/>
-                        </ModalBody>
-                        <ModalFooter>
-                            <FormBtn className="btn btn-secondary" data-dismiss="modal">
-                                Close
-                            </FormBtn>
-                            <FormBtn className="btn btn-primary" onClick={this.handleFormLogin}>
-                                Submit
-                            </FormBtn>
-                        </ModalFooter>
-                    </Modal>
-                </div>
-                {/* ---------Register Modal-------- */}
-                <div
-                    className="modal fade"
-                    tabIndex="-1"
-                    role="dialog"
-                    aria-labelledby="RegisterModal"
-                    aria-hidden="true"
-                    id="register">
-                    <Modal>
-                        <ModalHeader>Sign Up</ModalHeader>
-                        <ModalBody>
-                            First Name
-                            <Input
-                                type="text"
-                                value={this.state.firstName}
-                                onChange={this.handleUserFirstName}
-                                name="firstname"
-                                placeholder=""/>
-                            Last Name
-                            <Input
-                                type="text"
-                                value={this.state.lastName}
-                                onChange={this.handleUserLastName}
-                                name="lastname"
-                                placeholder=""/>
-                            Email
-                            <Input
-                                type="email"
-                                value={this.state.email}
-                                onChange={this.handleUserEmail}
-                                name="email"
-                                placeholder=""/>
-                            Password
-                            <Input
-                                type="password"
-                                value={this.state.password}
-                                onChange={this.handleUserPassword}
-                                name="password"
-                                placeholder=""/>
-                            Phone
-                            <Input
-                                type="text"
-                                value={this.state.phone}
-                                onChange={this.handleUserPhone}
-                                name="phone"
-                                placeholder=""/>
-                            <div
-                                className="col-sm-12"
-                                style={{
-                                marginLeft: "5px"
-                            }}>
-                                <Input
-                                    type="radio"
-                                    className="form-check-input"
-                                    name= "register-radio"
-                                    value= "rent"
-                                    onChange={this.handleUserTitle}
-                                    style={{
-                                    marginTop: "7px"
-                                }}/>
-                                I want to find a new home.
-                            </div>
-                            <div
-                                className="divRadio col-sm-12"
-                                style={{
-                                marginLeft: "5px"
-                            }}>
-                                <Input
-                                    type="radio"
-                                    className="form-check-input"
-                                    name= "register-radio"
-                                    value= "manager"
-                                    onChange={this.handleUserTitle}
-                                    style={{
-                                    marginTop: "7px"
-                                }}/>
-                                I own a property and I want to rent.
-                            </div>
-                        </ModalBody>
-                        <ModalFooter>
-                            <FormBtn className="btn btn-secondary" data-dismiss="modal">
-                                Close
-                            </FormBtn>
-                            <FormBtn className="btn btn-primary" onClick={this.handleFormRegister}>
-                                Submit
-                            </FormBtn>
-                        </ModalFooter>
-                    </Modal>
-                </div>
-                {/* ------------Margin Top ----------*/}
+      return (
+          <Body>
+{/* Fixed Header  */}
+            <div className="fixed-top fixed-top-custom"></div>
+              <FixedHeader>
+                <Container>
+                  <Row>
+                    <Logo/>
+                        <NavButton>
+                          <Button color="primary" onClick={this.login}>Login</Button>{''}
+                          <Button color="primary"onClick={this.register}>Register</Button>
+                        </NavButton>
+                    </Row>
+                </Container>
+              </FixedHeader>
+{/* Login Modal     */}
+              <Modal isOpen={this.state.loginModal} toggle={this.login} className={this.props.className}>
+                <ModalHeader toggle={this.login}>Login</ModalHeader>
+                <ModalBody>
+                Email
+                <Input
+                    value={this.state.email}
+                    onChange={this.handleUserEmail}
+                    name="email"
+                    placeholder=""/>
+                Password
+                <Input
+                    type="password"
+                    value={this.state.password}
+                    onChange={this.handleUserPassword}
+                    name="password"
+                    placeholder=""/>
+                </ModalBody>
+                <ModalFooter>
+                <Button color="primary" onClick={this.formLogin}>Submit</Button>
+                </ModalFooter>
+              </Modal>
+{/* Register Modal  */}
+              <Modal isOpen={this.state.registerModal} toggle={this.register} className={this.props.className}>
+                <ModalHeader toggle={this.register}>Register</ModalHeader>
+                <ModalBody>
+                    First Name
+                    <Input
+                        type="text"
+                        value={this.state.firstName}
+                        onChange={this.handleUserFirstName}
+                        name="firstname"
+                        placeholder=""/>
+                    Last Name
+                    <Input
+                        type="text"
+                        value={this.state.lastName}
+                        onChange={this.handleUserLastName}
+                        name="lastname"
+                        placeholder=""/>
+                    Email
+                    <Input
+                        type="email"
+                        value={this.state.email}
+                        onChange={this.handleUserEmail}
+                        name="email"
+                        placeholder=""/>
+                    Password
+                    <Input
+                        type="password"
+                        value={this.state.password}
+                        onChange={this.handleUserPassword}
+                        name="password"
+                        placeholder=""/>
+                    Phone
+                    <Input
+                        type="text"
+                        value={this.state.phone}
+                        onChange={this.handleUserPhone}
+                        name="phone"
+                        placeholder=""/>
+                    <div
+                        className="col-sm-12"
+                        style={{
+                        marginLeft: "5px"
+                    }}>
+                        <Input
+                            type="radio"
+                            className="form-check-input"
+                            name= "register-radio"
+                            value= "rent"
+                            onChange={this.handleUserTitle}
+                            style={{
+                            marginTop: "7px"
+                        }}/>
+                        I want to find a new home.
+                    </div>
+                    <div
+                        className="divRadio col-sm-12"
+                        style={{
+                        marginLeft: "5px"
+                    }}>
+                        <Input
+                            type="radio"
+                            className="form-check-input"
+                            name= "register-radio"
+                            value= "manager"
+                            onChange={this.handleUserTitle}
+                            style={{
+                            marginTop: "7px"
+                        }}/>
+                        I own a property and I want to rent.
+                    </div>
+                </ModalBody>
+                <ModalFooter>
+                <Button color="primary" onClick={this.formRegister}>Submit</Button>
+                </ModalFooter>
+              </Modal>
+{/* Margin Top      */}
                 <Margin/> 
-                {/* --Display Properties available--*/}
+{/* Properties      */}
                 <Container>
                     <Row>
-                    <Col size="md-8">
+                    {/* <Col size="md-8">
                     {this.state.properties.length
                         ? (
                             <span>
@@ -303,7 +297,7 @@ class Home extends Component {
                                 color: "white"
                             }}>No Results to Display</h3>
                         )}
-                    </Col>
+                    </Col> */}
                     <Col size="md-4">
                         <div style={{height: "150px", width: "330px", backgroundColor: "black", opacity: ".5", position: "fixed"}}></div>
                         <div style={{padding: "20px 10px", position: "fixed"}}>
@@ -328,4 +322,4 @@ class Home extends Component {
         );
     }
 }
-export default Home;
+export default Home; 

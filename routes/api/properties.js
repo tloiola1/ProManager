@@ -7,6 +7,7 @@ router.route("/")
   .post(propertyController.create);
 
 router.route("/:id")
+  .get(propertyController.findById)
   .delete(propertyController.remove);
 
 module.exports = router;

@@ -10,6 +10,14 @@ module.exports = {
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
+  findById: function(req, res) {
+    console.log("Property Controller FindById.");
+    console.log(req.params.id);
+    db.Property
+      .find({foreignkey: req.params.id})
+      .then(dbModel => res.json(dbModel))
+      .catch(err => res.status(422).json(err));
+  },
   create: function(req, res) {
     console.log("Property Controller Create.");
     console.log(req.body);

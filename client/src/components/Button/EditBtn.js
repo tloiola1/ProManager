@@ -1,6 +1,6 @@
-import React, { children } from "react";
+import React from "react";
 
-export const EditBtn = props =>
-<button {...props} className="btn btn-info col-sm-12">
-    {props.children}
+export const EditBtn = ({ toggle, target, children }) =>
+<button  data-toggle={toggle.split(" ").map(toggle => toggle).join(" ")} data-target={target.split(" ").map(target => target).join(" ")} className="btn btn-outline-info"{...children}>
+    {children}
 </button>
