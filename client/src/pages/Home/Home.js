@@ -12,64 +12,62 @@ import PROP from "../../utils/PROP";
 import USER from "../../utils/USER";
 import PROS from "../../utils/PROS";
 
-class Home extends Component {
-
+class Home extends React.Component {
+    
+    componentDidMount() {
+        this.loadProperties();
+      };
+    // Constructor
     constructor(props) {
         super(props);
         this.state = {
-          loginModal: false,
-          registerModal: false
+            loginModal: false,
+            registerModal: false,
+            properties: [],
+            users: [],
+            name: "",
+            firstName: "",
+            lastName: "",
+            email: "",
+            password: "",
+            phone: "",
+            title: "",
+            search: ""
         };
         this.register = this.register.bind(this);
         this.login = this.login.bind(this);
       };
-
-      login() {
-              this.setState({
+    //Display Login Modal
+    login() {
+            this.setState({
                 loginModal: !this.state.loginModal
         });
       };
-
-      register() {
+    //Display Register Modal
+    register() {
           this.setState({
               registerModal: !this.state.registerModal
           });
       };
-
-    state = {
-        properties: [],
-        users: [],
-        name: "",
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-        phone: "",
-        title: "",
-        search: ""
-    };
-
-    componentDidMount() {
-        this.loadProperties();
-    };
+    //Display Properties
     loadProperties = () => {
         PROP
             .getAllProperties()
             .then(res => {
-                console.log("loadProperty"); console.log(res.data);
                 this.setState({
                     properties: res.data
                 });
             })
             .catch(err => console.log(err));
-    };
-    handleUserFirstName = (event) => this.setState({firstName:  event.target.value});
-    handleUserLastName = (event) => this.setState({lastName:  event.target.value});
-    handleUserEmail = (event) => this.setState({email: event.target.value});
-    handleUserPassword = (event) => this.setState({password: event.target.value});
-    handleUserPhone = (event) => this.setState({phone: event.target.value});
-    handleUserTitle = (event) => this.setState({title: event.target.value});
-    handleSearch = (event) => this.setState({search: event.target.value});
+      };
+    //OnChange Events
+        userFirstName = event => this.setState({firstName:  event.target.value});
+        userLastName = event => this.setState({lastName:  event.target.value});
+        userEmail = event => this.setState({email: event.target.value});
+        userPassword = event => this.setState({password: event.target.value});
+        userPhone = event => this.setState({phone: event.target.value});
+        userTitle = event => this.setState({title: event.target.value});
+        handleSearch = event => this.setState({search: event.target.value});
     //Login User
     formLogin = event => {
         if (this.state.email && this.state.password) {
@@ -81,7 +79,7 @@ class Home extends Component {
                 .then(res => this.allowAccess(res))
                 .catch(err => console.log(err));
         }
-    };
+      };
     // Create User Function
     formRegister = event => {
         if (this.state.firstName && this.state.lastName && this.state.email && this.state.password && this.state.phone && this.state.title) {
@@ -99,7 +97,7 @@ class Home extends Component {
                 .then(res => this.newUser(res))
                 .catch(err => console.log(err));
         }
-    };
+      };
     //Create New User
     newUser = (res) => {
         sessionStorage.setItem("path", res.data.title);
@@ -108,10 +106,9 @@ class Home extends Component {
         console.log(sessionStorage.getItem("path"));
         if(sessionStorage.getItem("path") === 'rent'){ window.location = '/tenant'}
         else if(sessionStorage.getItem("path") === 'manager'){ window.location = '/manager'}
-    }
+      };
+    //User Access
     allowAccess = (res) => {
-        console.log("AllowAccess");
-        console.log(res);
         let isValidUser = false;
         for(var i = 0; i < res.data.length; i++){
             if(this.state.email === res.data[i].email && this.state.password === res.data[i].password){
@@ -124,11 +121,13 @@ class Home extends Component {
         console.log(isValidUser);
         if(isValidUser) window.location = `/${sessionStorage.getItem("path")}`;
         else this.notAllow();
-    };
+     };
+    //User No Access
     notAllow = () => {
         //Neeed to open register modal
         // document.getElementById("register").then( ()=> console.log("Good"));
-    }
+      }
+    //render
     render() {
       return (
           <Body>
@@ -152,14 +151,14 @@ class Home extends Component {
                 Email
                 <Input
                     value={this.state.email}
-                    onChange={this.handleUserEmail}
+                    onChange={this.userEmail}
                     name="email"
                     placeholder=""/>
                 Password
                 <Input
                     type="password"
                     value={this.state.password}
-                    onChange={this.handleUserPassword}
+                    onChange={this.userPassword}
                     name="password"
                     placeholder=""/>
                 </ModalBody>
@@ -175,35 +174,35 @@ class Home extends Component {
                     <Input
                         type="text"
                         value={this.state.firstName}
-                        onChange={this.handleUserFirstName}
+                        onChange={this.userFirstName}
                         name="firstname"
                         placeholder=""/>
                     Last Name
                     <Input
                         type="text"
                         value={this.state.lastName}
-                        onChange={this.handleUserLastName}
+                        onChange={this.userLastName}
                         name="lastname"
                         placeholder=""/>
                     Email
                     <Input
                         type="email"
                         value={this.state.email}
-                        onChange={this.handleUserEmail}
+                        onChange={this.userEmail}
                         name="email"
                         placeholder=""/>
                     Password
                     <Input
                         type="password"
                         value={this.state.password}
-                        onChange={this.handleUserPassword}
+                        onChange={this.userPassword}
                         name="password"
                         placeholder=""/>
                     Phone
                     <Input
                         type="text"
                         value={this.state.phone}
-                        onChange={this.handleUserPhone}
+                        onChange={this.userPhone}
                         name="phone"
                         placeholder=""/>
                     <div
@@ -216,7 +215,7 @@ class Home extends Component {
                             className="form-check-input"
                             name= "register-radio"
                             value= "rent"
-                            onChange={this.handleUserTitle}
+                            onChange={this.userTitle}
                             style={{
                             marginTop: "7px"
                         }}/>
@@ -232,7 +231,7 @@ class Home extends Component {
                             className="form-check-input"
                             name= "register-radio"
                             value= "manager"
-                            onChange={this.handleUserTitle}
+                            onChange={this.userTitle}
                             style={{
                             marginTop: "7px"
                         }}/>
@@ -248,7 +247,7 @@ class Home extends Component {
 {/* Properties      */}
                 <Container>
                     <Row>
-                    {/* <Col size="md-8">
+                    <Col size="md-8">
                     {this.state.properties.length
                         ? (
                             <span>
@@ -297,7 +296,7 @@ class Home extends Component {
                                 color: "white"
                             }}>No Results to Display</h3>
                         )}
-                    </Col> */}
+                    </Col>
                     <Col size="md-4">
                         <div style={{height: "150px", width: "330px", backgroundColor: "black", opacity: ".5", position: "fixed"}}></div>
                         <div style={{padding: "20px 10px", position: "fixed"}}>
