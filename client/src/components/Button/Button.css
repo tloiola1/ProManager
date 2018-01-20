@@ -1,10 +1,3 @@
 .btn-outline-primary{
-	color: purple;
-	border-color: purple;
 	margin: 5px;
-}
-.btn-outline-primary:hover{
-	color: white;
-	background-color: purple;
-	border-color: purple;
 }

@@ -2,58 +2,76 @@ import React, {Component} from "react";
 import {Col, Container, Row} from "../../components/Grid";
 import {FixedHeader} from "../../components/Header";
 import {Body} from "../../components/Body";
-import {Modal, ModalHeader, ModalBody, ModalFooter} from "../../components/Modal";
 import {H1, Margin} from "../../components/Tag";
-import {Button} from "../../components/Button";
+import {Button, Modal, ModalHeader, ModalBody, ModalFooter} from "reactstrap";
 import {Logo} from "../../components/Logo";
 import {NavButton} from "../../components/Nav";
 import { Card,CardPhoto,CardTitle,CardSubtitle,CardText,CardBlock} from "../../components/Card";
-import API from "../../utils/API";
 import {Input, FormBtn} from "../../components/Form";
+import PROP from "../../utils/PROP";
+import USER from "../../utils/USER";
+import PROS from "../../utils/PROS";
 
-class Home extends Component {
-
-    state = {
-        properties: [],
-        users: [],
-        name: "",
-        email: "",
-        password: "",
-        phone: "",
-        title: ""
-    };
-
+class Home extends React.Component {
+    
     componentDidMount() {
         this.loadProperties();
-    };
+      };
+    // Constructor
+    constructor(props) {
+        super(props);
+        this.state = {
+            loginModal: false,
+            registerModal: false,
+            properties: [],
+            users: [],
+            name: "",
+            firstName: "",
+            lastName: "",
+            email: "",
+            password: "",
+            phone: "",
+            title: "",
+            search: ""
+        };
+        this.register = this.register.bind(this);
+        this.login = this.login.bind(this);
+      };
+    //Display Login Modal
+    login() {
+            this.setState({
+                loginModal: !this.state.loginModal
+        });
+      };
+    //Display Register Modal
+    register() {
+          this.setState({
+              registerModal: !this.state.registerModal
+          });
+      };
+    //Display Properties
     loadProperties = () => {
-        API
-            .getAllProperty()
+        PROP
+            .getAllProperties()
             .then(res => {
-                // console.log("loadProperty"); console.log(res.data);
                 this.setState({
-                    properties: res.data,
-                    name: "",
-                    address: "",
-                    city: "",
-                    state: "",
-                    zipcode: "",
-                    description: "",
-                    available: "",
-                    photo: ""
+                    properties: res.data
                 });
             })
             .catch(err => console.log(err));
-    };
-    handleUserName = (event) => this.setState({name:  event.target.value});
-    handleUserEmail = (event) => this.setState({email: event.target.value});
-    handleUserPassword = (event) => this.setState({password: event.target.value});
-    handleUserPhone = (event) => this.setState({phone: event.target.value});
-    handleUserTitle = (event) => this.setState({title: event.target.value});
+      };
+    //OnChange Events
+        userFirstName = event => this.setState({firstName:  event.target.value});
+        userLastName = event => this.setState({lastName:  event.target.value});
+        userEmail = event => this.setState({email: event.target.value});
+        userPassword = event => this.setState({password: event.target.value});
+        userPhone = event => this.setState({phone: event.target.value});
+        userTitle = event => this.setState({title: event.target.value});
+        handleSearch = event => this.setState({search: event.target.value});
     //Login User
-    handleFormLogin = event => {
+    formLogin = event => {
         if (this.state.email && this.state.password) {
-            API
+            USER
                 .getUser({
                     email: this.state.email, 
                     password: this.state.password
@@ -61,13 +79,16 @@ class Home extends Component {
                 .then(res => this.allowAccess(res))
                 .catch(err => console.log(err));
         }
-    };
+      };
     // Create User Function
-    handleFormRegister = event => {
-        if (this.state.name && this.state.email && this.state.password && this.state.phone && this.state.title) {
-            API
+    formRegister = event => {
+        if (this.state.firstName && this.state.lastName && this.state.email && this.state.password && this.state.phone && this.state.title) {
+            USER
                 .postUser({
-                    name: this.state.name, 
+                    name: {
+                        firstName: this.state.firstName,
+                        lastName: this.state.lastName
+                    },
                     email: this.state.email, 
                     password: this.state.password,
                     phone: this.state.phone,
@@ -76,24 +97,23 @@ class Home extends Component {
                 .then(res => this.newUser(res))
                 .catch(err => console.log(err));
         }
-    };
+      };
     //Create New User
     newUser = (res) => {
         sessionStorage.setItem("path", res.data.title);
-        sessionStorage.setItem("name", res.data.name);
+        sessionStorage.setItem("name", res.data.name.firstName);
         sessionStorage.setItem("id", res.data._id);
         console.log(sessionStorage.getItem("path"));
         if(sessionStorage.getItem("path") === 'rent'){ window.location = '/tenant'}
         else if(sessionStorage.getItem("path") === 'manager'){ window.location = '/manager'}
-    }
+      };
+    //User Access
     allowAccess = (res) => {
-        // console.log("AllowAccess");
-        // console.log(res);
         let isValidUser = false;
         for(var i = 0; i < res.data.length; i++){
             if(this.state.email === res.data[i].email && this.state.password === res.data[i].password){
                 sessionStorage.setItem("path", res.data[i].title);
-                sessionStorage.setItem("name", res.data[i].name);
+                sessionStorage.setItem("name", res.data[i].name.firstName);
                 sessionStorage.setItem("id", res.data[i]._id);
                 isValidUser = true;
             }
@@ -101,148 +121,133 @@ class Home extends Component {
         console.log(isValidUser);
         if(isValidUser) window.location = `/${sessionStorage.getItem("path")}`;
         else this.notAllow();
-    };
+     };
+    //User No Access
     notAllow = () => {
-        console.log("Not Allowed!");
-    }
+        //Neeed to open register modal
+        // document.getElementById("register").then( ()=> console.log("Good"));
+      }
+    //render
     render() {
-        return (
-            <Body>
-                <div className="fixed-top fixed-top-custom"></div>
-                <FixedHeader>
-                    <Container>
-                        <Row>
-                            <Logo/>
-                            <NavButton>
-                                <H1>
-                                    <Button toggle="modal" target="#login">Login</Button>
-                                    <Button toggle="modal" target="#register">Register</Button>
-                                </H1>
-                            </NavButton>
-                        </Row>
-                    </Container>
-                </FixedHeader>
-                {/* ----------Login Modal---------- */}
-                <div
-                    className="modal fade"
-                    tabIndex="-1"
-                    role="dialog"
-                    aria-labelledby="exampleModalLabel"
-                    aria-hidden="true"
-                    id="login">
-                    <Modal>
-                        <ModalHeader>Login</ModalHeader>
-                        <ModalBody>
-                            Email
-                            <Input
-                                value={this.state.email}
-                                onChange={this.handleUserEmail}
-                                name="email"
-                                placeholder=""/>
-                            Password
-                            <Input
-                                type="password"
-                                value={this.state.password}
-                                onChange={this.handleUserPassword}
-                                name="password"
-                                placeholder=""/>
-                        </ModalBody>
-                        <ModalFooter>
-                            <FormBtn className="btn btn-secondary" data-dismiss="modal">
-                                Close
-                            </FormBtn>
-                            <FormBtn className="btn btn-primary" onClick={this.handleFormLogin}>
-                                Submit
-                            </FormBtn>
-                        </ModalFooter>
-                    </Modal>
-                </div>
-                {/* ---------Register Modal-------- */}
-                <div
-                    className="modal fade"
-                    tabIndex="-1"
-                    role="dialog"
-                    aria-labelledby="RegisterModal"
-                    aria-hidden="true"
-                    id="register">
-                    <Modal>
-                        <ModalHeader>Sign Up</ModalHeader>
-                        <ModalBody>
-                            Name
-                            <Input
-                                type="name"
-                                value={this.state.name}
-                                onChange={this.handleUserName}
-                                name="name"
-                                placeholder=""/>
-                            Email
-                            <Input
-                                type="email"
-                                value={this.state.email}
-                                onChange={this.handleUserEmail}
-                                name="email"
-                                placeholder=""/>
-                            Password
-                            <Input
-                                type="password"
-                                value={this.state.password}
-                                onChange={this.handleUserPassword}
-                                name="password"
-                                placeholder=""/>
-                            Phone
-                            <Input
-                                type="text"
-                                value={this.state.phone}
-                                onChange={this.handleUserPhone}
-                                name="phone"
-                                placeholder=""/>
-                            <div
-                                className="col-sm-12"
-                                style={{
-                                marginLeft: "5px"
-                            }}>
-                                <Input
-                                    type="radio"
-                                    className="form-check-input"
-                                    name= "register-radio"
-                                    value= "rent"
-                                    onChange={this.handleUserTitle}
-                                    style={{
-                                    marginTop: "7px"
-                                }}/>
-                                I want to find a new home.
-                            </div>
-                            <div
-                                className="divRadio col-sm-12"
-                                style={{
-                                marginLeft: "5px"
-                            }}>
-                                <Input
-                                    type="radio"
-                                    className="form-check-input"
-                                    name= "register-radio"
-                                    value= "manager"
-                                    onChange={this.handleUserTitle}
-                                    style={{
-                                    marginTop: "7px"
-                                }}/>
-                                I own a property and I want to rent.
-                            </div>
-                        </ModalBody>
-                        <ModalFooter>
-                            <FormBtn className="btn btn-secondary" data-dismiss="modal">
-                                Close
-                            </FormBtn>
-                            <FormBtn className="btn btn-primary" onClick={this.handleFormRegister}>
-                                Submit
-                            </FormBtn>
-                        </ModalFooter>
-                    </Modal>
-                </div>
-                {/* Margin Top */}
-                <Margin/> 
-                {/* --Display Properties available--*/}
+      return (
+          <Body>
+{/* Fixed Header  */}
+            <div className="fixed-top fixed-top-custom"></div>
+              <FixedHeader>
                 <Container>
+                  <Row>
+                    <Logo/>
+                        <NavButton>
+                          <Button color="primary" onClick={this.login}>Login</Button>{''}
+                          <Button color="primary"onClick={this.register}>Register</Button>
+                        </NavButton>
+                    </Row>
+                </Container>
+              </FixedHeader>
+{/* Login Modal     */}
+              <Modal isOpen={this.state.loginModal} toggle={this.login} className={this.props.className}>
+                <ModalHeader toggle={this.login}>Login</ModalHeader>
+                <ModalBody>
+                Email
+                <Input
+                    value={this.state.email}
+                    onChange={this.userEmail}
+                    name="email"
+                    placeholder=""/>
+                Password
+                <Input
+                    type="password"
+                    value={this.state.password}
+                    onChange={this.userPassword}
+                    name="password"
+                    placeholder=""/>
+                </ModalBody>
+                <ModalFooter>
+                <Button color="primary" onClick={this.formLogin}>Submit</Button>
+                </ModalFooter>
+              </Modal>
+{/* Register Modal  */}
+              <Modal isOpen={this.state.registerModal} toggle={this.register} className={this.props.className}>
+                <ModalHeader toggle={this.register}>Register</ModalHeader>
+                <ModalBody>
+                    First Name
+                    <Input
+                        type="text"
+                        value={this.state.firstName}
+                        onChange={this.userFirstName}
+                        name="firstname"
+                        placeholder=""/>
+                    Last Name
+                    <Input
+                        type="text"
+                        value={this.state.lastName}
+                        onChange={this.userLastName}
+                        name="lastname"
+                        placeholder=""/>
+                    Email
+                    <Input
+                        type="email"
+                        value={this.state.email}
+                        onChange={this.userEmail}
+                        name="email"
+                        placeholder=""/>
+                    Password
+                    <Input
+                        type="password"
+                        value={this.state.password}
+                        onChange={this.userPassword}
+                        name="password"
+                        placeholder=""/>
+                    Phone
+                    <Input
+                        type="text"
+                        value={this.state.phone}
+                        onChange={this.userPhone}
+                        name="phone"
+                        placeholder=""/>
+                    <div
+                        className="col-sm-12"
+                        style={{
+                        marginLeft: "5px"
+                    }}>
+                        <Input
+                            type="radio"
+                            className="form-check-input"
+                            name= "register-radio"
+                            value= "rent"
+                            onChange={this.userTitle}
+                            style={{
+                            marginTop: "7px"
+                        }}/>
+                        I want to find a new home.
+                    </div>
+                    <div
+                        className="divRadio col-sm-12"
+                        style={{
+                        marginLeft: "5px"
+                    }}>
+                        <Input
+                            type="radio"
+                            className="form-check-input"
+                            name= "register-radio"
+                            value= "manager"
+                            onChange={this.userTitle}
+                            style={{
+                            marginTop: "7px"
+                        }}/>
+                        I own a property and I want to rent.
+                    </div>
+                </ModalBody>
+                <ModalFooter>
+                <Button color="primary" onClick={this.formRegister}>Submit</Button>
+                </ModalFooter>
+              </Modal>
+{/* Margin Top      */}
+                <Margin/> 
+{/* Properties      */}
+                <Container>
+                    <Row>
+                    <Col size="md-8">
                     {this.state.properties.length
                         ? (
                             <span>
@@ -251,7 +256,6 @@ class Home extends Component {
                                     .properties
                                     .map(property => (
                                         <Card key={property._id}>
-                                            <Container>
                                                 <Row>
                                                     <Col size="md-4">
                                                         <CardPhoto>
@@ -262,15 +266,16 @@ class Home extends Component {
                                                         <CardBlock>
                                                             <CardTitle>
                                                                 <strong>
-                                                                    {property.name}
+                                                                    {property.propertyname}
                                                                 </strong>
                                                             </CardTitle>
+                                                            <hr></hr>
                                                             <CardSubtitle>
                                                                 <strong>
-                                                                    {property.address}
-                                                                    , {property.city}
-                                                                    , {property.state}
-                                                                    , {property.zipcode}
+                                                                    {property.address.address1}
+                                                                    , {property.address.city}
+                                                                    , {property.address.state}
+                                                                    , {property.address.zipcode}
                                                                 </strong>
                                                             </CardSubtitle>
                                                             <CardText>
@@ -281,7 +286,6 @@ class Home extends Component {
                                                         </CardBlock>
                                                     </Col>
                                                 </Row>
-                                            </Container>
                                         </Card>
                                     ))}
                             </span>
@@ -292,10 +296,29 @@ class Home extends Component {
                                 color: "white"
                             }}>No Results to Display</h3>
                         )}
+                    </Col>
+                    <Col size="md-4">
+                        <div style={{height: "150px", width: "330px", backgroundColor: "black", opacity: ".5", position: "fixed"}}></div>
+                        <div style={{padding: "20px 10px", position: "fixed"}}>
+                            <h5 style={{color: "orange"}}>Search For Acredited Professional</h5>
+                            <Input  
+                                type="text"
+                                value={this.state.search}
+                                onChange={this.handleSearch}
+                                name="search"
+                                placeholder=""/>
+                            <div style={{marginTop: "20px"}}>
+                            <FormBtn className="btn btn-warning">
+                                Search
+                            </FormBtn>
+                            </div>
+                        </div>
+                    </Col>
+                    </Row>
                 </Container>
                 <a href="/findproperty" className="btn btn-large-success">Find a new home.</a>
             </Body>
         );
     }
 }
-export default Home;
+export default Home; 

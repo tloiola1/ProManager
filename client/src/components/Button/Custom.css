@@ -3,9 +3,9 @@
 	margin: 5px;
 	padding: 10px;
 	color: white;
-	background-color: purple;
+	background-color: #007bff;
 }
 .btn-outline-primary:hover{
-	color: purple;
+	color: #007bff;
 	background-color: white;
 }

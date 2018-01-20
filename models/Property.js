@@ -5,29 +5,30 @@ const Schema = mongoose.Schema;
 // Using the Schema constructor, create a new UserSchema object
 // This is similar to a Sequelize model
 const PropertySchema = new Schema({
-  //_ID is the id of the user whom manages/added a property
-  _id: { type: String, required: true, unique: true },
-  // `Name` is required and of type String  
-  name: { type: String, required: true },
-  // `Address` is required and of type String
-  type: { type: String, required: true},
-  //
-  address: { type: String, required: true },
-  //
-  city: { type: String, require: true },
-  //
-  state: { type: String, require: true },
-  //
-  zipcode: { type: Number, require: true },
-  //
-  // size: {
-  //   enum: []
-  // }
-  description: { type: String, require: true },
-  //
-  available: { type: Boolean, require: true },
-  //  
-  photo: { type: String, require: true }
+  propertyname: { type: String, required: true },
+  type:         { type: String, required: true},
+  address:{
+    address1:   { type: String, required: true },
+    city:       { type: String, require: true },
+    state:      { type: String, require: true },
+    zipcode:    { type: String, require: true }
+  },
+  description:  { type: String, require: true },
+  available:    { type: String, require: true },
+  foreignkey:   { type: String, require: true },
+  resId:        { type: Schema.ObjectId, auto: true },
+  resident: {
+      firstName: { type: String, default: "Click on edit add a Resident" },
+      lastName: { type: String, default: null },
+      email: { type: String, default: null },
+      phone: { type: String, default: null }
+  },
+  todos: [
+    {
+    task: {type: String, default: ""},
+    _id: { type: Schema.ObjectId, auto: true }
+    }
+]
 });
 
 // This creates our model from the above schema, using mongoose's model method

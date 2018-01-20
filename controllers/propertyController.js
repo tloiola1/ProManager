@@ -3,38 +3,34 @@ const db = require("../models");
 // Defining methods for the propertyController
 module.exports = {
   findAll: function(req, res) {
+    console.log("Property Controller FindAll.");
+    console.log(req.body);
     db.Property
-      .find(req.query)
+      .find(req.body)
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
   findById: function(req, res) {
-    console.log("Property Controller.");
+    console.log("Property Controller FindById.");
     console.log(req.params.id);
     db.Property
-      .findById(req.params.id)
+      .find({foreignkey: req.params.id})
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
   create: function(req, res) {
-    // console.log("Property Controller.");
-    // console.log(req.body);
+    console.log("Property Controller Create.");
+    console.log(req.body);
     db.Property
       .create(req.body)
-      .then(dbModel => res.json(dbModel))
+      .then(dbModel =>{console.log("Create Res"); console.log(res); res.json(dbModel);})
       .catch(err => res.status(422).json(err));
   },
-//   update: function(req, res) {
-//     db.Property
-//       .findOneAndUpdate({ _id: req.params.id }, req.body)
-//       .then(dbModel => res.json(dbModel))
-//       .catch(err => res.status(422).json(err));
-//   },
-//   remove: function(req, res) {
-//     db.Property
-//       .findById({ _id: req.params.id })
-//       .then(dbModel => dbModel.remove())
-//       .then(dbModel => res.json(dbModel))
-//       .catch(err => res.status(422).json(err));
-//   }
+  remove: function(req, res) {
+    db.Property
+      .findById({ _id: req.params.id })
+      .then(dbModel => dbModel.remove())
+      .then(dbModel => res.json(dbModel))
+      .catch(err => res.status(422).json(err));
+  }
 };

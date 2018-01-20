@@ -1,4 +1,5 @@
-//Dependencies
+//Dependencies $ ssh -v git@heroku.com
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const logger = require("morgan");
@@ -38,3 +39,5 @@ app.listen(PORT, function() {
   console.log("App running on port " + PORT + "!");
 });
    
+
+//git remote set-url heroku https://git.heroku.com/pro-manager.git

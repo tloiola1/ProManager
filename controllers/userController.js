@@ -24,13 +24,16 @@ module.exports = {
       .create(req.body)
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
-  }//,
-//   update: function(req, res) {
-//     db.User
-//       .findOneAndUpdate({ _id: req.params.id }, req.body)
-//       .then(dbModel => res.json(dbModel))
-//       .catch(err => res.status(422).json(err));
-//   },
+  },
+  update: function(req, res) {
+    console.log("User Controller Update");
+    console.log(req.params._id);
+    console.log(req.body);
+    db.User
+      .findOneAndUpdate({ _id: req.params._id }, req.body )
+      .then(dbModel => res.json(dbModel))
+      .catch(err => res.status(422).json(err));
+  }
 //   remove: function(req, res) {
 //     db.User
 //       .findById({ _id: req.params.id })
