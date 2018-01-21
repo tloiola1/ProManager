@@ -4,16 +4,16 @@ const db = require("../models");
 module.exports = {
   update: function(req, res) {
     console.log("Property Controller Resident");
-    console.log(req);
+    console.log(req.params._id);
     db.Property
-      .findOneAndUpdate({foreignkey: req.params.id, propertyname: req.body.propertyname}, {$set: {resident: req.body.resident}})
+      .findOneAndUpdate({ _id: req.params._id }, {$set: {resident: req.body.resident}})
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
   remove: function(req, res) {
     db.Property
-      .findOneAndUpdate({ resId: req.params.id }, {$set: {resident: {
-        firstName: null,
+      .findOneAndUpdate({ _id: req.params.id }, {$unset: {resident: {
+        firstName: "Add Resident by click on Edit",
         lastName: "",
         email: "",
         phone: ""

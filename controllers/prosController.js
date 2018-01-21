@@ -25,7 +25,7 @@ module.exports = {
       .create(req.body)
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
-  }
+  },
   // update: function(req, res) {
   //   console.log("Pros Controller Update");
   //   console.log(req.params._id);
@@ -35,11 +35,11 @@ module.exports = {
   //     .then(dbModel => res.json(dbModel))
   //     .catch(err => res.status(422).json(err));
   // }
-//   remove: function(req, res) {
-//     db.Pros
-//       .findById({ _id: req.params.id })
-//       .then(dbModel => dbModel.remove())
-//       .then(dbModel => res.json(dbModel))
-//       .catch(err => res.status(422).json(err));
-//   }
+  remove: function(req, res) {
+    db.Pros
+      .findById({ _id: req.params._id })
+      .then(dbModel => dbModel.remove())
+      .then(dbModel => res.json(dbModel))
+      .catch(err => res.status(422).json(err));
+  }
 };

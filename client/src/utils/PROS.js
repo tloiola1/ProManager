@@ -18,11 +18,9 @@ export default {
     console.log("Utils API getAllPros");
     // console.log(id);
     return axios.get("/api/pros");
-  }//,
+  },
 //   // Post New PropertY
-//   deletePros: function(data) {
-//     console.log("Utils API DeletePros");
-//     console.log(data);
-//     return axios.post("/api/pros", data);
-//   }
+  deletePros: function(_id) {
+    return axios.post("/api/pros/"+ _id);
+  }
 };

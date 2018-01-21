@@ -2,9 +2,9 @@ const router = require("express").Router();
 const taskController = require("../../controllers/taskController");
 
 router.route("/") 
-  .post(taskController.remove);
+  .post(taskController.create); 
 
-router.route("/:id") 
-  .post(taskController.update);
+router.route("/:_id") 
+  .delete(taskController.remove);
 
 module.exports = router; 

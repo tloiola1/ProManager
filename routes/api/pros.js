@@ -6,8 +6,8 @@ router.route("/")
     .get(prosController.findAll)
     .post(prosController.create);
 
-// router.route("/:id")
+router.route("/:_id")
 //   .get(prosController.findById);
-//   .post(prosController.createById);
+  .delete(prosController.remove);
 
 module.exports = router; 

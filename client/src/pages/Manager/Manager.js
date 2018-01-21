@@ -1,17 +1,17 @@
+// Imports
 import React, { Component } from "react";
-import {Body} from "../../components/Body";
-import { FixedHeader } from "../../components/Header";
-import {Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, Card, CardTitle,CardSubtitle,CardText,CardBlock, Col, Container, Row} from "reactstrap";
-import { InverseButton, EditBtn, DeleteBtn } from "../../components/Button";
-import { Logo } from "../../components/Logo";
-import {Input, FormBtn, TextArea } from "../../components/Form";
-import { Span, Margin } from "../../components/Tag";
-import { NavButton } from "../../components/Nav";
-import { Name } from "../../components/Name";
-import PROP from "../../utils/PROP";
-import TASK from "../../utils/TASK";
-import PROS from "../../utils/PROS";
-import RES from "../../utils/RES";
+    import {Body} from "../../components/Body";
+    import { FixedHeader } from "../../components/Header";
+    import {Button, Modal, ModalHeader, ModalBody, ModalFooter, Card, CardTitle,CardSubtitle,CardText,CardBody, Col, Container, Row} from "reactstrap";
+    import { Logo } from "../../components/Logo";
+    import {Input, FormBtn, TextArea } from "../../components/Form";
+    import { Span, Margin } from "../../components/Tag";
+    import { NavButton } from "../../components/Nav";
+    import { Name } from "../../components/Name";
+    import PROP from "../../utils/PROP";
+    import TASK from "../../utils/TASK";
+    import PROS from "../../utils/PROS";
+    import RES from "../../utils/RES";
 
 class Manager extends Component {
     
@@ -33,7 +33,7 @@ class Manager extends Component {
             addResidentModalOpen: false,
             myProsCollapse: false,
             myPropertiesCollapse: false,
-            properties: [],
+            properties: [], 
             pros: [],
             todos: [],
             name: "",
@@ -65,19 +65,34 @@ class Manager extends Component {
     //Add Pros Modal Toggle
     addProsModal() { this.setState({ addProsModalOpen: !this.state.addProsModalOpen })};
     //Add Property Modal Toggle
-    addPropertyModal() { this.setState({ addPropertyModalOpen: !this.state.addPropertyModalOpen })};
-    addTaskModal() { this.setState({ addTaskModalOpen: !this.state.addTaskModalOpen })};
-    addResidentModal() { this.setState({ addResidentModalOpen: !this.state.addResidentModalOpen })};
+    addPropertyModal() { 
+        this.setState({ addPropertyModalOpen: !this.state.addPropertyModalOpen });
+        };
+    //
+    addTaskModal= id => { 
+        this.setState({ propertyId: id });
+        this.setState({ addTaskModalOpen: !this.state.addTaskModalOpen });
+        };
+    //
+    addResidentModal = id => { 
+        console.log(id); 
+        this.setState({ addResidentModalOpen: !this.state.addResidentModalOpen });
+        this.setState({ propertyId: id});
+      };
     //My Pros Collapse Toggle
-    myPros() { this.setState({ myProsCollapse: !this.state.myProsCollapse })};
+    myPros() { 
+        this.setState({ myProsCollapse: !this.state.myProsCollapse })
+        };
     //Collapse My Properties
-    myProperties(){ this.setState({ myPropertiesCollapse: !this.state.myPropertiesCollapse })}
+    myProperties(){ 
+        this.setState({ myPropertiesCollapse: !this.state.myPropertiesCollapse })
+        };
     //Display User Data
     loadUserData = () =>{
         PROP
             .getPropertyById(sessionStorage.getItem("id"))
             .then(res => {
-                console.log("Test"); console.log(res.data[1].todos);
+                console.log("Test"); console.log(res.data[1].todos[0].task);
                 this.setState({
                     properties: res.data 
                 });
@@ -94,6 +109,7 @@ class Manager extends Component {
             .catch(err => console.log(err));
       };
     //Handle OnChange Events
+
     handleInputName = event =>  this.setState({ Name: event.target.value });
         handleAddress1 = event => this.setState({ address1: event.target.value });
         handleCity = event => this.setState({ city: event.target.value });
@@ -148,41 +164,41 @@ class Manager extends Component {
     //Delete Pro
     deletePro = id => {
         console.log(id)
+        PROS
+                .deletePros(id)
+                .then(res => window.location.reload())
+                .catch(err => console.log(err));
       };
     //Add Tasks
     addTask = id => {
-        console.log(id);
-        // if(this.state.task){
-            // RES
-            //     .addTask({
-            //         _id: sessionStorage.getItem("id"),
-            //         propertyname: this.state.Name,
-            //         resident: {
-            //             firstName: this.state.firstName, 
-            //             lastName: this.state.lastName,
-            //             email: this.state.email,
-            //             phone: this.state.phone
-            //         }
-            //     })
-            //     .then(res => window.location.reload())//
-            //     .catch(err => console.log(err));
-        // }
+        console.log(this.state.propertyId);
+        if(this.state.task){
+            TASK
+                .postTask({
+                    _id: this.state.propertyId,
+                    todos: {
+                        task: this.state.task
+                    }
+                })
+                .then(res => window.location.reload())//
+                .catch(err => console.log(err));
+        }
      };
     //
-    deleteTask = (propId, taskId) => {
-        const ids = {
-            propId, 
+    deleteTask = (id, prop) => {
+        console.log(propId, taskId);
+        const data ={
+            propId,
             taskId
         }
         TASK
-                .deleteTask(ids)
+                .deleteTask(data)
                 .then(res => console.log(res))//window.location.reload()
                 .catch(err => console.log(err));
       }
     //
-    editResident = id =>{
-        this.setState({propertyId: id});
-        if (this.state.Name && this.state.firstName && this.state.lastName && this.state.email && this.state.phone) {
+    submitEditResident = id =>{
+        if (this.state.firstName && this.state.lastName && this.state.email && this.state.phone) {
             RES
                 .editResident({
                     _id: this.state.propertyId,
@@ -205,8 +221,9 @@ class Manager extends Component {
                 .then(res => window.location.reload())
                 .catch(err => console.log(err));
       }
-
+    //
     deleteProperty = id =>{
+        console.log(id);
         PROP
                 .deleteProperty(id)
                 .then(res => window.location.reload())
@@ -244,163 +261,154 @@ class Manager extends Component {
                                 Properties
                             </Button>
                             <Button className="col-sm-12" color="primary" onClick={this.addPropertyModal} style={{ margin: '.5rem' }}>Add Property</Button>
-                        </Col> 
+                        </Col>
+{/*     Tasks TODO                  */}
+                        <Col xs="auto" sm="9">
+                            {this.state.properties.length ? (
+                                <span>
+                                {this.state.properties.map(property => (
+                                    <Card key={property._id}>
+                                        <Container>
+                                            <Row>
+                                                <Col xs="auto" sm="5">
+                                                    <CardBody>
+                                                        <CardTitle>
+                                                            Property:{" "}
+                                                            <strong>{property.propertyname}
+                                                            </strong>
+                                                            <br></br>
+                                                            Resident:{" "}{property.resident.firstName}{" "}{property.resident.lastName}
+                                                        </CardTitle>
+                                                        <CardSubtitle>
+                                                            <Button color="info" style={{margin: "1rem"}} onClick={() => this.addTaskModal(property._id)}>
+                                                                Add Task
+                                                            </Button>
+                                                        </CardSubtitle>
+                                                    </CardBody>
+                                                </Col>
+                                                <Col xs="auto" sm="5">
+                                                    <CardBody>
+                                                        <CardTitle>
+                                                            <strong>My Tasks
+                                                            </strong>
+                                                        </CardTitle>
+                                                        <CardSubtitle>
+                                                        {property.todos.map(task => (
+                                                            <span key={task._id}>
+                                                                {task.task}🔨
+                                                                <span>
+                                                                <Button color="danger" onClick={() => this.deleteTask(property._id, task._id)} style={{margin: "irem"}}>
+                                                                X
+                                                                </Button>
+                                                            </span>
+                                                            <hr></hr>
+                                                        </span>   
+                                                        ))}
+                                                        </CardSubtitle>
+                                                    </CardBody>
+                                                </Col>
+                                            </Row>
+                                        </Container>
+                                    </Card>
+                                ))}
+                                </span>
+                            ) : ( <h3>Add a Property Here</h3> )}
+                        </Col>
                     </Row>
                 </Container>
-{/*     My Pros Collapse            */}
-                <Collapse isOpen={this.state.myProsCollapse}>
-                    <Container>
-                        <Row>
-                            <Col  sm="12" md={{ size: 6, offset: 3 }}>
-                                {this.state.pros.length ? (
-                                    <span>
-                                    {this.state.pros.map(providers => (
-                                        <Card key={providers._id}>
-                                            <CardBlock>
-                                                <CardTitle>
-                                                    <strong>
-                                                        {providers.name}
-                                                    </strong>
-                                                    <hr></hr>
-                                                </CardTitle>
-                                                <CardSubtitle>
-                                                    <strong>
-                                                    🏠{" "}{providers.address}
-                                                    </strong>
-                                                    <br></br>
-                                                    <strong>
-                                                    📞{" "}<a href={'tel:'+providers.phone}>
-                                                        {providers.phone}
-                                                    </a>
-                                                    </strong>
-                                                </CardSubtitle>
-                                                <Col sm={{ size: 'auto', offset: 6}}>
-                                                <CardText>
-                                                    <Button color="danger" onClick={() => this.deletePro(providers._id)} style={{ margin: '1rem' }}>
-                                                        Delete
-                                                    </Button>
-                                                    <Button onClick={this.myPros} style={{ margin: '1rem' }}>
-                                                        X
-                                                    </Button>
-                                                </CardText>
-                                                </Col>
-                                            </CardBlock>
-                                        </Card>
-                                    ))}
-                                    </span>
-                                ) : ( <h3>Add Some Contacts Here</h3> )}
-                            </Col>
-                        </Row>
-                    </Container>
-                </Collapse>
-{/*     Load My Propeties Collapse  */}
-                <Collapse isOpen={this.state.myPropertiesCollapse}>
-                    <Container>
-                        <Row>
-                            <Col sm="12">
-                                {this.state.properties.length ? (
-                                    <span>
-                                    {this.state.properties.map(property => (
-                                        <Card key={property._id}>
-                                            <Container>
-                                                <Row>
-                                                    <Col xs="auto" sm="4">
-                                                        <CardBlock>
-                                                            <CardTitle>
-                                                                <strong>
-                                                                    {property.propertyname}
-                                                                </strong>
-                                                            </CardTitle>
-                                                            <CardSubtitle>
-                                                                <strong>
-                                                                    {property.address.address1}
-                                                                    , {property.address.city}
-                                                                    , {property.address.state}
-                                                                    , {property.address.zipcode}
-                                                                </strong>
-                                                            </CardSubtitle>
-                                                            <CardText>
-                                                                <strong>
-                                                                    {property.description}
-                                                                </strong>
-                                                            </CardText>
-                                                        </CardBlock>
-                                                        <Button color="danger" onClick={() => this.deleteProperty(property._id)} style={{margin: "1rem"}}>
-                                                            Delete Property
-                                                        </Button>
-                                                    </Col>
+{/*     My Pros Modal            */}
+                <Modal isOpen={this.state.myProsCollapse} toggle={this.myPros}>
+                    {this.state.pros.length ? (
+                        <span>
+                        {this.state.pros.map(providers => (
+                            <span key={providers._id}>
+                                    <ModalHeader toggle={this.myPros}>
+                                        <strong>
+                                            {providers.name}
+                                        </strong>
+                                    </ModalHeader>
+                                    <ModalBody>
+                                        <strong>
+                                        <span role="img" aria-label="emoji">🏠</span>{" "}{providers.address}
+                                        <br></br>
+                                        <span role="img" aria-label="emoji">📞</span>{" "}<a href={'tel:'+providers.phone}>
+                                            {providers.phone}
+                                        </a>
+                                        </strong>
+                                    </ModalBody>
+                                    <ModalFooter>
+                                        <Button color="danger" onClick={()=>{this.deletePro(providers._id)}} style={{ margin: '1rem' }}>
+                                            Delete
+                                        </Button>
+                                    </ModalFooter>
+                                    <hr style={{border: "2px solid #000"}}></hr>
+                            </span>
+                        ))}
+                        </span>
+                    ) : ( <h3>Add Some Contacts Here</h3> )}
+                </Modal>
+{/*     Load My Propeties Modal  */}
+                <Modal isOpen={this.state.myPropertiesCollapse}>
+                    {this.state.properties.length ? (
+                        <span>
+                        {this.state.properties.map(property => (
+                            <span key={property._id}>
+                                <ModalHeader toggle={this.myProperties}>
+                                    <strong>
+                                        {property.propertyname}
+                                    </strong>
+                                </ModalHeader>
+                                <ModalBody>
+                                    <strong>
+                                        {property.address.address1}
+                                        , {property.address.city}
+                                        , {property.address.state}
+                                        , {property.address.zipcode}
+                                        <br></br>{property.description}
+                                    </strong>
+                                </ModalBody>
+                                <ModalFooter style={{padding: "0rem"}}>
+                                    <Button color="danger" onClick={() => this.deleteProperty(property._id)} style={{margin: "1rem"}}>
+                                        Delete Property
+                                    </Button>
+                                </ModalFooter>
+                                <hr></hr>
+                                
 {/*     Load My Residents           */}
-                                                    <Col xs="auto" sm="4">
-                                                        <CardBlock>
-                                                            <CardTitle>
-                                                                <strong>
-                                                                    {property.resident.firstName}
-                                                                    <span> </span>
-                                                                    {property.resident.lastName}
-                                                                </strong>
-                                                            </CardTitle>
-                                                            <CardSubtitle>
-                                                                <strong>
-                                                                📧{" "}{property.resident.email}
-                                                                </strong>
-                                                            </CardSubtitle>
-                                                            <CardText>
-                                                                <strong>
-                                                                📞{" "}{property.resident.phone}
-                                                                </strong>
-                                                            </CardText>
-                                                        </CardBlock>
-                                                        <Button color="info" style={{margin: "1rem"}} onClick={() => this.thisPropertyId(property._id)}>
-                                                            Task
-                                                        </Button>
-                                                        <Button color="info" onClick={ this.addResidentModal} style={{margin: "1rem"}}>
-                                                            Edit
-                                                        </Button>
-                                                        <Button color="danger" onClick={() => this.deleteResident(property.resId)} style={{margin: "1rem"}}>
-                                                            Delete
-                                                        </Button>
-                                                    </Col>
-{/*     Tasks TODO                  */}
-                                                    <Col xs="auto" sm="4">
-                                                        <CardBlock>
-                                                            <CardTitle>
-                                                                <strong>
-                                                                    <i>
-                                                                    To Dos
-                                                                    </i>
-                                                                </strong>
-                                                            </CardTitle>
-                                                                <strong>{property.todos.length ? (
-                                                                <CardSubtitle>
-                                                                {property.todos.map(task => (
-                                                                    <span key={task._id}>
-                                                                    {task.task}🔨
-                                                                    <span>
-                                                                    <DeleteBtn className="btn btn-outline-danger" onClick={() => this.deleteTask(property._id,task._id)} style={{margin: "10px"}}>
-                                                                        X
-                                                                    </DeleteBtn>
-                                                                    </span>
-                                                                    <hr></hr>
-                                                                </span>   
-                                                                ))}
-                                                                </CardSubtitle>
-                                                                ) : (<p></p>)}
-                                                                </strong>
-                                                        </CardBlock>
-                                                    </Col>
-                                                </Row>
-                                            </Container>
-                                        </Card>
-                                    ))}
-                                    </span>
-                                ) : ( <h3>Add a Property Here</h3> )}
-                            </Col>
-                            {/* <Col size="sm-1">
-                                    <Button color="warning" onClick={this.myProperties} style={{ marginBottom: '1rem' }}>X</Button>
-                                </Col> */}
-                        </Row>
-                    </Container>
-                </Collapse>
+                                <ModalHeader>
+                                    <strong>
+                                        {property.resident.firstName}{" "}
+                                        {property.resident.lastName}
+                                    </strong>
+                                </ModalHeader>
+                                <ModalBody>
+                                    <strong>
+                                    <a herf={"mailto:"+ property.resident.email}><span role="img" aria-label="emoji">📧</span>{" "}{property.resident.email}</a>
+                                    <br></br>
+                                    <a href={"tel:"+ property.resident.phone}><span role="img" aria-label="emoji">📞</span>{" "}{property.resident.phone}</a>
+                                    </strong>
+                                </ModalBody>
+                                <ModalFooter style={{padding: "0px"}}>
+                                    <Button color="info" style={{margin: "1rem"}} onClick={() => this.addTaskModal(property._id)}>
+                                        Task
+                                    </Button>
+                                    <Button color="info" onClick={()=>{ this.addResidentModal(property._id)}} style={{margin: "1rem"}}>
+                                        Edit
+                                    </Button>
+                                    <Button color="danger" onClick={() => this.deleteResident(property._id)} style={{margin: "1rem"}}>
+                                        Delete
+                                    </Button>
+                                </ModalFooter>
+                                <hr style={{border: "2px solid #000"}}></hr>
+                            </span>
+                        ))}
+                        </span>
+                    ) : ( 
+                    <h3>
+                        <Button color="info" onClick={this.myProperties} style={{ margin: '.5rem', backgroundColor:"none" }}>
+                            Add My Properties Here
+                        </Button></h3> )}
+                </Modal>
 {/*     Add Property Modal          */}
                 <Modal isOpen={this.state.addPropertyModalOpen} toggle={this.addPropertyModal} className={this.props.className}>
                     <ModalHeader>Add Property</ModalHeader>
@@ -523,15 +531,8 @@ class Manager extends Component {
                 </Modal>
 {/*     Add Resident Modal          */}
                 <Modal isOpen={this.state.addResidentModalOpen} toggle={this.addResidentModal} className={this.props.className}>
-                    <ModalHeader>Edit Resident</ModalHeader>
+                    <ModalHeader toggle={this.addResidentModal}>Edit Resident</ModalHeader>
                     <ModalBody>
-                        Property Name
-                        <Input
-                            type="text"
-                            value={this.state.Name}
-                            onChange={this.handleInputName}
-                            name="Name"
-                            placeholder=""/>
                         First Name
                         <Input
                             type="text"
@@ -562,7 +563,7 @@ class Manager extends Component {
                             placeholder=""/>
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="primary" onClick={this.editResident}>
+                        <Button color="primary" onClick={this.submitEditResident}>
                             <i>Submit</i>
                         </Button>
                     </ModalFooter>
@@ -601,7 +602,7 @@ class Manager extends Component {
                     </Modal>
 {/*     Add Task Modal              */}
                 <Modal isOpen={this.state.addTaskModalOpen} toggle={this.addTaskModal} className={this.props.className}>
-                    <ModalHeader>Add Task</ModalHeader>
+                    <ModalHeader toggle={this.addTaskModal}>Add Task</ModalHeader>
                     <ModalBody>
                         <Input
                             type="text"

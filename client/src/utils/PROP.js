@@ -8,10 +8,10 @@ export default {
     return axios.get("/api/properties");
   },
   // Post New PropertY
-  postProperty: function(postData) {
+  postProperty: function(data) {
     console.log("Utils API postProperty");
-    console.log(postData);
-    return axios.post("/api/properties", postData);
+    console.log(data);
+    return axios.post("/api/properties", data);
   },
   //Get Property with Id
   getPropertyById: function(id) {

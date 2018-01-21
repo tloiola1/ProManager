@@ -1,8 +1,8 @@
-import React, {Component} from "react";
+import React from "react";
 import {Col, Container, Row} from "../../components/Grid";
 import {FixedHeader} from "../../components/Header";
 import {Body} from "../../components/Body";
-import {H1, Margin} from "../../components/Tag";
+import {Margin} from "../../components/Tag";
 import {Button, Modal, ModalHeader, ModalBody, ModalFooter} from "reactstrap";
 import {Logo} from "../../components/Logo";
 import {NavButton} from "../../components/Nav";
@@ -10,7 +10,7 @@ import { Card,CardPhoto,CardTitle,CardSubtitle,CardText,CardBlock} from "../../c
 import {Input, FormBtn} from "../../components/Form";
 import PROP from "../../utils/PROP";
 import USER from "../../utils/USER";
-import PROS from "../../utils/PROS";
+// import PROS from "../../utils/PROS";
 
 class Home extends React.Component {
     
@@ -138,8 +138,8 @@ class Home extends React.Component {
                   <Row>
                     <Logo/>
                         <NavButton>
-                          <Button color="primary" onClick={this.login}>Login</Button>{''}
-                          <Button color="primary"onClick={this.register}>Register</Button>
+                          <Button color="primary" onClick={this.login}style={{margin: "1rem"}}>Login</Button>{''}
+                          <Button color="primary"onClick={this.register}style={{margin: "1rem"}}>Register</Button>
                         </NavButton>
                     </Row>
                 </Container>
