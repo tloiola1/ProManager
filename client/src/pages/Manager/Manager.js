@@ -2,7 +2,7 @@
 import React, { Component } from "react";
     import {Body} from "../../components/Body";
     import { FixedHeader } from "../../components/Header";
-    import {Button, Modal, ModalHeader, ModalBody, ModalFooter, Card, CardTitle,CardSubtitle,CardText,CardBody, Col, Container, Row} from "reactstrap";
+    import {Button, Modal, ModalHeader, ModalBody, ModalFooter, Card, CardTitle,CardSubtitle, CardBody, Col, Container, Row} from "reactstrap";
     import { Logo } from "../../components/Logo";
     import {Input, FormBtn, TextArea } from "../../components/Form";
     import { Span, Margin } from "../../components/Tag";
@@ -12,7 +12,8 @@ import React, { Component } from "react";
     import TASK from "../../utils/TASK";
     import PROS from "../../utils/PROS";
     import RES from "../../utils/RES";
-
+    import USER from "../../utils/USER";
+//
 class Manager extends Component {
     
     componentDidMount() {
@@ -49,10 +50,11 @@ class Manager extends Component {
             type: "",
             available: "",
             phone: "",
-            foreignkey: "",
+            todoSize: "",
             propertyId: "",
             task: "",
-            id: ""
+            id: "",
+            business: ""
         };
         this.addProsModal = this.addProsModal.bind(this);
         this.addPropertyModal = this.addPropertyModal.bind(this);
@@ -60,19 +62,23 @@ class Manager extends Component {
         this.addResidentModal = this.addResidentModal.bind(this);
         this.myPros = this.myPros.bind(this);
         this.myProperties = this.myProperties.bind(this);
+        // this.state = { items: [], text: '' };
         // this.login = this.login.bind(this);
       };
     //Add Pros Modal Toggle
-    addProsModal() { this.setState({ addProsModalOpen: !this.state.addProsModalOpen })};
+    addProsModal() { 
+        this.setState({ addProsModalOpen: !this.state.addProsModalOpen })
+        };
     //Add Property Modal Toggle
     addPropertyModal() { 
         this.setState({ addPropertyModalOpen: !this.state.addPropertyModalOpen });
         };
     //
-    addTaskModal= id => { 
-        this.setState({ propertyId: id });
-        this.setState({ addTaskModalOpen: !this.state.addTaskModalOpen });
-        };
+    addTaskModal = (id) => {
+        console.log(id);
+        this.setState({ propertyId: id});
+        this.setState({ addTaskModalOpen: !this.state.addTaskModalOpen });     
+      };
     //
     addResidentModal = id => { 
         console.log(id); 
@@ -86,20 +92,20 @@ class Manager extends Component {
     //Collapse My Properties
     myProperties(){ 
         this.setState({ myPropertiesCollapse: !this.state.myPropertiesCollapse })
-        };
+        }; 
     //Display User Data
     loadUserData = () =>{
         PROP
-            .getPropertyById(sessionStorage.getItem("id"))
+            .getUserProperties(sessionStorage.getItem("id"))
             .then(res => {
-                console.log("Test"); console.log(res.data[1].todos[0].task);
+                console.log("Test"); console.log(res.data[0].todos.length);
                 this.setState({
                     properties: res.data 
                 });
             })
             .catch(err => console.log(err));
-        PROS
-            .getAllPros()
+        USER
+            .getMyPros(sessionStorage.getItem("id"))
             .then(res => {
                 this.setState({
                     pros: res.data,
@@ -124,6 +130,7 @@ class Manager extends Component {
         handleUserLastName = event => this.setState({ lastName: event.target.value });
         handleUserEmail = event => this.setState({ email: event.target.value });
         handleTask = event => this.setState({ task: event.target.value });
+        handleBusiness = event => this.setState({ business: event.target.value });
     //Add Property
     submitMyProperty = event => {
         if (this.state.Name && this.state.address1 && this.state.city && this.state.state && this.state.zipcode && this.state.description && this.state.type && this.state.available) 
@@ -153,8 +160,14 @@ class Manager extends Component {
             PROS
                 .postPros({
                     name: this.state.Name, 
-                    address: this.state.address1,
+                    address: {
+                        address1: this.state.address1, 
+                        city: this.state.city,
+                        state: this.state.state,
+                        zipcode: this.state.zipcode
+                    },
                     phone: this.state.phone,
+                    business: this.state.business,
                     foreignkey: sessionStorage.getItem("id")
                 })
                 .then(res => window.location.reload())
@@ -166,12 +179,12 @@ class Manager extends Component {
         console.log(id)
         PROS
                 .deletePros(id)
-                .then(res => window.location.reload())
+                .then(res => console.log(res))//window.location.reload()
                 .catch(err => console.log(err));
       };
     //Add Tasks
-    addTask = id => {
-        console.log(this.state.propertyId);
+    addTask = ()=> {
+        this.setState({ addTaskModalOpen: !this.state.addTaskModalOpen });
         if(this.state.task){
             TASK
                 .postTask({
@@ -185,7 +198,7 @@ class Manager extends Component {
         }
      };
     //
-    deleteTask = (id, prop) => {
+    deleteTask = (propId, taskId) => {
         console.log(propId, taskId);
         const data ={
             propId,
@@ -251,7 +264,7 @@ class Manager extends Component {
                     </Container>
                 </FixedHeader>
                 <Margin/>
-{/*     My Buttons              */}
+{/*     My Buttons                  */}
                 <Container>
                     <Row>
                         <Col sm="3">
@@ -316,7 +329,7 @@ class Manager extends Component {
                         </Col>
                     </Row>
                 </Container>
-{/*     My Pros Modal            */}
+{/*     My Pros Modal               */}
                 <Modal isOpen={this.state.myProsCollapse} toggle={this.myPros}>
                     {this.state.pros.length ? (
                         <span>
@@ -324,20 +337,21 @@ class Manager extends Component {
                             <span key={providers._id}>
                                     <ModalHeader toggle={this.myPros}>
                                         <strong>
-                                            {providers.name}
+                                            {providers.name}{" "}
                                         </strong>
+                                        {providers.business}
                                     </ModalHeader>
                                     <ModalBody>
                                         <strong>
-                                        <span role="img" aria-label="emoji">🏠</span>{" "}{providers.address}
+                                        <span role="img" aria-label="emoji">🏠</span>{" "}{providers.address.address1}
                                         <br></br>
                                         <span role="img" aria-label="emoji">📞</span>{" "}<a href={'tel:'+providers.phone}>
                                             {providers.phone}
                                         </a>
                                         </strong>
                                     </ModalBody>
-                                    <ModalFooter>
-                                        <Button color="danger" onClick={()=>{this.deletePro(providers._id)}} style={{ margin: '1rem' }}>
+                                    <ModalFooter style={{padding: "0rem"}}>
+                                        <Button color="danger" onClick={()=>{this.deletePro(providers._id)}} style={{margin: "1rem 1rem 0rem 0rem"}}>
                                             Delete
                                         </Button>
                                     </ModalFooter>
@@ -347,7 +361,7 @@ class Manager extends Component {
                         </span>
                     ) : ( <h3>Add Some Contacts Here</h3> )}
                 </Modal>
-{/*     Load My Propeties Modal  */}
+{/*     Load My Propeties Modal     */}
                 <Modal isOpen={this.state.myPropertiesCollapse}>
                     {this.state.properties.length ? (
                         <span>
@@ -368,7 +382,7 @@ class Manager extends Component {
                                     </strong>
                                 </ModalBody>
                                 <ModalFooter style={{padding: "0rem"}}>
-                                    <Button color="danger" onClick={() => this.deleteProperty(property._id)} style={{margin: "1rem"}}>
+                                    <Button color="danger" onClick={() => this.deleteProperty(property._id)} style={{margin: "1rem 1rem 0rem 0rem"}}>
                                         Delete Property
                                     </Button>
                                 </ModalFooter>
@@ -389,13 +403,10 @@ class Manager extends Component {
                                     </strong>
                                 </ModalBody>
                                 <ModalFooter style={{padding: "0px"}}>
-                                    <Button color="info" style={{margin: "1rem"}} onClick={() => this.addTaskModal(property._id)}>
-                                        Task
-                                    </Button>
-                                    <Button color="info" onClick={()=>{ this.addResidentModal(property._id)}} style={{margin: "1rem"}}>
+                                    <Button color="info" onClick={()=>{ this.addResidentModal(property._id)}} style={{margin: "1rem 1rem 0rem 0rem"}}>
                                         Edit
                                     </Button>
-                                    <Button color="danger" onClick={() => this.deleteResident(property._id)} style={{margin: "1rem"}}>
+                                    <Button color="danger" onClick={() => this.deleteResident(property._id)} style={{margin: "1rem 1rem 0rem 0rem"}}>
                                         Delete
                                     </Button>
                                 </ModalFooter>
@@ -586,11 +597,39 @@ class Manager extends Component {
                                 onChange={this.handleAddress1}
                                 name="address1"
                                 placeholder=""/>
+                            City
+                            <Input
+                                type="text"
+                                value={this.state.city}
+                                onChange={this.handleCity}
+                                name="city"
+                                placeholder=""/>
+                            State
+                            <Input
+                                type="text"
+                                value={this.state.state}
+                                onChange={this.handleState}
+                                name="state"
+                                placeholder=""/>
+                            ZipCode
+                            <Input
+                                type="text"
+                                value={this.state.zipcode}
+                                onChange={this.handleZipCode}
+                                name="zipcode"
+                                placeholder=""/>
                             Phone
                             <Input
                                 type="text"
                                 value={this.state.phone}
                                 onChange={this.handlePhone}
+                                name="phone"
+                                placeholder=""/>
+                            Business
+                            <Input
+                                type="text"
+                                value={this.state.business}
+                                onChange={this.handleBusiness}
                                 name="phone"
                                 placeholder=""/>
                         </ModalBody>

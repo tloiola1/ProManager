@@ -8,7 +8,7 @@ export default {
 //     return axios.get("/api/pros/" + id);
 //   },
   //Post New Pros
-  postPros: function(postData) {
+  postPros: function(postData) { 
     console.log("Utils API postPros"); 
     console.log(postData);
     return axios.post("/api/pros", postData);
@@ -21,6 +21,6 @@ export default {
   },
 //   // Post New PropertY
   deletePros: function(_id) {
-    return axios.post("/api/pros/"+ _id);
+    return axios.delete("/api/pros/"+ _id);
   }
 };

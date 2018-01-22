@@ -6,8 +6,14 @@ const Schema = mongoose.Schema;
 // This is similar to a Sequelize model
 const ProsSchema = new Schema({
   name:       { type: String, required: true },
-  address:    { type: String, required: true },
+  address:{
+    address1:   { type: String, required: true },
+    city:       { type: String, require: true },
+    state:      { type: String, require: true },
+    zipcode:    { type: String, require: true }
+  },
   phone:      { type: String, require: true },
+  business:   { type: String, require: true },
   foreignkey: { type: String, require: true },
 });
 

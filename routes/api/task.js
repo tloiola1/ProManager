@@ -5,6 +5,6 @@ router.route("/")
   .post(taskController.create); 
 
 router.route("/:_id") 
-  .delete(taskController.remove);
+  .post(taskController.remove);
 
 module.exports = router; 

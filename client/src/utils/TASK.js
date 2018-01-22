@@ -1,13 +1,13 @@
 import axios from "axios";
 
-export default {
+export default { 
   
   postTask: function(data) {
     return axios.post("/api/task", data);
   },
 
   deleteTask: function(data) {
-    return axios.delete("/api/task/dlete", data);
+    return axios.post("/api/task/"+ data, data);
   }
 //   // Saves a book to the database
 //   savePoperty: function(bookData) {

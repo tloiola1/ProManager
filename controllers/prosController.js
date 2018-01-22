@@ -10,14 +10,6 @@ module.exports = {
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
-  // findById: function(req, res) {
-  //   console.log("Pros Controller FindById");
-  //   console.log(req.params.id);
-  //   db.Pros
-  //     .find({foreignkey: req.params.id})
-  //     .then(dbModel => res.json(dbModel))
-  //     .catch(err => res.status(422).json(err));
-  // }
   create: function(req, res) {
     console.log("Pros Controller Create");
     console.log(req.body);
@@ -36,6 +28,7 @@ module.exports = {
   //     .catch(err => res.status(422).json(err));
   // }
   remove: function(req, res) {
+    console.log(req.params._id);
     db.Pros
       .findById({ _id: req.params._id })
       .then(dbModel => dbModel.remove())
