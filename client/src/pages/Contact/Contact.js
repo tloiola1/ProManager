@@ -68,9 +68,9 @@ export default class App extends React.Component {
 
 // import axios from "axios";
 
-// const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/promanager/image/upload";//adpt8bps
+// const CLOUDINARY_URL = "";
 
-// const CLOUDINARY_UPLOAD_PRESET = "adpt8bps";
+// const CLOUDINARY_UPLOAD_PRESET = "";
 
 // const imgPreview = document.getElementById("img-preview");
 // const fileUpload = document.getElementById("file-upload");
