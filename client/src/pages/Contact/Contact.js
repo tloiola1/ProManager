@@ -3,8 +3,8 @@ import Dropzone from 'react-dropzone';
 import request from 'superagent';
 import './App.css';
 
-const CLOUDINARY_UPLOAD_PRESET = 'adpt8bps';
-const CLOUDINARY_UPLOAD_URL = 'https://api.cloudinary.com/v1_1/promanager/image/upload';
+const CLOUDINARY_UPLOAD_PRESET = secret_key;
+const CLOUDINARY_UPLOAD_URL = secret_url;
 
 export default class App extends React.Component {
   constructor(props) {
