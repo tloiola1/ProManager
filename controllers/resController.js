@@ -12,11 +12,11 @@ module.exports = {
   },
   remove: function(req, res) {
     db.Property
-      .findOneAndUpdate({ _id: req.params.id }, {$unset: {resident: {
+      .findOneAndUpdate({ _id: req.params._id }, {$unset: {resident: {
         firstName: "Add Resident by click on Edit",
-        lastName: "",
-        email: "",
-        phone: ""
+        lastName: null,
+        email: null,
+        phone: null
       }}})
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));

@@ -1,5 +1,7 @@
 // Imports
 import React, { Component } from "react";
+    import Dropzone from 'react-dropzone';
+    import request from 'superagent';
     import {Body} from "../../components/Body";
     import { FixedHeader } from "../../components/Header";
     import {Button, Modal, ModalHeader, ModalBody, ModalFooter, Card, CardTitle,CardSubtitle, CardBody, Col, Container, Row} from "reactstrap";

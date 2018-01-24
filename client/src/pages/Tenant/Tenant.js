@@ -187,7 +187,7 @@ class Manager extends Component {
     render() {
         return (
             <Body>
-{/*     Header                      */}
+{/*     Header              */}
                 <div className="fixed-top fixed-top-custom"></div>
                 <FixedHeader>
                     <Container>
@@ -205,7 +205,7 @@ class Manager extends Component {
                     </Container>
                 </FixedHeader>
                 <Margin/>
-{/*     My Buttons                  */}
+{/*     My Buttons          */}
                 <Container>
                     <Row>
                         <Col sm="3">
@@ -215,7 +215,7 @@ class Manager extends Component {
                                 Home Sweet Home
                             </Button>
                         </Col>
-{/*     Tasks TODO                  */}
+{/*     My Home             */}
                         <Col xs="auto" sm="9">
                             {this.state.properties.length ? (
                                 <span>
@@ -234,6 +234,11 @@ class Manager extends Component {
                                                             LandLord:{" "}{landLord.name.firstName}{" "} {landLord.name.lastName}
                                                         </CardTitle>
                                                         <CardSubtitle>
+                                                            <a herf={"mailto:"+ landLord.email}><span role="img" aria-label="emoji">📧</span>{" "}{landLord.email}</a>
+                                                            <br></br>
+                                                            <a href={"tel:"+ landLord.phone}><span role="img" aria-label="emoji">📞</span>{" "}{landLord.phone}</a>
+                                                        </CardSubtitle>
+                                                        <CardSubtitle>
                                                             <Button color="info" style={{margin: "1rem"}} onClick={() => this.addTaskModal(property._id)}>
                                                                 Add Task
                                                             </Button>
@@ -241,6 +246,7 @@ class Manager extends Component {
                                                     </CardBody>
                                                 </Col>
                                             ))}
+{/*     My Tasks            */}
                                                 <Col xs="auto" sm="5">
                                                     <CardBody>
                                                         <CardTitle>
@@ -271,7 +277,7 @@ class Manager extends Component {
                         </Col>
                     </Row>
                 </Container>
-{/*     My Pros Modal               */}
+{/*     My Pros Modal       */}
                 <Modal isOpen={this.state.myProsModalOpen} toggle={this.myPros}>
                     {this.state.pros.length ? (
                         <span>
@@ -304,7 +310,7 @@ class Manager extends Component {
                     ) : ( <h3>Add Some Contacts Here</h3> )}
                 </Modal>
 
-{/*     Add Pros Modal              */}
+{/*     Add Pros Modal      */}
                 <Modal isOpen={this.state.addProsModalOpen} toggle={this.addProsModal} className={this.props.className}>
                         <ModalHeader toggle={this.addProsModal}>Add Service Provider</ModalHeader>
                         <ModalBody>
@@ -364,7 +370,7 @@ class Manager extends Component {
                             </Button>
                         </ModalFooter>
                     </Modal>
-{/*     Add Task Modal              */}
+{/*     Add Task Modal      */}
                 <Modal isOpen={this.state.addTaskModalOpen} toggle={this.addTaskModal} className={this.props.className}>
                     <ModalHeader toggle={this.addTaskModal}>Add Task</ModalHeader>
                     <ModalBody>

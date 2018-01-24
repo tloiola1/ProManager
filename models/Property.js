@@ -18,7 +18,7 @@ const PropertySchema = new Schema({
   foreignkey:   { type: String, require: true },
   resId:        { type: Schema.ObjectId, auto: true },
   resident: {
-      firstName: { type: String, default: "Click on edit add a Resident" },
+      firstName: { type: String, default: "To add a Resident click on Edit" },
       lastName: { type: String, default: null },
       email: { type: String, default: null },
       phone: { type: String, default: null }

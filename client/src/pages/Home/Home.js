@@ -318,7 +318,7 @@ class Home extends React.Component {
                     <Col xm="auto" sm="4">
                         <div style={{height: "150px", width: "330px", backgroundColor: "black", opacity: ".5", position: "fixed"}}></div>
                         <div style={{padding: "20px 10px", position: "fixed"}}>
-                        <h2 style={{color: "orange"}}>Need Help?</h2>
+                        <h2 className="text-center" style={{color: "orange"}}>Need Help?</h2>
                             <h5 style={{color: "orange"}}>Search For Acredited Professional</h5>
                             <ButtonDropdown isOpen={this.state.dropdownOpen} toggle={this.toggle} style={{float:"right"}}>
                                 <Button id="caret" outline color="warning" style={{float:"right"}}>Search</Button>
