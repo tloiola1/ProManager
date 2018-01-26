@@ -10,6 +10,7 @@ import React, { Component } from "react";
     import { Span, Margin } from "../../components/Tag";
     import { NavButton } from "../../components/Nav";
     import { Name } from "../../components/Name";
+    import { ProfilePicture } from "../../components/ProfilePicture";
     import PROP from "../../utils/PROP";
     import TASK from "../../utils/TASK";
     import PROS from "../../utils/PROS";
@@ -21,7 +22,8 @@ class Manager extends Component {
     
     componentDidMount() {
         if(sessionStorage.getItem("name") === null) { window.location = "/"; }
-        else { 
+        else {
+            this.setState({ profilePic: sessionStorage.getItem("img")});
             this.setState({name: sessionStorage.getItem("name")});this.loadUserData()
         }
         // this.loadUserInfo();
@@ -58,7 +60,8 @@ class Manager extends Component {
             propertyId: "",
             task: "",
             id: "",
-            business: ""
+            business: "",
+            profilePic: ""
         };
         this.addProsModal = this.addProsModal.bind(this);
         this.addProfilePictureModal = this.addProfilePictureModal.bind(this);
@@ -74,9 +77,35 @@ class Manager extends Component {
         // this.state = { items: [], text: '' };
         // this.login = this.login.bind(this);
       };
+    //Display User Data
+    loadUserData = () =>{
+        console.log(sessionStorage.getItem("img"));
+        PROP
+            .getUserProperties(sessionStorage.getItem("id"))
+            .then(res => {
+                // console.log("Test"); console.log(res.data[0].img);
+                this.setState({
+                    properties: res.data 
+                });
+            })
+            .catch(err => console.log(err));
+        USER
+            .getMyPros(sessionStorage.getItem("id"))
+            .then(res => {
+                this.setState({
+                    pros: res.data,
+                });
+                console.log(this.state.pros);
+            })
+            .catch(err => console.log(err));
+      };
     //Add Pros Modal Toggle
     addProsModal() { 
         this.setState({ addProsModalOpen: !this.state.addProsModalOpen })
+        };
+    //
+    addProfilePictureModal() { 
+        this.setState({ addProfilePictureModalOpen: !this.state.addProfilePictureModalOpen })
         };
     //Add Property Modal Toggle
     addPropertyModal() { 
@@ -102,27 +131,6 @@ class Manager extends Component {
     myProperties(){ 
         this.setState({ myPropertiesCollapse: !this.state.myPropertiesCollapse })
         }; 
-    //Display User Data
-    loadUserData = () =>{
-        PROP
-            .getUserProperties(sessionStorage.getItem("id"))
-            .then(res => {
-                console.log("Test"); console.log(res.data[0].img);
-                this.setState({
-                    properties: res.data 
-                });
-            })
-            .catch(err => console.log(err));
-        USER
-            .getMyPros(sessionStorage.getItem("id"))
-            .then(res => {
-                this.setState({
-                    pros: res.data,
-                });
-                console.log(this.state.pros);
-            })
-            .catch(err => console.log(err));
-      };
     //Handle OnChange Events
     handleInputName = event =>  this.setState({ Name: event.target.value });
         handleAddress1 = event => this.setState({ address1: event.target.value });
@@ -298,10 +306,10 @@ class Manager extends Component {
                         <Row>
                             <Logo/>
                             <NavButton>
-                                    <Span>
-                                        <img src={sessionStorage.getItem("img")} style={{height: "5rem", width: "5rem", borderRadius: "50%"}} onClick={this.addProfilePictureModal}></img>
+                                    <Span> {/* onClick=this.addProfilePictureModal} */}
+                                        <img src={sessionStorage.getItem("img")}></img>
                                         <strong> 
-                                            Hello <Name>{this.state.name}</Name>
+                                            Hello<Name>{this.state.name}</Name>
                                         </strong>
                                     </Span>
                                     <a id="logoff" href="/"><strong> | Log Off</strong></a>

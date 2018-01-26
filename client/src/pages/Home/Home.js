@@ -120,7 +120,8 @@ class Home extends React.Component {
         sessionStorage.setItem("name", res.data.name.firstName);
         sessionStorage.setItem("id", res.data._id);
         sessionStorage.setItem("email", res.data.email);
-        console.log(sessionStorage.getItem("path"));
+        sessionStorage.setItem("img", res.data.img);        
+        // console.log(sessionStorage.getItem("path"));
         if(sessionStorage.getItem("path") === 'tenant'){ window.location = '/tenant'
         }
         else if(sessionStorage.getItem("path") === 'manager'){ window.location = '/manager'}

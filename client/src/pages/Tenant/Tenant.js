@@ -240,7 +240,7 @@ class Manager extends Component {
                                                         </CardSubtitle>
                                                         <CardSubtitle>
                                                             <Button color="info" style={{margin: "1rem"}} onClick={() => this.addTaskModal(property._id)}>
-                                                                Add Task
+                                                                Message Owner
                                                             </Button>
                                                         </CardSubtitle>
                                                     </CardBody>
