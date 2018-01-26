@@ -36,6 +36,9 @@ var UserSchema = new Schema({
     name:  { type: String, trim: true },
     address: { type: String, trim: true },
     phone: {  type: String, trim: true }
+  },
+  img: {
+    type: String, default: "http://res.cloudinary.com/promanager/image/upload/v1516933592/d2q6rok9cvakg5g2zyrp.svg"
   }
 });
 

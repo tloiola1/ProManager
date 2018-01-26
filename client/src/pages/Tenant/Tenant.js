@@ -1,155 +1,326 @@
+// Imports
 import React, { Component } from "react";
-import {Body} from "../../components/Body";
-import { Col, Container, Row } from "../../components/Grid";
-import { FixedHeader } from "../../components/Header";
-import {Modal, ModalHeader, ModalBody, ModalFooter} from "../../components/Modal";
-import { Card,CardPhoto,CardTitle,CardSubtitle,CardText,CardBlock} from "../../components/Card";
-import { InverseButton } from "../../components/Button";//, Button
-import { Logo } from "../../components/Logo";
-import {Input, FormBtn, TextArea } from "../../components/Form";
-import { Span, Margin } from "../../components/Tag";
-import { NavButton } from "../../components/Nav";
-import { Name } from "../../components/Name";
-import PROP from "../../utils/PROP";
-// import USER from "../../utils/USER";
-import PROS from "../../utils/PROS";
-
+    import {Body} from "../../components/Body";
+    import { FixedHeader } from "../../components/Header";
+    import {Button, Modal, ModalHeader, ModalBody, ModalFooter, Card, CardTitle,CardSubtitle, CardBody, Col, Container, Row} from "reactstrap";
+    import { Logo } from "../../components/Logo";
+    import {Input } from "../../components/Form";
+    import { Margin } from "../../components/Tag";
+    import { NavButton } from "../../components/Nav";
+    import { Name } from "../../components/Name";
+    import PROP from "../../utils/PROP";
+    import TASK from "../../utils/TASK";
+    import PROS from "../../utils/PROS";
+    // import RES from "../../utils/RES";
+    import USER from "../../utils/USER";
+//
 class Manager extends Component {
-
-    state = {
-        pros: [],
-        properties: [],
-        name: "",
-        Name: "",
-        address1: "",
-        city: "",
-        state: "",
-        zipcode: "",
-        description: "",
-        type: "",
-        available: "",
-        phone: "",
-    };
+    
     componentDidMount() {
-        this.loadUserInfo();
-        this.loadUserData(sessionStorage.getItem("id"));
-        // this.loadProperties(sessionStorage.getItem("id"));
-    };
-    loadUserInfo = (id) => {
         if(sessionStorage.getItem("name") === null) { window.location = "/"; }
         else { 
-            this.setState({name: sessionStorage.getItem("name")});
+            this.setState({name: sessionStorage.getItem("name")});this.loadUserData()
         }
-    }
-    loadUserData = (id) =>{
+      };
+    // Constructor
+    constructor(props) {
+        super(props);
+        this.state = {
+            addProsModalOpen: false,
+            addtaskModalOpen: false,
+            myProsModalOpen: false,
+            properties: [], 
+            pros: [],
+            todos: [],
+            landLord: [],
+            name: "",
+            firstName: "",
+            lastName: "",
+            email: "",
+            Name: "",
+            address1: "",
+            city: "",
+            state: "",
+            zipcode: "",
+            phone: "",
+            todoSize: "",
+            propertyId: "",
+            task: "",
+            id: "",
+            business: ""
+        };
+        this.addProsModal = this.addProsModal.bind(this);
+        this.addTaskModal = this.addTaskModal.bind(this);
+        this.myPros = this.myPros.bind(this);
+        this.myProperties = this.myProperties.bind(this);
+      };
+    //Add Pros Modal Toggle
+    addProsModal() { 
+        this.setState({ addProsModalOpen: !this.state.addProsModalOpen })
+        };
+    //
+    addTaskModal = (id) => {
+        console.log(id);
+        this.setState({ propertyId: id});
+        this.setState({ addTaskModalOpen: !this.state.addTaskModalOpen });     
+      };
+    //My Pros Collapse Toggle
+    myPros() { 
+        this.setState({ myProsModalOpen: !this.state.myProsModalOpen })
+        };
+    //Collapse My Properties
+    myProperties(){ 
+        this.setState({ myPropertiesModal: !this.state.myPropertiesModal })
+        }; 
+    //Display User Data
+    loadUserData = () =>{
         PROP
             .getAllProperties()
-            .then(res => {
-                console.log("loadProperty"); console.log(res.data);
-                this.setState({
-                    properties: res.data
-                });
+            .then(res => { 
+                const email = sessionStorage.getItem("email");
+                const data = [];
+                for(let i = 0; i < res.data.length; i++){
+                    if(res.data[i].resident.email === email){
+                        data.push(res.data[i]);
+                    }
+                }
+                sessionStorage.setItem("landlordId", data[0].foreignkey);
+                this.setState({ properties: data });
             })
             .catch(err => console.log(err));
-        PROS
-            .getAllPros()
+
+        USER
+            .getUser()
+            .then(res =>{
+                const _id = sessionStorage.getItem("landlordId");
+                const data = [];
+                for(let i = 0; i < res.data.length; i++){
+                    if(res.data[i]._id === _id){
+                        data.push(res.data[i]);
+                    }
+                }
+                this.setState({ landLord: data });
+                console.log(this.state.landLord[0]);
+                console.log(this.state.landLord[0].name.firstName);
+            })
+            .catch(err => console.log(err));
+
+        USER
+            .getMyPros(sessionStorage.getItem("id"))
             .then(res => {
                 this.setState({
                     pros: res.data,
                 });
-                console.log(this.state.pros);
             })
             .catch(err => console.log(err));
-    };
-
-    handleInputName = (event) =>  this.setState({ Name: event.target.value });
-    handleAddress1 = (event) => this.setState({ address1: event.target.value });
-    handleCity = (event) => this.setState({ city: event.target.value });
-    handlePhone = (event) => this.setState({ phone: event.target.value });
-    handleState = (event) => this.setState({  state: event.target.value });
-    handleZipCode = (event) => this.setState({ zipcode: event.target.value });
-    handleDescription = (event) => this.setState({ description: event.target.value });
-    handlePropertyType = (event) => this.setState({ type: event.target.value })
-    handleAvailability = (event) => this.setState({ available: event.target.value });
-
-    handleFormAddProperty = event => {
-        //The Suites at ATL 2212 Peachtree Rd Atlanta GA 30519 This is a great location for GA Tech students. Catch the Buzz to school just around the corner. true
-        if (this.state.Name && this.state.address1 && this.state.city && this.state.state && this.state.zipcode && this.state.description && this.state.type && this.state.available) 
-        {
-            PROP
-                .postProperty({
-                    propertyname: this.state.Name, 
+      };
+    //Handle OnChange Events
+    handleInputName = event =>  this.setState({ Name: event.target.value });
+        handleAddress1 = event => this.setState({ address1: event.target.value });
+        handleCity = event => this.setState({ city: event.target.value });
+        handlePhone = event => this.setState({ phone: event.target.value });
+        handleState = event => this.setState({  state: event.target.value });
+        handleZipCode = event => this.setState({ zipcode: event.target.value });
+        handleForeignkey = event => this.setState({ foreignkey: event.target.value });
+        handleUserFirstName = event => this.setState({ firstName: event.target.value });
+        handleUserLastName = event => this.setState({ lastName: event.target.value });
+        handleUserEmail = event => this.setState({ email: event.target.value });
+        handleTask = event => this.setState({ task: event.target.value });
+        handleBusiness = event => this.setState({ business: event.target.value });
+    //Add Pros
+    submitMyPros = event => {
+        //Mark Plumber 1221 qwertyuiop street 1234567890
+        if (this.state.Name && this.state.address1 && this.state.phone) {
+            PROS
+                .postPros({
+                    name: this.state.Name, 
                     address: {
                         address1: this.state.address1, 
                         city: this.state.city,
                         state: this.state.state,
                         zipcode: this.state.zipcode
                     },
-                    description: this.state.description,
-                    type: this.state.type,
-                    available: this.state.available,
-                    foreignkey: sessionStorage.getItem("id")
-                })
-                .then(res => window.location.reload())
-                .catch(err => console.log(err));
-        }
-    };
-    handleFormAddPros = event => {
-        //Mark Plumber 1221 qwertyuiop street 1234567890
-        if (this.state.Name && this.state.address1 && this.state.phone) {
-            PROS
-                .postPros({
-                    name: this.state.Name, 
-                    address: this.state.address1,
                     phone: this.state.phone,
+                    business: this.state.business,
                     foreignkey: sessionStorage.getItem("id")
                 })
                 .then(res => window.location.reload())
                 .catch(err => console.log(err));
         } 
-    };
-    handleProcess = event => {
-        const id = event.target.value;
-        console.log(id);
-    }
+     };
+    //Delete Pro
+    deletePro = id => {
+        console.log(id)
+        PROS
+                .deletePros(id)
+                .then(res => console.log(res))//window.location.reload()
+                .catch(err => console.log(err));
+      };
+    //Add Tasks
+    addTask = ()=> {
+        this.setState({ addTaskModalOpen: !this.state.addTaskModalOpen });
+        if(this.state.task){
+            TASK
+                .postTask({
+                    _id: this.state.propertyId,
+                    todos: {
+                        task: this.state.task
+                    }
+                })
+                .then(res => window.location.reload())//
+                .catch(err => console.log(err));
+        }
+     };
+    //
+    deleteTask = (propId, taskId) => {
+        console.log(propId, taskId);
+        const data ={
+            propId,
+            taskId
+        }
+        TASK
+                .deleteTask(data)
+                .then(res => console.log(res))//window.location.reload()
+                .catch(err => console.log(err));
+      }
+    //
     render() {
         return (
             <Body>
+{/*     Header              */}
                 <div className="fixed-top fixed-top-custom"></div>
                 <FixedHeader>
                     <Container>
                         <Row>
                             <Logo/>
                             <NavButton>
-                                    <Span>
+                                    <span>
                                         <strong> 
                                             Hello <Name>{this.state.name}</Name>
                                         </strong>
-                                    </Span>
+                                    </span>
                                     <a id="logoff" href="/"><strong> | Log Off</strong></a>
                             </NavButton>
                         </Row>
                     </Container>
                 </FixedHeader>
                 <Margin/>
-                {/* Add Property Modal */}
-                <div
-                    className="modal fade"
-                    tabIndex="-1"
-                    role="dialog"
-                    aria-labelledby="AddPropertyModal"
-                    aria-hidden="true"
-                    id="addProperty">
-                    <Modal>
-                        <ModalHeader>Add Property</ModalHeader>
+{/*     My Buttons          */}
+                <Container>
+                    <Row>
+                        <Col sm="3">
+                            <Button className="col-sm-12" color="primary" onClick={this.addProsModal} style={{ margin: '.5rem' }}>Add Pros</Button>
+                            <Button className="col-sm-12" color="primary" onClick={this.myPros} style={{ margin: '.5rem' }}>My Pros</Button>
+                            <Button className="col-sm-12" color="primary" onClick={this.myProperties} style={{ margin: '.5rem' }}>
+                                Home Sweet Home
+                            </Button>
+                        </Col>
+{/*     My Home             */}
+                        <Col xs="auto" sm="9">
+                            {this.state.properties.length ? (
+                                <span>
+                                {this.state.properties.map(property => (
+                                    <Card key={property._id}>
+                                        <Container>
+                                            <Row>
+                                            {this.state.landLord.map(landLord => (
+                                                <Col xs="auto" sm="5">
+                                                    <CardBody>
+                                                        <CardTitle key={landLord._id}>
+                                                            Property:{" "}
+                                                            <strong>{property.propertyname}
+                                                            </strong>
+                                                            <br></br>
+                                                            LandLord:{" "}{landLord.name.firstName}{" "} {landLord.name.lastName}
+                                                        </CardTitle>
+                                                        <CardSubtitle>
+                                                            <a herf={"mailto:"+ landLord.email}><span role="img" aria-label="emoji">📧</span>{" "}{landLord.email}</a>
+                                                            <br></br>
+                                                            <a href={"tel:"+ landLord.phone}><span role="img" aria-label="emoji">📞</span>{" "}{landLord.phone}</a>
+                                                        </CardSubtitle>
+                                                        <CardSubtitle>
+                                                            <Button color="info" style={{margin: "1rem"}} onClick={() => this.addTaskModal(property._id)}>
+                                                                Message Owner
+                                                            </Button>
+                                                        </CardSubtitle>
+                                                    </CardBody>
+                                                </Col>
+                                            ))}
+{/*     My Tasks            */}
+                                                <Col xs="auto" sm="5">
+                                                    <CardBody>
+                                                        <CardTitle>
+                                                            <strong>My Tasks
+                                                            </strong>
+                                                        </CardTitle>
+                                                        <CardSubtitle>
+                                                        {property.todos.map(task => (
+                                                            <span key={task._id}>
+                                                                {task.task}🔨
+                                                                <span>
+                                                                <Button color="danger" onClick={() => this.deleteTask(property._id, task._id)} style={{margin: "irem"}}>
+                                                                X
+                                                                </Button>
+                                                            </span>
+                                                            <hr></hr>
+                                                        </span>   
+                                                        ))}
+                                                        </CardSubtitle>
+                                                    </CardBody>
+                                                </Col>
+                                            </Row>
+                                        </Container>
+                                    </Card>
+                                ))}
+                                </span>
+                            ) : ( <h3>No Tasks for You</h3> )}
+                        </Col>
+                    </Row>
+                </Container>
+{/*     My Pros Modal       */}
+                <Modal isOpen={this.state.myProsModalOpen} toggle={this.myPros}>
+                    {this.state.pros.length ? (
+                        <span>
+                        {this.state.pros.map(providers => (
+                            <span key={providers._id}>
+                                    <ModalHeader toggle={this.myPros}>
+                                        <strong>
+                                            {providers.name}{" "}
+                                        </strong>
+                                        {providers.business}
+                                    </ModalHeader>
+                                    <ModalBody>
+                                        <strong>
+                                        <span role="img" aria-label="emoji">🏠</span>{" "}{providers.address.address1}
+                                        <br></br>
+                                        <span role="img" aria-label="emoji">📞</span>{" "}<a href={'tel:'+providers.phone}>
+                                            {providers.phone}
+                                        </a>
+                                        </strong>
+                                    </ModalBody>
+                                    <ModalFooter style={{padding: "0rem"}}>
+                                        <Button color="danger" onClick={()=>{this.deletePro(providers._id)}} style={{margin: "1rem 1rem 0rem 0rem"}}>
+                                            Delete
+                                        </Button>
+                                    </ModalFooter>
+                                    <hr style={{border: "2px solid #000"}}></hr>
+                            </span>
+                        ))}
+                        </span>
+                    ) : ( <h3>Add Some Contacts Here</h3> )}
+                </Modal>
+
+{/*     Add Pros Modal      */}
+                <Modal isOpen={this.state.addProsModalOpen} toggle={this.addProsModal} className={this.props.className}>
+                        <ModalHeader toggle={this.addProsModal}>Add Service Provider</ModalHeader>
                         <ModalBody>
-                            Name the Property
+                            Name
                             <Input
                                 type="text"
                                 value={this.state.Name}
                                 onChange={this.handleInputName}
                                 name="name"
-                                placeholder=""/>
+                                placeholder="E.g. 'Mark, Plumber' or 'Handyman'"/>
                             Address
                             <Input
                                 type="text"
@@ -178,117 +349,6 @@ class Manager extends Component {
                                 onChange={this.handleZipCode}
                                 name="zipcode"
                                 placeholder=""/>
-                            Describe the Property
-                            <TextArea
-                                type="textarea"
-                                rows="4" 
-                                value={this.state.description}
-                                onChange={this.handleDescription}
-                                name="description"
-                                placeholder=""/>
-                            <hr></hr>
-                            <div
-                                className="col-sm-12"
-                                style={{
-                                marginLeft: "5px"
-                            }}>
-                                <Input
-                                    type="radio"
-                                    className="form-check-input"
-                                    name= "property-radio"
-                                    value= "home"
-                                    onChange={this.handlePropertyType}
-                                    style={{
-                                    marginTop: "7px"
-                                }}/>
-                                This is a Home for Rental.
-                            </div>
-                            <div
-                                className="divRadio col-sm-12"
-                                style={{
-                                marginLeft: "5px"
-                            }}>
-                                <Input
-                                    type="radio"
-                                    className="form-check-input"
-                                    name= "property-radio"
-                                    value= "office"
-                                    onChange={this.handlePropertyType}
-                                    style={{
-                                    marginTop: "7px"
-                                }}/>
-                                This is a Bussiness Office for Rental.
-                            </div>
-                            <hr></hr>
-                            <div
-                                className="col-sm-12"
-                                style={{
-                                marginLeft: "5px"
-                            }}>
-                                <Input
-                                    type="radio"
-                                    className="form-check-input"
-                                    name= "available-radio"
-                                    value= "true"
-                                    onChange={this.handleAvailability}
-                                    style={{
-                                    marginTop: "7px"
-                                }}/>
-                                This Location is Available for Rent.
-                            </div>
-                            <div
-                                className="col-sm-12"
-                                style={{
-                                marginLeft: "5px"
-                            }}>
-                                <Input
-                                    type="radio"
-                                    className="form-check-input"
-                                    name= "available-radio"
-                                    value= "false"
-                                    onChange={this.handleAvailability}
-                                    style={{
-                                    marginTop: "7px"
-                                }}/>
-                                This Location is <span style={{color: "red"}}>Not</span> Available for Rent.
-                            </div>
-                        </ModalBody>
-                        <ModalFooter>
-                            <FormBtn className="btn btn-secondary" data-dismiss="modal">
-                                Close
-                            </FormBtn>
-                            <FormBtn className="btn btn-primary" onClick={this.handleFormAddProperty}>
-                                Submit
-                            </FormBtn>
-                        </ModalFooter>
-                    </Modal>
-                </div>
-                {/* ------------------ */}
-                {/*   Add Pros Modal   */}
-                <div
-                    className="modal fade"
-                    tabIndex="-1"
-                    role="dialog"
-                    aria-labelledby="AddPros"
-                    aria-hidden="true"
-                    id="addPros">
-                    <Modal>
-                        <ModalHeader>Add Service Provider</ModalHeader>
-                        <ModalBody>
-                            Name
-                            <Input
-                                type="text"
-                                value={this.state.Name}
-                                onChange={this.handleInputName}
-                                name="name"
-                                placeholder="E.g. 'Mark, Plumber' or 'Handyman'"/>
-                            Address
-                            <Input
-                                type="text"
-                                value={this.state.address1}
-                                onChange={this.handleAddress1}
-                                name="address1"
-                                placeholder=""/>
                             Phone
                             <Input
                                 type="text"
@@ -296,141 +356,37 @@ class Manager extends Component {
                                 onChange={this.handlePhone}
                                 name="phone"
                                 placeholder=""/>
+                            Business
+                            <Input
+                                type="text"
+                                value={this.state.business}
+                                onChange={this.handleBusiness}
+                                name="phone"
+                                placeholder=""/>
                         </ModalBody>
                         <ModalFooter>
-                            <FormBtn className="btn btn-secondary" data-dismiss="modal">
-                                Close
-                            </FormBtn>
-                            <FormBtn className="btn btn-primary" onClick={this.handleFormAddPros}>
-                                Submit
-                            </FormBtn>
+                            <Button color="primary" onClick={this.submitMyPros}>
+                                <i>Submit</i>
+                            </Button>
                         </ModalFooter>
                     </Modal>
-                </div>
-                {/* ------------------ */}
-                {/*   Contact MOdal    */}
-                <div
-                    className="modal fade"
-                    tabIndex="-1"
-                    role="dialog"
-                    aria-labelledby="Contact"
-                    aria-hidden="true"
-                    id="contact">
-                    {this.state.pros.length
-                        ? (
-                            <span>
-                                {this
-                                    .state
-                                    .pros
-                                    .map(providers => (
-                                        <Modal key={providers._id}>
-                                            <ModalHeader>
-                                                <strong>
-                                                    {providers.name}
-                                                </strong>
-                                            </ModalHeader>
-                                            <ModalBody>
-                                                <strong>
-                                                    Address: {providers.address}
-                                                </strong>
-                                                <hr></hr>
-                                                <strong>
-                                                    Phone: {providers.phone}
-                                                </strong>
-                                            </ModalBody>
-                                            <ModalFooter>
-                                                <FormBtn className="btn btn-secondary" data-dismiss="modal">
-                                                    Close
-                                                </FormBtn>
-                                                <FormBtn className="btn btn-info" value={providers._id} onClick={this.handleProcess}>
-                                                Edit
-                                                </FormBtn>
-                                                <FormBtn className="btn btn-danger" value={providers._id} onClick={this.handleProcess}>
-                                                Delete
-                                                </FormBtn>
-                                            </ModalFooter>
-                                        </Modal>
-                                    ))}
-                            </span>
-                        )
-                        : (
-                            <h3>Add Some Contacts Here</h3>
-                        )}
-                    </div>
-                {/* ------------------ */}
-                <Container>
-                    <Row className="justify-content-between">
-                    {/* Load Existing Properties Related to User Id */}
-                    <Col size="lg-8 md-9 sm-12">
-                    {this.state.properties.length
-                        ? (
-                            <span>
-                                {this
-                                    .state
-                                    .properties
-                                    .map(property => (
-                                        <Card key={property._id}>
-                                            <Container>
-                                                <Row>
-                                                    <Col size="md-4">
-                                                        <CardPhoto>
-                                                            {property.photo}
-                                                        </CardPhoto>
-                                                    </Col>
-                                                    <Col size="md-5">
-                                                        <CardBlock>
-                                                            <CardTitle>
-                                                                <strong>
-                                                                    {property.propertyname}
-                                                                </strong>
-                                                            </CardTitle>
-                                                            <CardSubtitle>
-                                                                <strong>
-                                                                    {property.address.address1}
-                                                                    , {property.address.city}
-                                                                    , {property.address.state}
-                                                                    , {property.address.zipcode}
-                                                                </strong>
-                                                            </CardSubtitle>
-                                                            <CardText>
-                                                                <strong>
-                                                                    {property.description}
-                                                                </strong>
-                                                            </CardText>
-                                                        </CardBlock>
-                                                    </Col>
-                                                    <Col size="md-3 sm-12">
-                                                        <FormBtn className="btn btn-info col-sm-12" value={property._id} onClick={this.handleEdit}>
-                                                        Edit
-                                                        </FormBtn>
-                                                        <FormBtn className="btn btn-danger col-sm-12" value={property._id} onClick={this.handleDelete}>
-                                                        Delete
-                                                        </FormBtn>
-                                                    </Col>
-                                                </Row>
-                                            </Container>
-                                        </Card>
-                                    ))}
-                            </span>
-                        )
-                        : (
-                            <h3>Add a Property Here</h3>
-                        )}
-                    </Col>
-                    {/* My Add Buttons */}
-                    <Col size="lg-4 md-3 sm-12"> 
-                        <InverseButton toggle="modal" target="#todo">
-                           ToDo
-                        </InverseButton>
-                        <InverseButton toggle="modal" target="#MyPros">
-                           My Pros
-                        </InverseButton>
-                        <InverseButton toggle="modal" target="#SearchNewHome">
-                            Find New Home
-                        </InverseButton>
-                    </Col>
-                    </Row>
-                </Container>
+{/*     Add Task Modal      */}
+                <Modal isOpen={this.state.addTaskModalOpen} toggle={this.addTaskModal} className={this.props.className}>
+                    <ModalHeader toggle={this.addTaskModal}>Add Task</ModalHeader>
+                    <ModalBody>
+                        <Input
+                            type="text"
+                            value={this.state.task}
+                            onChange={this.handleTask}
+                            name="task"
+                            placeholder="E.g. 'Water leak' or 'Garage door jamed'"/>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="primary" onClick={this.addTask}>
+                            <i>Submit</i>
+                        </Button>
+                    </ModalFooter>
+                </Modal>
             </Body>
         );
     }

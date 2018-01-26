@@ -6,23 +6,28 @@
   "scripts": {
     "server": "nodemon server.js",
     "client": "cd client && yarn start",
-    "start": "npm-run-all --parallel server client",
+    "prestart": "npm run build",
+    "start": "node server.js",
+    "files": "npm-run-all --parallel server client",
     "build": "node scripts/build.js",
     "proSeed": "node scripts/propertySeedDB.js",
     "userSeed": "node scripts/UserSeedDB.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "installDeps": "yarn && cd client && yarn"
   },
-  "author": "",
+  "author": "author",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.16.2",
     "body-parser": "^1.18.2",
+    "cloudinary-core": "^2.4.0",
     "express": "^4.16.1",
     "express-handlebars": "^3.0.0",
     "mongoose": "^4.12.0",
     "morgan": "^1.9.0",
-    "request": "^2.83.0"
+    "node": "^9.4.0",
+    "request": "^2.83.0",
+    "superagent": "^3.8.2"
   },
   "devDependencies": {
     "npm-run-all": "^4.1.2"

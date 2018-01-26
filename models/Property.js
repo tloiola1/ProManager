@@ -18,7 +18,7 @@ const PropertySchema = new Schema({
   foreignkey:   { type: String, require: true },
   resId:        { type: Schema.ObjectId, auto: true },
   resident: {
-      firstName: { type: String, default: "Click on edit add a Resident" },
+      firstName: { type: String, default: "To add a Resident click on Edit" },
       lastName: { type: String, default: null },
       email: { type: String, default: null },
       phone: { type: String, default: null }
@@ -28,7 +28,8 @@ const PropertySchema = new Schema({
     task: {type: String, default: ""},
     _id: { type: Schema.ObjectId, auto: true }
     }
-]
+  ],
+  img: { type: String }
 });
 
 // This creates our model from the above schema, using mongoose's model method
