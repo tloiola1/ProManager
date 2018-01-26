@@ -14,7 +14,7 @@ module.exports = {
     console.log("Task Controller Delete");
     console.log(req.body);//
     db.Property
-      .find({_id: req.body.propId}, {todos: {$elemMatch: {_id : req.body.taskId}}}, {$set: {todos:{task: null}}})//,{todos: {$elemMatch: {_id: req.body.taskId}}}
+      .find({_id: req.body.propId}, {todos: {$elemMatch: {_id : req.body.taskId}}}, {$unset: {task: null}})//,{todos: {$elemMatch: {_id: req.body.taskId}}}
       .then((dbModel) => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   } 

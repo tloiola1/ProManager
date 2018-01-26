@@ -28,7 +28,8 @@ const PropertySchema = new Schema({
     task: {type: String, default: ""},
     _id: { type: Schema.ObjectId, auto: true }
     }
-]
+  ],
+  img: { type: String }
 });
 
 // This creates our model from the above schema, using mongoose's model method

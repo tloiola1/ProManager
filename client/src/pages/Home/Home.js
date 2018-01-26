@@ -10,6 +10,7 @@ import React from "react";
     import {Input } from "../../components/Form";
     import PROP from "../../utils/PROP";
     import USER from "../../utils/USER";
+    import "./Home.css"
 // import PROS from "../../utils/PROS";
 
 class Home extends React.Component {
@@ -71,6 +72,7 @@ class Home extends React.Component {
                 this.setState({
                     properties: array
                 });
+                console.log(this.state.properties);
             })
             .catch(err => console.log(err));
       };
@@ -118,7 +120,8 @@ class Home extends React.Component {
         sessionStorage.setItem("name", res.data.name.firstName);
         sessionStorage.setItem("id", res.data._id);
         sessionStorage.setItem("email", res.data.email);
-        console.log(sessionStorage.getItem("path"));
+        sessionStorage.setItem("img", res.data.img);        
+        // console.log(sessionStorage.getItem("path"));
         if(sessionStorage.getItem("path") === 'tenant'){ window.location = '/tenant'
         }
         else if(sessionStorage.getItem("path") === 'manager'){ window.location = '/manager'}
@@ -132,6 +135,7 @@ class Home extends React.Component {
                 sessionStorage.setItem("name", res.data[i].name.firstName);
                 sessionStorage.setItem("email", res.data[i].email);
                 sessionStorage.setItem("id", res.data[i]._id);
+                sessionStorage.setItem("img", res.data[i].img);
                 isValidUser = true;
             }
         }
@@ -278,8 +282,8 @@ class Home extends React.Component {
                                         <Card key={property._id}>
                                                 <Row>
                                                     <Col sm="4">
-                                                        <CardPhoto>
-                                                            {property.photo}
+                                                        <CardPhoto id="myImage">
+                                                            {property.img}
                                                         </CardPhoto>
                                                     </Col>
                                                     <Col sm="8">
