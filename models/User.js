@@ -36,6 +36,9 @@ var UserSchema = new Schema({
     name:  { type: String, trim: true },
     address: { type: String, trim: true },
     phone: {  type: String, trim: true }
+  },
+  img: {
+    type: String, default: 'https://www.freepik.com/free-icon/male-user-shadow_751026.htm'
   }
 });
 

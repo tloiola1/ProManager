@@ -15,7 +15,8 @@ import React, { Component } from "react";
     import PROS from "../../utils/PROS";
     import RES from "../../utils/RES";
     import USER from "../../utils/USER";
-//
+    import IMG from "../../utils/IMG";
+//Class Component
 class Manager extends Component {
     
     componentDidMount() {
@@ -31,6 +32,7 @@ class Manager extends Component {
         super(props);
         this.state = {
             addProsModalOpen: false,
+            addProfilePictureModalOpen: false,
             addPropertyModalOpen: false,
             addtaskModalOpen: false,
             addResidentModalOpen: false,
@@ -59,11 +61,16 @@ class Manager extends Component {
             business: ""
         };
         this.addProsModal = this.addProsModal.bind(this);
+        this.addProfilePictureModal = this.addProfilePictureModal.bind(this);
         this.addPropertyModal = this.addPropertyModal.bind(this);
         this.addTaskModal = this.addTaskModal.bind(this);
         this.addResidentModal = this.addResidentModal.bind(this);
         this.myPros = this.myPros.bind(this);
         this.myProperties = this.myProperties.bind(this);
+        this.state.uploadedFile= null;
+        this.state.uploadedFileCloudinaryUrl= '';
+        this.state.CLOUDINARY_UPLOAD_URL= "https://api.cloudinary.com/v1_1/promanager/image/upload";
+        this.state.CLOUDINARY_UPLOAD_PRESET= "adpt8bps";
         // this.state = { items: [], text: '' };
         // this.login = this.login.bind(this);
       };
@@ -100,7 +107,7 @@ class Manager extends Component {
         PROP
             .getUserProperties(sessionStorage.getItem("id"))
             .then(res => {
-                console.log("Test"); console.log(res.data[0].todos.length);
+                console.log("Test"); console.log(res.data[0].img);
                 this.setState({
                     properties: res.data 
                 });
@@ -117,7 +124,6 @@ class Manager extends Component {
             .catch(err => console.log(err));
       };
     //Handle OnChange Events
-
     handleInputName = event =>  this.setState({ Name: event.target.value });
         handleAddress1 = event => this.setState({ address1: event.target.value });
         handleCity = event => this.setState({ city: event.target.value });
@@ -149,7 +155,8 @@ class Manager extends Component {
                     description: this.state.description,
                     type: this.state.type,
                     available: this.state.available,
-                    foreignkey: sessionStorage.getItem("id")
+                    foreignkey: sessionStorage.getItem("id"),
+                    img: this.state.uploadedFileCloudinaryUrl
                 })
                 .then(res => window.location.reload())
                 .catch(err => console.log(err));
@@ -199,7 +206,7 @@ class Manager extends Component {
                 .catch(err => console.log(err));
         }
      };
-    //
+    //Delet Task
     deleteTask = (propId, taskId) => {
         console.log(propId, taskId);
         const data ={
@@ -211,7 +218,7 @@ class Manager extends Component {
                 .then(res => console.log(res))//window.location.reload()
                 .catch(err => console.log(err));
       }
-    //
+    //Submit Resident
     submitEditResident = id =>{
         if (this.state.firstName && this.state.lastName && this.state.email && this.state.phone) {
             RES
@@ -244,6 +251,42 @@ class Manager extends Component {
                 .then(res => window.location.reload())
                 .catch(err => console.log(err));
       }
+    //Upload Image
+    onImageDrop(files) {
+        this.setState({
+          uploadedFile: files[0]
+        });
+        this.handleImageUpload(files[0]);
+      }
+    //
+    onProfilePictureDrop(files) {
+        this.setState({
+          uploadedFile: files[0]
+        });
+        // IMG
+        // .postImage
+        
+      }
+    //Upload Image
+    handleImageUpload(file) {
+          console.log("Test Passed")
+        let upload = request.post(this.state.CLOUDINARY_UPLOAD_URL)
+                         .field('upload_preset', this.state.CLOUDINARY_UPLOAD_PRESET)
+                         .field('file', file);
+    
+        upload.end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+        //   console.log(res)
+          if (res.body.secure_url !== '') {
+            this.setState({
+              uploadedFileCloudinaryUrl: res.body.secure_url
+            })
+          }
+        });
+            
+      };
     //
     render() {
         return (
@@ -256,6 +299,7 @@ class Manager extends Component {
                             <Logo/>
                             <NavButton>
                                     <Span>
+                                        <img src={sessionStorage.getItem("img")} style={{height: "5rem", width: "5rem", borderRadius: "50%"}} onClick={this.addProfilePictureModal}></img>
                                         <strong> 
                                             Hello <Name>{this.state.name}</Name>
                                         </strong>
@@ -535,6 +579,19 @@ class Manager extends Component {
                             }}/>
                             This Location is <span style={{color: "red"}}>Not</span> Available for Rent.
                         </div>
+                        <form>
+                            <div className="FileUpload">
+                            <Dropzone id="dropZone" onDrop={this.onImageDrop.bind(this)}
+                                multiple={false}
+                                accept="image/*">
+                                
+                            <div>
+                            <img src={this.state.uploadedFileCloudinaryUrl} style={{height: "10rem", with: "10rem"}}/>
+                            </div>
+                            <small>Click to select a file to upload.</small>
+                            </Dropzone>
+                            </div>
+                        </form>
                     </ModalBody>
                     <ModalFooter>
                         <FormBtn className="btn btn-primary" onClick={this.submitMyProperty}>
@@ -657,6 +714,25 @@ class Manager extends Component {
                             <i>Submit</i>
                         </Button>
                     </ModalFooter>
+                </Modal>
+{/*     Add Profile Picture         */}
+                <Modal isOpen={this.state.addProfilePictureModalOpen} toggle={this.addProfilePictureModal} className={this.props.className}>
+                    <ModalHeader toggle={this.addProfilePictureModal}>Add Your Profile Picture</ModalHeader>
+                    <ModalBody>
+                    <form>
+                        <div className="FileUpload">
+                        <Dropzone id="dropZone" onDrop={this.onProfilePictureDrop.bind(this)}
+                            multiple={false}
+                            accept="image/*">
+                            
+                        <div>
+                        <img src={this.state.uploadedFileCloudinaryUrl} style={{height: "10rem", with: "10rem"}}/>
+                        </div>
+                        <small>Click to select a file to upload.</small>
+                        </Dropzone>
+                        </div>
+                    </form>
+                    </ModalBody>
                 </Modal>
             </Body>
         );
