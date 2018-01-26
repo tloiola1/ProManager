@@ -1,7 +1,7 @@
 
 .fixed-top-custom{
 	width: 100%;
-	height: 60px;
+	height: 70px;
 	opacity: 0.9;
 	background-color: #ebebeb;
 }
@@ -35,4 +35,20 @@ h1{
 
 #logoff:hover{
 	text-decoration-line: none;
+}
+
+.btn-primary{
+	background-color: #3dce5c;
+	border: 1px solid #3dce5c;	
+}
+
+.btn-primary:hover{
+	color: #3dce5c;	
+	border: 1px solid #3dce5c;	
+	background-color: white;	
+}
+.btn-primary:click{
+	color: #3dce5c;	
+	border: 1px solid #3dce5c;	
+	background-color: white;	
 }

@@ -1,7 +1,5 @@
 import React from "react";
 
 export const ProfilePicture = props =>
-<div>
-<img {...props} alt="ProfilePicture">
-</img>
-</div>;
+<img {...props} alt="ProfilePicture" style={{width: "4rem", height: "4rem", borderRadius: "50%"}}>
+</img>;

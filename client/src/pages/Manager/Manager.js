@@ -6,10 +6,9 @@ import React, { Component } from "react";
     import { FixedHeader } from "../../components/Header";
     import {Button, Modal, ModalHeader, ModalBody, ModalFooter, Card, CardTitle,CardSubtitle, CardBody, Col, Container, Row} from "reactstrap";
     import { Logo } from "../../components/Logo";
-    import {Input, FormBtn, TextArea } from "../../components/Form";
-    import { Span, Margin } from "../../components/Tag";
+    import {Input, TextArea } from "../../components/Form";
+    import { Margin } from "../../components/Tag";
     import { NavButton } from "../../components/Nav";
-    import { Name } from "../../components/Name";
     import { ProfilePicture } from "../../components/ProfilePicture";
     import PROP from "../../utils/PROP";
     import TASK from "../../utils/TASK";
@@ -79,7 +78,6 @@ class Manager extends Component {
       };
     //Display User Data
     loadUserData = () =>{
-        console.log(sessionStorage.getItem("img"));
         PROP
             .getUserProperties(sessionStorage.getItem("id"))
             .then(res => {
@@ -271,9 +269,9 @@ class Manager extends Component {
         this.setState({
           uploadedFile: files[0]
         });
-        // IMG
-        // .postImage
-        
+        this.handleImageUpload(files[0], (picURL)=>{
+            console.log(picURL)
+        })
       }
     //Upload Image
     handleImageUpload(file) {
@@ -306,12 +304,12 @@ class Manager extends Component {
                         <Row>
                             <Logo/>
                             <NavButton>
-                                    <Span> {/* onClick=this.addProfilePictureModal} */}
-                                        <img src={sessionStorage.getItem("img")}></img>
+                                    <span> {/* onClick=this.addProfilePictureModal} */}
+                                        <a><ProfilePicture src={this.state.profilePic} onClick={this.addProfilePictureModal}></ProfilePicture></a>
                                         <strong> 
-                                            Hello<Name>{this.state.name}</Name>
+                                            Hello<em>{this.state.name}</em>
                                         </strong>
-                                    </Span>
+                                    </span>
                                     <a id="logoff" href="/"><strong> | Log Off</strong></a>
                             </NavButton>
                         </Row>
@@ -602,9 +600,9 @@ class Manager extends Component {
                         </form>
                     </ModalBody>
                     <ModalFooter>
-                        <FormBtn className="btn btn-primary" onClick={this.submitMyProperty}>
+                        <Button color="primary" onClick={this.submitMyProperty}>
                             <i>Submit</i>
-                        </FormBtn>
+                        </Button>
                     </ModalFooter>
                 </Modal>
 {/*     Add Resident Modal          */}

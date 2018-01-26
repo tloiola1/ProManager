@@ -7,7 +7,6 @@ import React, { Component } from "react";
     import {Input } from "../../components/Form";
     import { Margin } from "../../components/Tag";
     import { NavButton } from "../../components/Nav";
-    import { Name } from "../../components/Name";
     import PROP from "../../utils/PROP";
     import TASK from "../../utils/TASK";
     import PROS from "../../utils/PROS";
@@ -196,7 +195,7 @@ class Manager extends Component {
                             <NavButton>
                                     <span>
                                         <strong> 
-                                            Hello <Name>{this.state.name}</Name>
+                                            Hello <em>{this.state.name}</em>
                                         </strong>
                                     </span>
                                     <a id="logoff" href="/"><strong> | Log Off</strong></a>
