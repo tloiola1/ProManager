@@ -320,12 +320,12 @@ class Manager extends Component {
                 <Container>
                     <Row>
                         <Col sm="3">
-                            <Button className="col-sm-12" color="primary" onClick={this.addProsModal} style={{ margin: '.5rem' }}>Add Pros</Button>
-                            <Button className="col-sm-12" color="primary" onClick={this.myPros} style={{ margin: '.5rem' }}>My Pros</Button>
-                            <Button className="col-sm-12" color="primary" onClick={this.myProperties} style={{ margin: '.5rem' }}>My 
+                            <Button className="col-sm-12" color="success" onClick={this.addProsModal} style={{ margin: '.5rem' }}>Add Pros</Button>
+                            <Button className="col-sm-12" color="success" onClick={this.myPros} style={{ margin: '.5rem' }}>My Pros</Button>
+                            <Button className="col-sm-12" color="success" onClick={this.myProperties} style={{ margin: '.5rem' }}>My 
                                 Properties
                             </Button>
-                            <Button className="col-sm-12" color="primary" onClick={this.addPropertyModal} style={{ margin: '.5rem' }}>Add Property</Button>
+                            <Button className="col-sm-12" color="success" onClick={this.addPropertyModal} style={{ margin: '.5rem' }}>Add Property</Button>
                         </Col>
 {/*     Tasks TODO                  */}
                         <Col xs="auto" sm="9">
@@ -600,7 +600,7 @@ class Manager extends Component {
                         </form>
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="primary" onClick={this.submitMyProperty}>
+                        <Button color="success" onClick={this.submitMyProperty}>
                             <i>Submit</i>
                         </Button>
                     </ModalFooter>
@@ -639,7 +639,7 @@ class Manager extends Component {
                             placeholder=""/>
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="primary" onClick={this.submitEditResident}>
+                        <Button color="success" onClick={this.submitEditResident}>
                             <i>Submit</i>
                         </Button>
                     </ModalFooter>
@@ -699,7 +699,7 @@ class Manager extends Component {
                                 placeholder=""/>
                         </ModalBody>
                         <ModalFooter>
-                            <Button color="primary" onClick={this.submitMyPros}>
+                            <Button color="success" onClick={this.submitMyPros}>
                                 <i>Submit</i>
                             </Button>
                         </ModalFooter>
@@ -716,7 +716,7 @@ class Manager extends Component {
                             placeholder="E.g. 'Water leak' or 'Garage door jamed'"/>
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="primary" onClick={this.addTask}>
+                        <Button color="success" onClick={this.addTask}>
                             <i>Submit</i>
                         </Button>
                     </ModalFooter>
