@@ -60,7 +60,8 @@ class Manager extends Component {
             task: "",
             id: "",
             business: "",
-            profilePic: ""
+            profilePic: "",
+            price: ""
         };
         this.addProsModal = this.addProsModal.bind(this);
         this.addProfilePictureModal = this.addProfilePictureModal.bind(this);
@@ -76,6 +77,28 @@ class Manager extends Component {
         // this.state = { items: [], text: '' };
         // this.login = this.login.bind(this);
       };
+    clear() {
+        this.setState({name: ''});
+        this.setState({firstName: ''});
+        this.setState({lastName: ''});
+        this.setState({email: ''});
+        this.setState({Name: ''});
+        this.setState({address1: ''});
+        this.setState({city: ''});
+        this.setState({state: ''});
+        this.setState({zipcode: ''});
+        this.setState({description: ''});
+        this.setState({type: ''});
+        this.setState({available: ''});
+        this.setState({phone: ''});
+        this.setState({todoSize: ''});
+        this.setState({propertyId: ''});
+        this.setState({task: ''});
+        this.setState({id: ''});
+        this.setState({business: ''});
+        this.setState({profilePic: ''});
+        this.setState({price: ''});
+        }
     //Display User Data
     loadUserData = () =>{
         PROP
@@ -93,42 +116,9 @@ class Manager extends Component {
                 this.setState({
                     pros: res.data,
                 });
-                console.log(this.state.pros);
             })
             .catch(err => console.log(err));
       };
-    //Add Pros Modal Toggle
-    addProsModal() { 
-        this.setState({ addProsModalOpen: !this.state.addProsModalOpen })
-        };
-    //
-    addProfilePictureModal() { 
-        this.setState({ addProfilePictureModalOpen: !this.state.addProfilePictureModalOpen })
-        };
-    //Add Property Modal Toggle
-    addPropertyModal() { 
-        this.setState({ addPropertyModalOpen: !this.state.addPropertyModalOpen });
-        };
-    //
-    addTaskModal = (id) => {
-        console.log(id);
-        this.setState({ propertyId: id});
-        this.setState({ addTaskModalOpen: !this.state.addTaskModalOpen });     
-      };
-    //
-    addResidentModal = id => { 
-        console.log(id); 
-        this.setState({ addResidentModalOpen: !this.state.addResidentModalOpen });
-        this.setState({ propertyId: id});
-      };
-    //My Pros Collapse Toggle
-    myPros() { 
-        this.setState({ myProsCollapse: !this.state.myProsCollapse })
-        };
-    //Collapse My Properties
-    myProperties(){ 
-        this.setState({ myPropertiesCollapse: !this.state.myPropertiesCollapse })
-        }; 
     //Handle OnChange Events
     handleInputName = event =>  this.setState({ Name: event.target.value });
         handleAddress1 = event => this.setState({ address1: event.target.value });
@@ -145,6 +135,56 @@ class Manager extends Component {
         handleUserEmail = event => this.setState({ email: event.target.value });
         handleTask = event => this.setState({ task: event.target.value });
         handleBusiness = event => this.setState({ business: event.target.value });
+        handlePrice = event => this.setState({ price: event.target.value });
+    //Add Pros Modal Toggle
+    addProsModal() { 
+        this.clear();
+        this.setState({ addProsModalOpen: !this.state.addProsModalOpen })
+        };
+    //
+    addProfilePictureModal() { 
+        this.setState({ addProfilePictureModalOpen: !this.state.addProfilePictureModalOpen })
+        };
+    //Add Property Modal Toggle
+    addPropertyModal() {
+        this.clear();
+        this.setState({ addPropertyModalOpen: !this.state.addPropertyModalOpen });
+        };
+    //
+    addTaskModal = (id) => {
+        console.log(id);
+        this.setState({ propertyId: id});
+        this.setState({ addTaskModalOpen: !this.state.addTaskModalOpen });     
+      };
+    //
+    addResidentModal = id => { 
+        this.clear(); 
+        this.setState({ addResidentModalOpen: !this.state.addResidentModalOpen });
+        this.setState({ propertyId: id});
+      };
+    //editResident
+    editResident = id => {
+        this.clear();
+        RES
+            .getResidentPropertyId(id)
+            .then( res => {
+                this.setState({firstName: res.data[0].resident.firstName});
+                this.setState({lastName: res.data[0].resident.lastName});
+                this.setState({firstName: res.data[0].resident.firstName});
+                this.setState({email: res.data[0].resident.email});
+                this.setState({phone: res.data[0].resident.phone});
+                this.setState({ addResidentModalOpen: !this.state.addResidentModalOpen });
+            })
+            .catch( err => console.log(err));
+      }
+    //My Pros Collapse Toggle
+    myPros() { 
+        this.setState({ myProsCollapse: !this.state.myProsCollapse })
+        };
+    //Collapse My Properties
+    myProperties(){ 
+        this.setState({ myPropertiesCollapse: !this.state.myPropertiesCollapse })
+        }; 
     //Add Property
     submitMyProperty = event => {
         if (this.state.Name && this.state.address1 && this.state.city && this.state.state && this.state.zipcode && this.state.description && this.state.type && this.state.available) 
@@ -162,6 +202,7 @@ class Manager extends Component {
                     type: this.state.type,
                     available: this.state.available,
                     foreignkey: sessionStorage.getItem("id"),
+                    price: this.state.price,
                     img: this.state.uploadedFileCloudinaryUrl
                 })
                 .then(res => window.location.reload())
@@ -208,24 +249,24 @@ class Manager extends Component {
                         task: this.state.task
                     }
                 })
-                .then(res => window.location.reload())//
+                .then(res => window.location.reload())//this.loadUserData 
                 .catch(err => console.log(err));
         }
      };
     //Delet Task
     deleteTask = (propId, taskId) => {
-        console.log(propId, taskId);
+        // console.log(propId, taskId);
         const data ={
             propId,
             taskId
         }
         TASK
                 .deleteTask(data)
-                .then(res => console.log(res))//window.location.reload()
+                .then(res => console.log(res.data.todos[0]))//window.location.reload()
                 .catch(err => console.log(err));
       }
     //Submit Resident
-    submitEditResident = id =>{
+    submitResident = id =>{
         if (this.state.firstName && this.state.lastName && this.state.email && this.state.phone) {
             RES
                 .editResident({
@@ -237,7 +278,7 @@ class Manager extends Component {
                         phone: this.state.phone
                     }
                 })
-                .then(res => window.location.reload())//
+                .then(res => window.location.reload())//console.log(res)
                 .catch(err => console.log(err));
         }
       }
@@ -259,23 +300,10 @@ class Manager extends Component {
       }
     //Upload Image
     onImageDrop(files) {
+        const file = files[0];        
         this.setState({
           uploadedFile: files[0]
         });
-        this.handleImageUpload(files[0]);
-      }
-    //
-    onProfilePictureDrop(files) {
-        this.setState({
-          uploadedFile: files[0]
-        });
-        this.handleImageUpload(files[0], (picURL)=>{
-            console.log(picURL)
-        })
-      }
-    //Upload Image
-    handleImageUpload(file) {
-          console.log("Test Passed")
         let upload = request.post(this.state.CLOUDINARY_UPLOAD_URL)
                          .field('upload_preset', this.state.CLOUDINARY_UPLOAD_PRESET)
                          .field('file', file);
@@ -290,9 +318,39 @@ class Manager extends Component {
               uploadedFileCloudinaryUrl: res.body.secure_url
             })
           }
+        })
+        // this.handleImageUpload(files[0]);
+      }
+    //
+    onProfilePictureDrop(files) {
+        const file = files[0];
+        this.setState({
+          uploadedFile: files[0]
         });
-            
-      };
+        let upload = request.post(this.state.CLOUDINARY_UPLOAD_URL)
+                         .field('upload_preset', this.state.CLOUDINARY_UPLOAD_PRESET)
+                         .field('file', file);
+    
+        upload.end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+        //   console.log(res)
+          if (res.body.secure_url !== '') {
+            this.setState({
+              profilePic: res.body.secure_url
+            })
+            IMG
+                .postImage({
+                    _id: sessionStorage.getItem("id"),
+                    img: res.body.secure_url
+                })
+                .then(res => this.addProfilePictureModal )
+                .catch(err => console.log(err));
+          }
+        })
+      }
+    
     //
     render() {
         return (
@@ -320,14 +378,14 @@ class Manager extends Component {
                 <Container>
                     <Row>
                         <Col sm="3">
-                            <Button className="col-sm-12" color="primary" onClick={this.addProsModal} style={{ margin: '.5rem' }}>Add Pros</Button>
-                            <Button className="col-sm-12" color="primary" onClick={this.myPros} style={{ margin: '.5rem' }}>My Pros</Button>
-                            <Button className="col-sm-12" color="primary" onClick={this.myProperties} style={{ margin: '.5rem' }}>My 
+                            <Button className="col-sm-12" color="success" onClick={this.addProsModal} style={{ margin: '.5rem' }}>Add Pros</Button>
+                            <Button className="col-sm-12" color="success" onClick={this.myPros} style={{ margin: '.5rem' }}>My Pros</Button>
+                            <Button className="col-sm-12" color="success" onClick={this.myProperties} style={{ margin: '.5rem' }}>My 
                                 Properties
                             </Button>
-                            <Button className="col-sm-12" color="primary" onClick={this.addPropertyModal} style={{ margin: '.5rem' }}>Add Property</Button>
+                            <Button className="col-sm-12" color="success" onClick={this.addPropertyModal} style={{ margin: '.5rem' }}>Add Property</Button>
                         </Col>
-{/*     Tasks TODO                  */}
+{/*     Message TODO                  */}
                         <Col xs="auto" sm="9">
                             {this.state.properties.length ? (
                                 <span>
@@ -342,12 +400,17 @@ class Manager extends Component {
                                                             <strong>{property.propertyname}
                                                             </strong>
                                                             <br></br>
-                                                            Resident:{" "}{property.resident.firstName}{" "}{property.resident.lastName}
+                                                            Resident:{property.resident.lastName === null ? 
+                                                            <Button color="info" onClick={()=>{ this.addResidentModal(property._id)}} style={{margin: "1rem 1rem 0rem 0rem"}}>
+                                                            Add Resident
+                                                        </Button> : <span> {" "}{property.resident.firstName}{" "}{property.resident.lastName}
+                                                           </span> }
                                                         </CardTitle>
-                                                        <CardSubtitle>
+                                                        <CardSubtitle>      {property.resident.lastName === null ? "" :
                                                             <Button color="info" style={{margin: "1rem"}} onClick={() => this.addTaskModal(property._id)}>
-                                                                Add Task
+                                                                Message Resident
                                                             </Button>
+                                                             }
                                                         </CardSubtitle>
                                                     </CardBody>
                                                 </Col>
@@ -359,14 +422,13 @@ class Manager extends Component {
                                                         </CardTitle>
                                                         <CardSubtitle>
                                                         {property.todos.map(task => (
-                                                            <span key={task._id}>
+                                                            <span key={task._id}>       <hr></hr>
                                                                 {task.task}🔨
                                                                 <span>
                                                                 <Button color="danger" onClick={() => this.deleteTask(property._id, task._id)} style={{margin: "irem"}}>
                                                                 X
                                                                 </Button>
                                                             </span>
-                                                            <hr></hr>
                                                         </span>   
                                                         ))}
                                                         </CardSubtitle>
@@ -411,7 +473,7 @@ class Manager extends Component {
                             </span>
                         ))}
                         </span>
-                    ) : ( <h3>Add Some Contacts Here</h3> )}
+                    ) : ( <h3>Your COntact List is Empty</h3> )}
                 </Modal>
 {/*     Load My Propeties Modal     */}
                 <Modal isOpen={this.state.myPropertiesCollapse}>
@@ -441,12 +503,25 @@ class Manager extends Component {
                                 <hr></hr>
                                 
 {/*     Load My Residents           */}
+                                {property.resident.lastName !== null ?
                                 <ModalHeader>
                                     <strong>
                                         {property.resident.firstName}{" "}
                                         {property.resident.lastName}
                                     </strong>
                                 </ModalHeader>
+                                :<span>
+                                    <ModalHeader>
+                                        To add resident click "Add Resident"
+                                    </ModalHeader>
+                                    <ModalFooter style={{padding: "0px"}}>
+                                        <Button color="info" onClick={()=>{ this.addResidentModal(property._id)}} style={{margin: "1rem 1rem 0rem 0rem"}}>
+                                            Add Resident
+                                        </Button>
+                                    </ModalFooter>
+                                </span>
+                                }
+                                {property.resident.lastName !== null ?
                                 <ModalBody>
                                     <strong>
                                     <a herf={"mailto:"+ property.resident.email}><span role="img" aria-label="emoji">📧</span>{" "}{property.resident.email}</a>
@@ -454,14 +529,17 @@ class Manager extends Component {
                                     <a href={"tel:"+ property.resident.phone}><span role="img" aria-label="emoji">📞</span>{" "}{property.resident.phone}</a>
                                     </strong>
                                 </ModalBody>
+                                : ''}
+                                {property.resident.lastName !== null ?
                                 <ModalFooter style={{padding: "0px"}}>
-                                    <Button color="info" onClick={()=>{ this.addResidentModal(property._id)}} style={{margin: "1rem 1rem 0rem 0rem"}}>
+                                    <Button color="info" onClick={()=>{ this.editResident(property._id)}} style={{margin: "1rem 1rem 0rem 0rem"}}>
                                         Edit
                                     </Button>
                                     <Button color="danger" onClick={() => this.deleteResident(property._id)} style={{margin: "1rem 1rem 0rem 0rem"}}>
                                         Delete
                                     </Button>
                                 </ModalFooter>
+                                : ''}
                                 <hr style={{border: "2px solid #000"}}></hr>
                             </span>
                         ))}
@@ -585,6 +663,13 @@ class Manager extends Component {
                             }}/>
                             This Location is <span style={{color: "red"}}>Not</span> Available for Rent.
                         </div>
+                        Monthly Rent Price:
+                        <Input
+                            type="text"
+                            value={this.state.price}
+                            onChange={this.handlePrice}
+                            name="price"
+                            placeholder="$"/>
                         <form>
                             <div className="FileUpload">
                             <Dropzone id="dropZone" onDrop={this.onImageDrop.bind(this)}
@@ -592,7 +677,7 @@ class Manager extends Component {
                                 accept="image/*">
                                 
                             <div>
-                            <img src={this.state.uploadedFileCloudinaryUrl} style={{height: "10rem", with: "10rem"}}/>
+                            <img alt="PropImage" src={this.state.uploadedFileCloudinaryUrl} style={{height: "10rem", with: "10rem"}}/>
                             </div>
                             <small>Click to select a file to upload.</small>
                             </Dropzone>
@@ -600,14 +685,15 @@ class Manager extends Component {
                         </form>
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="primary" onClick={this.submitMyProperty}>
+                        <Button color="success" onClick={this.submitMyProperty}>
                             <i>Submit</i>
                         </Button>
                     </ModalFooter>
                 </Modal>
 {/*     Add Resident Modal          */}
                 <Modal isOpen={this.state.addResidentModalOpen} toggle={this.addResidentModal} className={this.props.className}>
-                    <ModalHeader toggle={this.addResidentModal}>Edit Resident</ModalHeader>
+                    <ModalHeader toggle={this.addResidentModal}>
+                        {this.state.lastName === null ? <span>Add</span> : <span>Edit</span>} Resident</ModalHeader>
                     <ModalBody>
                         First Name
                         <Input
@@ -639,8 +725,10 @@ class Manager extends Component {
                             placeholder=""/>
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="primary" onClick={this.submitEditResident}>
-                            <i>Submit</i>
+                        <Button color="success" onClick={this.submitResident}>
+                            {this.state.firstName === "" ?
+                                <i>Submit</i>
+                            : <i>Update</i> }
                         </Button>
                     </ModalFooter>
                 </Modal>
@@ -699,7 +787,7 @@ class Manager extends Component {
                                 placeholder=""/>
                         </ModalBody>
                         <ModalFooter>
-                            <Button color="primary" onClick={this.submitMyPros}>
+                            <Button color="success" onClick={this.submitMyPros}>
                                 <i>Submit</i>
                             </Button>
                         </ModalFooter>
@@ -716,7 +804,7 @@ class Manager extends Component {
                             placeholder="E.g. 'Water leak' or 'Garage door jamed'"/>
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="primary" onClick={this.addTask}>
+                        <Button color="success" onClick={this.addTask}>
                             <i>Submit</i>
                         </Button>
                     </ModalFooter>
@@ -732,7 +820,7 @@ class Manager extends Component {
                             accept="image/*">
                             
                         <div>
-                        <img src={this.state.uploadedFileCloudinaryUrl} style={{height: "10rem", with: "10rem"}}/>
+                        <img alt="ProfileImage" src={this.state.uploadedFileCloudinaryUrl} style={{height: "10rem", with: "10rem"}}/>
                         </div>
                         <small>Click to select a file to upload.</small>
                         </Dropzone>

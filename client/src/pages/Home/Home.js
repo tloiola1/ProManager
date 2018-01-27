@@ -300,6 +300,7 @@ class Home extends React.Component {
                                                                     , {property.address.state}
                                                                     , {property.address.zipcode}
                                                                     <CardText>{property.description}
+                                                                    <br/>{"$"}{property.price}
                                                                     </CardText>
                                                                 </strong>
                                                                 <Button color="primary"onClick={this.register}style={{margin: "1rem 1rem 1rem 0rem", float: "right"}}>Rent this Home</Button>

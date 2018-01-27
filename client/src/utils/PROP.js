@@ -29,8 +29,4 @@ export default {
   deleteProperty: function(id) {
     return axios.delete("/api/properties/" + id);
   }
-//   // Saves a book to the database
-//   savePoperty: function(bookData) {
-//     return axios.post("/api/books", bookData);
-//   }
 };

@@ -1,7 +1,9 @@
 import axios from "axios";
 
 export default {
-  
+  getResidentPropertyId: function(id) {
+    return axios.get("/api/res/" + id); 
+  },
   deleteResident: function(id) {
     return axios.delete("/api/res/" + id); 
   },
@@ -10,8 +12,4 @@ export default {
     console.log(data);
     return axios.post("/api/res/"+ data._id, data);
   }
-//   // Saves a book to the database 
-//   savePoperty: function(bookData) {
-//     return axios.post("/api/books", bookData);
-//   }
 };

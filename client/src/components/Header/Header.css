@@ -37,17 +37,12 @@ h1{
 	text-decoration-line: none;
 }
 
-.btn-primary{
+.btn-success{
 	background-color: #3dce5c;
 	border: 1px solid #3dce5c;	
 }
 
-.btn-primary:hover{
-	color: #3dce5c;	
-	border: 1px solid #3dce5c;	
-	background-color: white;	
-}
-.btn-primary:click{
+.btn-success:hover{
 	color: #3dce5c;	
 	border: 1px solid #3dce5c;	
 	background-color: white;	

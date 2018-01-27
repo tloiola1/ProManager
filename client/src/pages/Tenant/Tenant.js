@@ -1,5 +1,7 @@
 // Imports
 import React, { Component } from "react";
+    import Dropzone from 'react-dropzone';
+    import request from 'superagent';
     import {Body} from "../../components/Body";
     import { FixedHeader } from "../../components/Header";
     import {Button, Modal, ModalHeader, ModalBody, ModalFooter, Card, CardTitle,CardSubtitle, CardBody, Col, Container, Row} from "reactstrap";
@@ -10,7 +12,7 @@ import React, { Component } from "react";
     import PROP from "../../utils/PROP";
     import TASK from "../../utils/TASK";
     import PROS from "../../utils/PROS";
-    // import RES from "../../utils/RES";
+    import IMG from "../../utils/IMG";
     import USER from "../../utils/USER";
 //
 class Manager extends Component {
@@ -53,6 +55,19 @@ class Manager extends Component {
         this.myPros = this.myPros.bind(this);
         this.myProperties = this.myProperties.bind(this);
       };
+    //Handle OnChange Events
+    handleInputName = event =>  this.setState({ Name: event.target.value });
+        handleAddress1 = event => this.setState({ address1: event.target.value });
+        handleCity = event => this.setState({ city: event.target.value });
+        handlePhone = event => this.setState({ phone: event.target.value });
+        handleState = event => this.setState({  state: event.target.value });
+        handleZipCode = event => this.setState({ zipcode: event.target.value });
+        handleForeignkey = event => this.setState({ foreignkey: event.target.value });
+        handleUserFirstName = event => this.setState({ firstName: event.target.value });
+        handleUserLastName = event => this.setState({ lastName: event.target.value });
+        handleUserEmail = event => this.setState({ email: event.target.value });
+        handleTask = event => this.setState({ task: event.target.value });
+        handleBusiness = event => this.setState({ business: event.target.value });
     //Add Pros Modal Toggle
     addProsModal() { 
         this.setState({ addProsModalOpen: !this.state.addProsModalOpen })
@@ -113,19 +128,6 @@ class Manager extends Component {
             })
             .catch(err => console.log(err));
       };
-    //Handle OnChange Events
-    handleInputName = event =>  this.setState({ Name: event.target.value });
-        handleAddress1 = event => this.setState({ address1: event.target.value });
-        handleCity = event => this.setState({ city: event.target.value });
-        handlePhone = event => this.setState({ phone: event.target.value });
-        handleState = event => this.setState({  state: event.target.value });
-        handleZipCode = event => this.setState({ zipcode: event.target.value });
-        handleForeignkey = event => this.setState({ foreignkey: event.target.value });
-        handleUserFirstName = event => this.setState({ firstName: event.target.value });
-        handleUserLastName = event => this.setState({ lastName: event.target.value });
-        handleUserEmail = event => this.setState({ email: event.target.value });
-        handleTask = event => this.setState({ task: event.target.value });
-        handleBusiness = event => this.setState({ business: event.target.value });
     //Add Pros
     submitMyPros = event => {
         //Mark Plumber 1221 qwertyuiop street 1234567890
@@ -181,6 +183,35 @@ class Manager extends Component {
                 .deleteTask(data)
                 .then(res => console.log(res))//window.location.reload()
                 .catch(err => console.log(err));
+      }
+    //
+    onProfilePictureDrop(files) {
+        const file = files[0];
+        this.setState({
+          uploadedFile: files[0]
+        });
+        let upload = request.post(this.state.CLOUDINARY_UPLOAD_URL)
+                         .field('upload_preset', this.state.CLOUDINARY_UPLOAD_PRESET)
+                         .field('file', file);
+    
+        upload.end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+        //   console.log(res)
+          if (res.body.secure_url !== '') {
+            this.setState({
+              profilePic: res.body.secure_url
+            })
+            IMG
+                .postImage({
+                    _id: sessionStorage.getItem("id"),
+                    img: res.body.secure_url
+                })
+                .then(res => this.addProfilePictureModal )
+                .catch(err => console.log(err));
+          }
+        })
       }
     //
     render() {
@@ -272,7 +303,7 @@ class Manager extends Component {
                                     </Card>
                                 ))}
                                 </span>
-                            ) : ( <h3>No Tasks for You</h3> )}
+                            ) : <span/>}
                         </Col>
                     </Row>
                 </Container>
@@ -306,7 +337,7 @@ class Manager extends Component {
                             </span>
                         ))}
                         </span>
-                    ) : ( <h3>Add Some Contacts Here</h3> )}
+                    ) : ( <h3>Your Contact List is Empty</h3> )}
                 </Modal>
 
 {/*     Add Pros Modal      */}
