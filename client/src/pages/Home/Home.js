@@ -162,8 +162,8 @@ class Home extends React.Component {
                   <Row>
                     <Logo/>
                         <NavButton>
-                          <Button color="primary" onClick={this.login}style={{margin: "1rem"}}>Login</Button>{''}
-                          <Button color="primary"onClick={this.register}style={{margin: "1rem"}}>Register</Button>
+                          <Button color="success" onClick={this.login}style={{margin: "1rem"}}>Login</Button>{''}
+                          <Button color="success"onClick={this.register}style={{margin: "1rem"}}>Register</Button>
                         </NavButton>
                     </Row>
                 </Container>
@@ -187,7 +187,7 @@ class Home extends React.Component {
                     placeholder=""/>
                 </ModalBody>
                 <ModalFooter>
-                <Button color="primary" onClick={this.formLogin}>Submit</Button>
+                <Button color="success" onClick={this.formLogin}>Submit</Button>
                 </ModalFooter>
               </Modal>
 {/* Register Modal  */}
@@ -263,7 +263,7 @@ class Home extends React.Component {
                     </div>
                 </ModalBody>
                 <ModalFooter>
-                <Button color="primary" onClick={this.formRegister}>Submit</Button>
+                <Button color="success" onClick={this.formRegister}>Submit</Button>
                 </ModalFooter>
               </Modal>
 {/* Margin Top      */}
@@ -303,7 +303,7 @@ class Home extends React.Component {
                                                                     <br/>{"$"}{property.price}
                                                                     </CardText>
                                                                 </strong>
-                                                                <Button color="primary"onClick={this.register}style={{margin: "1rem 1rem 1rem 0rem", float: "right"}}>Rent this Home</Button>
+                                                                <Button color="success"onClick={this.register}style={{margin: "1rem 1rem 1rem 0rem", float: "right"}}>Rent this Home</Button>
                                                             </CardSubtitle>
                                                         </CardBody>
                                                     </Col>
