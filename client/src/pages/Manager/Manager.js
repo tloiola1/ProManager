@@ -11,7 +11,7 @@ import React, { Component } from "react";
     import { NavButton } from "../../components/Nav";
     import { ProfilePicture } from "../../components/ProfilePicture";
     import PROP from "../../utils/PROP";
-    import TASK from "../../utils/TASK";
+    import MESSAGE from "../../utils/MESSAGE";
     import PROS from "../../utils/PROS";
     import RES from "../../utils/RES";
     import USER from "../../utils/USER";
@@ -35,7 +35,7 @@ class Manager extends Component {
             addProsModalOpen: false,
             addProfilePictureModalOpen: false,
             addPropertyModalOpen: false,
-            addtaskModalOpen: false,
+            addMessageModalOpen: false,
             addResidentModalOpen: false,
             myProsCollapse: false,
             myPropertiesCollapse: false,
@@ -57,7 +57,7 @@ class Manager extends Component {
             phone: "",
             todoSize: "",
             propertyId: "",
-            task: "",
+            message: "",
             id: "",
             business: "",
             profilePic: "",
@@ -66,7 +66,7 @@ class Manager extends Component {
         this.addProsModal = this.addProsModal.bind(this);
         this.addProfilePictureModal = this.addProfilePictureModal.bind(this);
         this.addPropertyModal = this.addPropertyModal.bind(this);
-        this.addTaskModal = this.addTaskModal.bind(this);
+        this.addMessageModal = this.addMessageModal.bind(this);
         this.addResidentModal = this.addResidentModal.bind(this);
         this.myPros = this.myPros.bind(this);
         this.myProperties = this.myProperties.bind(this);
@@ -108,6 +108,7 @@ class Manager extends Component {
                 this.setState({
                     properties: res.data 
                 });
+                console.log(this.state.properties.length)
             })
             .catch(err => console.log(err));
         USER
@@ -133,7 +134,7 @@ class Manager extends Component {
         handleUserFirstName = event => this.setState({ firstName: event.target.value });
         handleUserLastName = event => this.setState({ lastName: event.target.value });
         handleUserEmail = event => this.setState({ email: event.target.value });
-        handleTask = event => this.setState({ task: event.target.value });
+        handleMessage = event => this.setState({ message: event.target.value });
         handleBusiness = event => this.setState({ business: event.target.value });
         handlePrice = event => this.setState({ price: event.target.value });
     //Add Pros Modal Toggle
@@ -151,10 +152,10 @@ class Manager extends Component {
         this.setState({ addPropertyModalOpen: !this.state.addPropertyModalOpen });
         };
     //
-    addTaskModal = (id) => {
-        console.log(id);
+    addMessageModal = (id) => {
+        // console.log(id);
         this.setState({ propertyId: id});
-        this.setState({ addTaskModalOpen: !this.state.addTaskModalOpen });     
+        this.setState({ addMessageModalOpen: !this.state.addMessageModalOpen });     
       };
     //
     addResidentModal = id => { 
@@ -187,7 +188,7 @@ class Manager extends Component {
         }; 
     //Add Property
     submitMyProperty = event => {
-        if (this.state.Name && this.state.address1 && this.state.city && this.state.state && this.state.zipcode && this.state.description && this.state.type && this.state.available) 
+        if (this.state.Name && this.state.address1 && this.state.city && this.state.state && this.state.zipcode && this.state.description && this.state.type) 
         {
             PROP
                 .postProperty({
@@ -200,7 +201,6 @@ class Manager extends Component {
                     },
                     description: this.state.description,
                     type: this.state.type,
-                    available: this.state.available,
                     foreignkey: sessionStorage.getItem("id"),
                     price: this.state.price,
                     img: this.state.uploadedFileCloudinaryUrl
@@ -239,31 +239,32 @@ class Manager extends Component {
                 .catch(err => console.log(err));
       };
     //Add Tasks
-    addTask = ()=> {
-        this.setState({ addTaskModalOpen: !this.state.addTaskModalOpen });
-        if(this.state.task){
-            TASK
-                .postTask({
-                    _id: this.state.propertyId,
-                    todos: {
-                        task: this.state.task
+    addMessage = (id)=> {
+        // console.log(id);
+        if(this.state.message){
+            MESSAGE
+                .postMessage({
+                    message: {
+                        propertyId: this.state.propertyId,
+                        message: this.state.message
                     }
                 })
-                .then(res => window.location.reload())//this.loadUserData 
+                .then(res => console.log(res))//this.loadUserData window.location.reload()
                 .catch(err => console.log(err));
         }
+        this.setState({ addMessageModalOpen: !this.state.addMessageModalOpen });
      };
     //Delet Task
-    deleteTask = (propId, taskId) => {
+    deleteMessage = (propId, taskId) => {
         // console.log(propId, taskId);
-        const data ={
-            propId,
-            taskId
-        }
-        TASK
-                .deleteTask(data)
-                .then(res => console.log(res.data.todos[0]))//window.location.reload()
-                .catch(err => console.log(err));
+        // const data ={
+        //     propId,
+        //     taskId
+        // }
+        // MESSAGE
+        //         .deleteMessage(data)
+        //         .then(res => console.log(res.data.todos[0]))//window.location.reload()
+        //         .catch(err => console.log(err));
       }
     //Submit Resident
     submitResident = id =>{
@@ -295,7 +296,7 @@ class Manager extends Component {
         console.log(id);
         PROP
                 .deleteProperty(id)
-                .then(res => window.location.reload())
+                .then(res => {this.loadUserData(); this.myProperties() })
                 .catch(err => console.log(err));
       }
     //Upload Image
@@ -340,12 +341,16 @@ class Manager extends Component {
             this.setState({
               profilePic: res.body.secure_url
             })
+            sessionStorage.setItem("img", res.body.secure_url);
             IMG
                 .postImage({
                     _id: sessionStorage.getItem("id"),
                     img: res.body.secure_url
                 })
-                .then(res => this.addProfilePictureModal )
+                .then(res => {
+                    this.addProfilePictureModal();
+                    this.setState({ addProfilePictureModalOpen: !this.state.addProfilePictureModalOpen });
+                })
                 .catch(err => console.log(err));
           }
         })
@@ -385,8 +390,8 @@ class Manager extends Component {
                             </Button>
                             <Button className="col-sm-12" color="success" onClick={this.addPropertyModal} style={{ margin: '.5rem' }}>Add Property</Button>
                         </Col>
-{/*     Message TODO                  */}
-                        <Col xs="auto" sm="9">
+{/*     Message TODO                */}                        
+                            <Col xs="auto" sm="9">
                             {this.state.properties.length ? (
                                 <span>
                                 {this.state.properties.map(property => (
@@ -407,7 +412,7 @@ class Manager extends Component {
                                                            </span> }
                                                         </CardTitle>
                                                         <CardSubtitle>      {property.resident.lastName === null ? "" :
-                                                            <Button color="info" style={{margin: "1rem"}} onClick={() => this.addTaskModal(property._id)}>
+                                                            <Button color="info" style={{margin: "1rem"}} onClick={() => this.addMessageModal(property._id)}>
                                                                 Message Resident
                                                             </Button>
                                                              }
@@ -421,7 +426,7 @@ class Manager extends Component {
                                                             </strong>
                                                         </CardTitle>
                                                         <CardSubtitle>
-                                                        {property.todos.map(task => (
+                                                        {/* {property.todos.map(task => (
                                                             <span key={task._id}>       <hr></hr>
                                                                 {task.task}🔨
                                                                 <span>
@@ -430,7 +435,7 @@ class Manager extends Component {
                                                                 </Button>
                                                             </span>
                                                         </span>   
-                                                        ))}
+                                                        ))} */}
                                                         </CardSubtitle>
                                                     </CardBody>
                                                 </Col>
@@ -630,8 +635,7 @@ class Manager extends Component {
                             }}/>
                             This is a Bussiness Office for Rental.
                         </div>
-                        <hr></hr>
-                        <div
+                        {/* <div
                             className="col-sm-12"
                             style={{
                             marginLeft: "5px"
@@ -662,7 +666,7 @@ class Manager extends Component {
                                 marginTop: "7px"
                             }}/>
                             This Location is <span style={{color: "red"}}>Not</span> Available for Rent.
-                        </div>
+                        </div> */}
                         Monthly Rent Price:
                         <Input
                             type="text"
@@ -670,6 +674,7 @@ class Manager extends Component {
                             onChange={this.handlePrice}
                             name="price"
                             placeholder="$"/>
+                        <hr></hr>
                         <form>
                             <div className="FileUpload">
                             <Dropzone id="dropZone" onDrop={this.onImageDrop.bind(this)}
@@ -793,18 +798,18 @@ class Manager extends Component {
                         </ModalFooter>
                     </Modal>
 {/*     Add Task Modal              */}
-                <Modal isOpen={this.state.addTaskModalOpen} toggle={this.addTaskModal} className={this.props.className}>
-                    <ModalHeader toggle={this.addTaskModal}>Add Task</ModalHeader>
+                <Modal isOpen={this.state.addMessageModalOpen} toggle={this.addMessageModal} className={this.props.className}>
+                    <ModalHeader toggle={this.addMessageModal}>Add Task</ModalHeader>
                     <ModalBody>
                         <Input
                             type="text"
-                            value={this.state.task}
-                            onChange={this.handleTask}
+                            value={this.state.message}
+                            onChange={this.handleMessage}
                             name="task"
                             placeholder="E.g. 'Water leak' or 'Garage door jamed'"/>
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="success" onClick={this.addTask}>
+                        <Button color="success" onClick={this.addMessage}>
                             <i>Submit</i>
                         </Button>
                     </ModalFooter>

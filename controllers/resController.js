@@ -14,13 +14,13 @@ module.exports = {
     console.log("Property Controller Resident");
     console.log(req.params._id);
     db.Property
-      .findOneAndUpdate({ _id: req.params._id }, {$set: {resident: req.body.resident}})
+      .findOneAndUpdate({ _id: req.params._id }, {$set: {resident: req.body.resident}}, {$set: {available: "false"}})
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
   remove: function(req, res) {
     db.Property
-      .findOneAndUpdate({ _id: req.params._id }, {$unset: {resident: {
+      .findOneAndUpdate({ _id: req.params._id }, {$set: {available: "true"}}, {$unset: {resident: {
         firstName: null,
         lastName: null,
         email: null,

@@ -14,7 +14,7 @@ const PropertySchema = new Schema({
     zipcode:    { type: String, require: true }
   },
   description:  { type: String, require: true },
-  available:    { type: String, require: true },
+  available:    { type: String, require: true, default: "true" },
   price:        { type: String, require: true },
   foreignkey:   { type: String, require: true },
   resId:        { type: Schema.ObjectId, auto: true },
@@ -24,12 +24,12 @@ const PropertySchema = new Schema({
       email: { type: String, default: null },
       phone: { type: String, default: null }
   },
-  todos: [
-    {
-    task: {type: String, default: ""},
-    _id: { type: Schema.ObjectId, auto: true }
-    }
-  ],
+  // todos: [
+  //   {
+  //   task: {type: String, default: ""},
+  //   _id: { type: Schema.ObjectId, auto: true }
+  //   }
+  // ],
   img: { type: String }
 });
 
