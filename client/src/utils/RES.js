@@ -8,8 +8,8 @@ export default {
     return axios.delete("/api/res/" + id); 
   },
   editResident: function(data) {
-    console.log("Utils API AddResident");
-    console.log(data);
+    // console.log("Utils API AddResident");
+    // console.log(data);
     return axios.post("/api/res/"+ data._id, data);
   }
-};
+}; 

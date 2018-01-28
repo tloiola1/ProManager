@@ -11,11 +11,13 @@ import React, { Component } from "react";
     import { NavButton } from "../../components/Nav";
     import { ProfilePicture } from "../../components/ProfilePicture";
     import PROP from "../../utils/PROP";
+    import UPDATE from "../../utils/UPDATE";
     import MESSAGE from "../../utils/MESSAGE";
     import PROS from "../../utils/PROS";
     import RES from "../../utils/RES";
     import USER from "../../utils/USER";
     import IMG from "../../utils/IMG";
+    // import { IncomingMessage } from "http";
 //Class Component
 class Manager extends Component {
     
@@ -41,7 +43,6 @@ class Manager extends Component {
             myPropertiesCollapse: false,
             properties: [], 
             pros: [],
-            todos: [],
             name: "",
             firstName: "",
             lastName: "",
@@ -55,13 +56,13 @@ class Manager extends Component {
             type: "",
             available: "",
             phone: "",
-            todoSize: "",
             propertyId: "",
             message: "",
             id: "",
             business: "",
             profilePic: "",
-            price: ""
+            price: "",
+            update: false
         };
         this.addProsModal = this.addProsModal.bind(this);
         this.addProfilePictureModal = this.addProfilePictureModal.bind(this);
@@ -78,7 +79,7 @@ class Manager extends Component {
         // this.login = this.login.bind(this);
       };
     clear() {
-        this.setState({name: ''});
+        // this.setState({name: ''});
         this.setState({firstName: ''});
         this.setState({lastName: ''});
         this.setState({email: ''});
@@ -92,15 +93,17 @@ class Manager extends Component {
         this.setState({available: ''});
         this.setState({phone: ''});
         this.setState({todoSize: ''});
-        this.setState({propertyId: ''});
-        this.setState({task: ''});
-        this.setState({id: ''});
+        // this.setState({propertyId: ''});
+        this.setState({message: ''});
+        // this.setState({id: ''});
         this.setState({business: ''});
-        this.setState({profilePic: ''});
+        // this.setState({profilePic: ''});
         this.setState({price: ''});
+        this.setState({uploadedFileCloudinaryUrl: ''});
         }
     //Display User Data
     loadUserData = () =>{
+        this.setState({update: false});
         PROP
             .getUserProperties(sessionStorage.getItem("id"))
             .then(res => {
@@ -108,7 +111,7 @@ class Manager extends Component {
                 this.setState({
                     properties: res.data 
                 });
-                console.log(this.state.properties.length)
+                // console.log(this.state.properties.length)
             })
             .catch(err => console.log(err));
         USER
@@ -142,23 +145,77 @@ class Manager extends Component {
         this.clear();
         this.setState({ addProsModalOpen: !this.state.addProsModalOpen })
         };
-    //
-    addProfilePictureModal() { 
-        this.setState({ addProfilePictureModalOpen: !this.state.addProfilePictureModalOpen })
+    //My Pros Collapse Toggle
+    myPros() { 
+        this.setState({ myProsCollapse: !this.state.myProsCollapse })
         };
-    //Add Property Modal Toggle
-    addPropertyModal() {
-        this.clear();
-        this.setState({ addPropertyModalOpen: !this.state.addPropertyModalOpen });
-        };
-    //
+    //Add Pros
+    submitMyPros = event => {
+        //Mark Plumber 1221 qwertyuiop street 1234567890
+        if (this.state.Name && this.state.address1 && this.state.phone) {
+            PROS
+                .postPros({
+                    name: this.state.Name, 
+                    address: {
+                        address1: this.state.address1, 
+                        city: this.state.city,
+                        state: this.state.state,
+                        zipcode: this.state.zipcode
+                    },
+                    phone: this.state.phone,
+                    business: this.state.business,
+                    foreignkey: sessionStorage.getItem("id")
+                })
+                .then(res => console.log(res))
+                .catch(err => console.log(err));
+        }
+        this.loadUserData();
+        this.setState({ addProsModalOpen: !this.state.addProsModalOpen })
+     };
+    //Delete Pro
+    deletePro = id => {
+        console.log(id)
+        PROS
+                .deletePros(id)
+                .then(res => console.log(res))//window.location.reload()
+                .catch(err => console.log(err));
+      };
+    //Add Tasks
     addMessageModal = (id) => {
-        // console.log(id);
+        this.clear();
         this.setState({ propertyId: id});
         this.setState({ addMessageModalOpen: !this.state.addMessageModalOpen });     
       };
     //
-    addResidentModal = id => { 
+    addMessage = (id)=> {
+        if(this.state.message){
+            MESSAGE
+                .postMessage({
+                    _id: this.state.propertyId,
+                    message: {
+                        text: this.state.message
+                    }
+                })
+                .then(res => console.log(res))
+                .catch(err => console.log(err));
+        }
+        this.setState({ addMessageModalOpen: !this.state.addMessageModalOpen });
+        this.loadUserData();
+     };
+    //Delet Task
+    deleteMessage = (propertyId, messageId) => {
+        // console.log(propertyId, messageId);
+        const data ={
+            propertyId,
+            messageId
+        }
+        MESSAGE
+                .deleteMessage(data)
+                .then(res => console.log(res))//window.location.reload()
+                .catch(err => console.log(err));
+        this.loadUserData();
+      }
+      addResidentModal = id => { 
         this.clear(); 
         this.setState({ addResidentModalOpen: !this.state.addResidentModalOpen });
         this.setState({ propertyId: id});
@@ -166,6 +223,7 @@ class Manager extends Component {
     //editResident
     editResident = id => {
         this.clear();
+        this.setState({update: true});
         RES
             .getResidentPropertyId(id)
             .then( res => {
@@ -175,13 +233,69 @@ class Manager extends Component {
                 this.setState({email: res.data[0].resident.email});
                 this.setState({phone: res.data[0].resident.phone});
                 this.setState({ addResidentModalOpen: !this.state.addResidentModalOpen });
+                this.setState({ propertyId: id});
             })
             .catch( err => console.log(err));
       }
-    //My Pros Collapse Toggle
-    myPros() { 
-        this.setState({ myProsCollapse: !this.state.myProsCollapse })
+    //Submit Resident
+    submitResident = id =>{
+        // console.log(this.state.propertyId);
+        if (this.state.firstName && this.state.lastName && this.state.email && this.state.phone) {
+            RES
+                .editResident({
+                    _id: this.state.propertyId,
+                    resident: {
+                        firstName: this.state.firstName, 
+                        lastName: this.state.lastName,
+                        email: this.state.email,
+                        phone: this.state.phone
+                    }
+                })
+                .then(res => console.log(res))//
+                .catch(err => console.log(err));
+        }
+        this.loadUserData(); // 
+        this.setState({ addResidentModalOpen: !this.state.addResidentModalOpen });
+      }
+    //
+    deleteResident = id =>{
+        // console.log(id);
+        RES
+                .deleteResident(id)
+                .then(res => console.log(res))
+                .catch(err => console.log(err));
+        this.setState({ myPropertiesCollapse: !this.state.myPropertiesCollapse });
+        this.loadUserData();
+      }
+    //Add Property Modal Toggle
+    addPropertyModal() {
+        this.clear();
+        this.setState({update: false});
+        this.setState({ addPropertyModalOpen: !this.state.addPropertyModalOpen });
         };
+    //
+    editProperty = id => {
+        this.clear();
+        this.setState({ addPropertyModalOpen: !this.state.addPropertyModalOpen });
+        UPDATE
+            .getPropertyById(id)
+            .then( res => {
+                console.log(res);
+                    this.setState({ propertyId: res.data[0]._id });
+                    this.setState({ Name: res.data[0].propertyname });
+                    this.setState({ address1: res.data[0].address.address1 });
+                    this.setState({ city: res.data[0].address.city });
+                    this.setState({ state: res.data[0].address.state });
+                    this.setState({ zipcode: res.data[0].address.zipcode });
+                    this.setState({ description: res.data[0].description });
+                    this.setState({ type: res.data[0].type });
+                    this.setState({ id: res.data[0].foreignkey });
+                    this.setState({ price: res.data[0].price });
+                    this.setState({ uploadedFileCloudinaryUrl: res.data[0].img });
+                    this.setState({ update: true });
+            })
+            .catch( err => console.log(err));
+      }
     //Collapse My Properties
     myProperties(){ 
         this.setState({ myPropertiesCollapse: !this.state.myPropertiesCollapse })
@@ -205,91 +319,36 @@ class Manager extends Component {
                     price: this.state.price,
                     img: this.state.uploadedFileCloudinaryUrl
                 })
-                .then(res => window.location.reload())
+                .then(res => console.log(res))
                 .catch(err => console.log(err));
         }
+        this.loadUserData();
+        this.setState({ addPropertyModalOpen: !this.state.addPropertyModalOpen });
       };
-    //Add Pros
-    submitMyPros = event => {
-        //Mark Plumber 1221 qwertyuiop street 1234567890
-        if (this.state.Name && this.state.address1 && this.state.phone) {
-            PROS
-                .postPros({
-                    name: this.state.Name, 
+    //Update Property
+    updateProperty = id =>{
+        if (this.state.Name && this.state.address1 && this.state.city && this.state.state && this.state.zipcode && this.state.description && this.state.type) 
+        {
+            UPDATE
+                .updateProperty({
+                    _id: this.state.propertyId,
+                    propertyname: this.state.Name, 
                     address: {
                         address1: this.state.address1, 
                         city: this.state.city,
                         state: this.state.state,
                         zipcode: this.state.zipcode
                     },
-                    phone: this.state.phone,
-                    business: this.state.business,
-                    foreignkey: sessionStorage.getItem("id")
+                    description: this.state.description,
+                    type: this.state.type,
+                    price: this.state.price,
+                    img: this.state.uploadedFileCloudinaryUrl
                 })
-                .then(res => window.location.reload())
-                .catch(err => console.log(err));
-        } 
-     };
-    //Delete Pro
-    deletePro = id => {
-        console.log(id)
-        PROS
-                .deletePros(id)
-                .then(res => console.log(res))//window.location.reload()
-                .catch(err => console.log(err));
-      };
-    //Add Tasks
-    addMessage = (id)=> {
-        // console.log(id);
-        if(this.state.message){
-            MESSAGE
-                .postMessage({
-                    message: {
-                        propertyId: this.state.propertyId,
-                        message: this.state.message
-                    }
-                })
-                .then(res => console.log(res))//this.loadUserData window.location.reload()
+                .then(res => console.log(res))
                 .catch(err => console.log(err));
         }
-        this.setState({ addMessageModalOpen: !this.state.addMessageModalOpen });
-     };
-    //Delet Task
-    deleteMessage = (propId, taskId) => {
-        // console.log(propId, taskId);
-        // const data ={
-        //     propId,
-        //     taskId
-        // }
-        // MESSAGE
-        //         .deleteMessage(data)
-        //         .then(res => console.log(res.data.todos[0]))//window.location.reload()
-        //         .catch(err => console.log(err));
-      }
-    //Submit Resident
-    submitResident = id =>{
-        if (this.state.firstName && this.state.lastName && this.state.email && this.state.phone) {
-            RES
-                .editResident({
-                    _id: this.state.propertyId,
-                    resident: {
-                        firstName: this.state.firstName, 
-                        lastName: this.state.lastName,
-                        email: this.state.email,
-                        phone: this.state.phone
-                    }
-                })
-                .then(res => window.location.reload())//console.log(res)
-                .catch(err => console.log(err));
-        }
-      }
-    //
-    deleteResident = id =>{
-        console.log(id);
-        RES
-                .deleteResident(id)
-                .then(res => window.location.reload())
-                .catch(err => console.log(err));
+        this.loadUserData();
+        this.setState({ addPropertyModalOpen: !this.state.addPropertyModalOpen });
       }
     //
     deleteProperty = id =>{
@@ -300,6 +359,10 @@ class Manager extends Component {
                 .catch(err => console.log(err));
       }
     //Upload Image
+    addProfilePictureModal() { 
+        this.setState({ addProfilePictureModalOpen: !this.state.addProfilePictureModalOpen })
+        };
+    //
     onImageDrop(files) {
         const file = files[0];        
         this.setState({
@@ -365,8 +428,11 @@ class Manager extends Component {
                 <FixedHeader>
                     <Container>
                         <Row>
-                            <Logo/>
-                            <NavButton>
+                            <Col sm="2" xs="1">
+                                <Logo/>
+                            </Col>
+                            <Col sm="10" xs="11">
+                                <NavButton>
                                     <span> {/* onClick=this.addProfilePictureModal} */}
                                         <a><ProfilePicture src={this.state.profilePic} onClick={this.addProfilePictureModal}></ProfilePicture></a>
                                         <strong> 
@@ -374,7 +440,8 @@ class Manager extends Component {
                                         </strong>
                                     </span>
                                     <a id="logoff" href="/"><strong> | Log Off</strong></a>
-                            </NavButton>
+                                </NavButton>
+                            </Col>
                         </Row>
                     </Container>
                 </FixedHeader>
@@ -390,8 +457,8 @@ class Manager extends Component {
                             </Button>
                             <Button className="col-sm-12" color="success" onClick={this.addPropertyModal} style={{ margin: '.5rem' }}>Add Property</Button>
                         </Col>
-{/*     Message TODO                */}                        
-                            <Col xs="auto" sm="9">
+{/*     Message TODO                */}
+                        <Col xs="auto" sm="9">
                             {this.state.properties.length ? (
                                 <span>
                                 {this.state.properties.map(property => (
@@ -422,20 +489,20 @@ class Manager extends Component {
                                                 <Col xs="auto" sm="5">
                                                     <CardBody>
                                                         <CardTitle>
-                                                            <strong>My Tasks
+                                                            <strong>My Inbox
                                                             </strong>
                                                         </CardTitle>
                                                         <CardSubtitle>
-                                                        {/* {property.todos.map(task => (
-                                                            <span key={task._id}>       <hr></hr>
-                                                                {task.task}🔨
+                                                        {property.message.map(message => (
+                                                            <span key={message._id}>       <hr></hr>
+                                                                {message.text}🔨
                                                                 <span>
-                                                                <Button color="danger" onClick={() => this.deleteTask(property._id, task._id)} style={{margin: "irem"}}>
+                                                                <Button color="danger" onClick={() => this.deleteMessage(property._id, message._id)} style={{margin: "irem"}}>
                                                                 X
                                                                 </Button>
                                                             </span>
                                                         </span>   
-                                                        ))} */}
+                                                        ))}
                                                         </CardSubtitle>
                                                     </CardBody>
                                                 </Col>
@@ -497,15 +564,19 @@ class Manager extends Component {
                                         , {property.address.city}
                                         , {property.address.state}
                                         , {property.address.zipcode}
-                                        <br></br>{property.description}
+                                        <br/>{property.description}
+                                        <br/>{"$"}{property.price}
                                     </strong>
                                 </ModalBody>
                                 <ModalFooter style={{padding: "0rem"}}>
+                                    <Button color="info" onClick={()=>{ this.editProperty(property._id)}} style={{margin: "1rem 1rem 0rem 0rem"}}>
+                                        Edit Property
+                                    </Button>
                                     <Button color="danger" onClick={() => this.deleteProperty(property._id)} style={{margin: "1rem 1rem 0rem 0rem"}}>
                                         Delete Property
                                     </Button>
                                 </ModalFooter>
-                                <hr></hr>
+                                <hr/>
                                 
 {/*     Load My Residents           */}
                                 {property.resident.lastName !== null ?
@@ -538,10 +609,10 @@ class Manager extends Component {
                                 {property.resident.lastName !== null ?
                                 <ModalFooter style={{padding: "0px"}}>
                                     <Button color="info" onClick={()=>{ this.editResident(property._id)}} style={{margin: "1rem 1rem 0rem 0rem"}}>
-                                        Edit
+                                        Edit Resident
                                     </Button>
                                     <Button color="danger" onClick={() => this.deleteResident(property._id)} style={{margin: "1rem 1rem 0rem 0rem"}}>
-                                        Delete
+                                        Delete Resident
                                     </Button>
                                 </ModalFooter>
                                 : ''}
@@ -557,7 +628,7 @@ class Manager extends Component {
                 </Modal>
 {/*     Add Property Modal          */}
                 <Modal isOpen={this.state.addPropertyModalOpen} toggle={this.addPropertyModal} className={this.props.className}>
-                    <ModalHeader>Add Property</ModalHeader>
+                    <ModalHeader toggle={this.addPropertyModal} >Add Property</ModalHeader>
                     <ModalBody>
                         Name the Property
                         <Input
@@ -635,38 +706,6 @@ class Manager extends Component {
                             }}/>
                             This is a Bussiness Office for Rental.
                         </div>
-                        {/* <div
-                            className="col-sm-12"
-                            style={{
-                            marginLeft: "5px"
-                        }}>
-                            <Input
-                                type="radio"
-                                className="form-check-input"
-                                name= "available-radio"
-                                value= "true"
-                                onChange={this.handleAvailability}
-                                style={{
-                                marginTop: "7px"
-                            }}/>
-                            This Location is Available for Rent.
-                        </div>
-                        <div
-                            className="col-sm-12"
-                            style={{
-                            marginLeft: "5px"
-                        }}>
-                            <Input
-                                type="radio"
-                                className="form-check-input"
-                                name= "available-radio"
-                                value= "false"
-                                onChange={this.handleAvailability}
-                                style={{
-                                marginTop: "7px"
-                            }}/>
-                            This Location is <span style={{color: "red"}}>Not</span> Available for Rent.
-                        </div> */}
                         Monthly Rent Price:
                         <Input
                             type="text"
@@ -690,9 +729,15 @@ class Manager extends Component {
                         </form>
                     </ModalBody>
                     <ModalFooter>
+                    {this.state.update === false ? 
                         <Button color="success" onClick={this.submitMyProperty}>
                             <i>Submit</i>
                         </Button>
+                    : 
+                        <Button color="success" onClick={this.updateProperty}>
+                            <i>Update</i>
+                        </Button>
+                    }
                     </ModalFooter>
                 </Modal>
 {/*     Add Resident Modal          */}
@@ -731,7 +776,7 @@ class Manager extends Component {
                     </ModalBody>
                     <ModalFooter>
                         <Button color="success" onClick={this.submitResident}>
-                            {this.state.firstName === "" ?
+                            {this.state.update === false ?
                                 <i>Submit</i>
                             : <i>Update</i> }
                         </Button>
@@ -747,7 +792,7 @@ class Manager extends Component {
                                 value={this.state.Name}
                                 onChange={this.handleInputName}
                                 name="name"
-                                placeholder="E.g. 'Mark, Plumber' or 'Handyman'"/>
+                                placeholder=""/>
                             Address
                             <Input
                                 type="text"
@@ -789,7 +834,7 @@ class Manager extends Component {
                                 value={this.state.business}
                                 onChange={this.handleBusiness}
                                 name="phone"
-                                placeholder=""/>
+                                placeholder="E.g. 'Mark, Plumber' or 'Handyman'"/>
                         </ModalBody>
                         <ModalFooter>
                             <Button color="success" onClick={this.submitMyPros}>

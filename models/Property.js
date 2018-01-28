@@ -24,12 +24,12 @@ const PropertySchema = new Schema({
       email: { type: String, default: null },
       phone: { type: String, default: null }
   },
-  // todos: [
-  //   {
-  //   task: {type: String, default: ""},
-  //   _id: { type: Schema.ObjectId, auto: true }
-  //   }
-  // ],
+  message: [
+    {
+    text: {type: String, default: ""},
+    _id: { type: Schema.ObjectId, auto: true }
+    }
+  ],
   img: { type: String }
 });
 

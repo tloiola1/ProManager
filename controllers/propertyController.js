@@ -10,14 +10,6 @@ module.exports = {
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
-  findById: function(req, res) {
-    console.log("Property Controller FindById.");
-    console.log(req.params._id);
-    db.Property
-      .find({_id: req.params._id})
-      .then(dbModel => res.json(dbModel))
-      .catch(err => res.status(422).json(err));
-  },
   findByForeignKey: function(req, res) {
     console.log("Property Controller FindByForeignKey.");
     console.log(req.params._id);
@@ -41,4 +33,4 @@ module.exports = {
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   }
-};
+}; 

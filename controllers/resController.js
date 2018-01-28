@@ -11,22 +11,29 @@ module.exports = {
       .catch(err => res.status(422).json(err));
   },
   update: function(req, res) {
-    console.log("Property Controller Resident");
+    console.log("Property Controller Resident"); 
     console.log(req.params._id);
     db.Property
-      .findOneAndUpdate({ _id: req.params._id }, {$set: {resident: req.body.resident}}, {$set: {available: "false"}})
+      .findOneAndUpdate({ _id: req.params._id }, {$set: {resident: req.body.resident}, available: "false"})
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
   remove: function(req, res) {
     db.Property
-      .findOneAndUpdate({ _id: req.params._id }, {$set: {available: "true"}}, {$unset: {resident: {
+      .findOneAndUpdate({ _id: req.params._id }, {$set: {resident: {
         firstName: null,
         lastName: null,
         email: null,
         phone: null
-      }}})
-      .then(dbModel => res.json(dbModel))
+      }},
+      available: "true"
+      })
+      .then((property) => {
+        property.message = new Array();
+        property.save();
+        res.json(property)
+      })
       .catch(err => res.status(422).json(err));
   }
 };
+ 

@@ -3,15 +3,15 @@ import React from "react";
     import {FixedHeader} from "../../components/Header";
     import {Body} from "../../components/Body";
     import {Margin} from "../../components/Tag";
-    import {Button, Modal, ModalHeader, ModalBody, ModalFooter, Card, CardTitle,CardSubtitle, CardBody, CardText, Col, Container, Row, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem} from "reactstrap";
+    import {Button, Modal, ModalHeader, ModalBody, ModalFooter, Card, CardTitle,CardSubtitle, CardBody, CardText, Col, Container, Row} from "reactstrap";//, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem
     import {Logo} from "../../components/Logo";
     import {NavButton} from "../../components/Nav";
-    import { CardPhoto } from "../../components/Card";
+    import { CardPhoto } from "../../components/CardPhoto";
+    import { SearchBox, PanelBox } from "../../components/SearchBox";
     import {Input } from "../../components/Form";
     import PROP from "../../utils/PROP";
     import USER from "../../utils/USER";
-    import "./Home.css"
-// import PROS from "../../utils/PROS";
+    import PROS from "../../utils/PROS";
 
 class Home extends React.Component {
     
@@ -25,38 +25,25 @@ class Home extends React.Component {
             dropdownOpen: false,
             loginModal: false,
             registerModal: false,
+            myProsModalOpen: false,
             properties: [],
-            users: [],
+            pros: [],
             name: "",
             firstName: "",
             lastName: "",
             email: "",
             password: "",
+            confirmpassword: "",
             phone: "",
             title: "",
-            search: ""
+            searchValue: "",
+            confirm: false
         };
         this.register = this.register.bind(this);
         this.login = this.login.bind(this);
         this.toggle = this.toggle.bind(this);
-      };
-    //Toggle
-    toggle() {
-        this.setState({
-          dropdownOpen: !this.state.dropdownOpen
-        });
-      }
-    //Display Login Modal
-    login() {
-            this.setState({
-                loginModal: !this.state.loginModal
-        });
-      };
-    //Display Register Modal
-    register() {
-          this.setState({
-              registerModal: !this.state.registerModal
-          });
+        this.myPros = this.myPros.bind(this);
+
       };
     //Display Properties
     loadProperties = () => {
@@ -72,7 +59,7 @@ class Home extends React.Component {
                 this.setState({
                     properties: array
                 });
-                console.log(this.state.properties);
+                // console.log(this.state.properties);
             })
             .catch(err => console.log(err));
       };
@@ -81,9 +68,22 @@ class Home extends React.Component {
         userLastName = event => this.setState({lastName:  event.target.value});
         userEmail = event => this.setState({email: event.target.value});
         userPassword = event => this.setState({password: event.target.value});
+        userConfirmPassword = event => this.setState({confirmpassword: event.target.value});
         userPhone = event => this.setState({phone: event.target.value});
         userTitle = event => this.setState({title: event.target.value});
-        handleSearch = event => this.setState({search: event.target.value});
+        handleSearch = event => this.setState({searchValue: event.target.value});
+    //Toggle
+    toggle() {
+        this.setState({ dropdownOpen: !this.state.dropdownOpen });
+      };
+    //Display Login Modal
+    login() {
+            this.setState({loginModal: !this.state.loginModal});
+      };
+    //Display Register Modal
+    register() {
+          this.setState({ registerModal: !this.state.registerModal });
+      };
     //Login User
     formLogin = event => {
         if (this.state.email && this.state.password) {
@@ -98,7 +98,7 @@ class Home extends React.Component {
       };
     // Create User Function
     formRegister = event => {
-        if (this.state.firstName && this.state.lastName && this.state.email && this.state.password && this.state.phone && this.state.title) {
+        if(this.state.password === this.state.confirmpassword && this.state.firstName && this.state.lastName && this.state.email && this.state.password && this.state.confirmpassword && this.state.phone && this.state.title) {
             USER
                 .postUser({
                     name: {
@@ -112,6 +112,10 @@ class Home extends React.Component {
                 })
                 .then(res => this.newUser(res))
                 .catch(err => console.log(err));
+        }
+        else{
+            this.setState({confirmpassword: ''})
+            this.setState({confirm: true})
         }
       };
     //Create New User
@@ -145,30 +149,61 @@ class Home extends React.Component {
      };
     //User No Access
     notAllow = () => {
-        //Neeed to open register modal
-        // document.getElementById("register").then( ()=> console.log("Good"));
+        this.setState({ registerModal: !this.state.registerModal });
       }
-    searchPro =() => {
-        console.log(this.state.search);
-    }
+    //My Pros Collapse Toggle
+    myPros() { 
+        this.setState({ myProsModalOpen: !this.state.myProsModalOpen })
+        };
+    //
+    searchPro =(business) => {
+        this.setState({ myProsModalOpen: !this.state.myProsModalOpen })
+        business = this.state.searchValue;
+        PROS
+            .getAllPros()
+            .then(res => { 
+                // console.log(res.data);
+                if(business.toLowerCase() === "all"){
+                    // console.log("ALL My Friend")
+                    this.setState({ pros: res.data });
+                }else 
+                if(business !== "all"){
+                    const data = [];
+                    for(let i = 0; i < res.data.length; i++){
+                        if(res.data[i].business.toLowerCase() === business.toLowerCase()){
+                            data.push(res.data[i]);
+                        }
+                    }
+                    this.setState({ pros: data }); 
+                }
+                // this.setState({ownerId: data[0].foreignkey});
+                
+                // console.log(this.state.pros);
+            })
+            .catch(err => console.log(err));
+      }
     //render
     render() {
       return (
           <Body>
-{/* Fixed Header    */}
+{/*     Fixed Header        */}
             <div className="fixed-top fixed-top-custom"></div>
               <FixedHeader>
                 <Container>
                   <Row>
-                    <Logo/>
+                    <Col sm="2" xs="1">
+                        <Logo/>
+                    </Col>
+                    <Col sm="10" xs="11">
                         <NavButton>
                           <Button color="success" onClick={this.login}style={{margin: "1rem"}}>Login</Button>{''}
                           <Button color="success"onClick={this.register}style={{margin: "1rem"}}>Register</Button>
                         </NavButton>
+                    </Col>
                     </Row>
                 </Container>
               </FixedHeader>
-{/* Login Modal     */}
+{/*     Login Modal         */}
               <Modal isOpen={this.state.loginModal} toggle={this.login} className={this.props.className}>
                 <ModalHeader toggle={this.login}>Login</ModalHeader>
                 <ModalBody>
@@ -190,7 +225,7 @@ class Home extends React.Component {
                 <Button color="success" onClick={this.formLogin}>Submit</Button>
                 </ModalFooter>
               </Modal>
-{/* Register Modal  */}
+{/*     Register Modal      */}
               <Modal isOpen={this.state.registerModal} toggle={this.register} className={this.props.className}>
                 <ModalHeader toggle={this.register}>Register</ModalHeader>
                 <ModalBody>
@@ -222,6 +257,17 @@ class Home extends React.Component {
                         onChange={this.userPassword}
                         name="password"
                         placeholder=""/>
+                    {this.state.confirm === false ? 
+                    <span>Confirm Password</span>
+                    :
+                    <span style={{color:"red"}}>Confirm Password</span>}
+                    
+                    <Input
+                        type="password"
+                        value={this.state.confirmpassword}
+                        onChange={this.userConfirmPassword}
+                        name="password"
+                        placeholder=""/>
                     Phone
                     <Input
                         type="text"
@@ -243,7 +289,7 @@ class Home extends React.Component {
                             style={{
                             marginTop: "7px"
                         }}/>
-                        I want to find a new home.
+                        I am a Tenant / I want to find a new home.
                     </div>
                     <div
                         className="divRadio col-sm-12"
@@ -266,12 +312,39 @@ class Home extends React.Component {
                 <Button color="success" onClick={this.formRegister}>Submit</Button>
                 </ModalFooter>
               </Modal>
-{/* Margin Top      */}
+{/*     My Pros Modal       */}
+                <Modal isOpen={this.state.myProsModalOpen} toggle={this.myPros}>
+                    {this.state.pros.length ? (
+                        <span>
+                        {this.state.pros.map(pro => (
+                            <span key={pro._id}>
+                                <ModalHeader toggle={this.myPros}>
+                                    <strong>
+                                        {pro.name}{" "}
+                                    </strong>
+                                    {pro.business}
+                                </ModalHeader>
+                                <ModalBody>
+                                    <strong>
+                                    <span role="img" aria-label="emoji">🏠</span>{" "}{pro.address.address1}
+                                    <br></br>
+                                    <span role="img" aria-label="emoji">📞</span>{" "}<a href={'tel:'+pro.phone}>
+                                        {pro.phone}
+                                    </a>
+                                    </strong>
+                                </ModalBody>
+                                <hr style={{border: "2px solid #000"}}></hr>
+                            </span>
+                        ))}
+                        </span>
+                    ) : ( <h3>Your Contact List is Empty</h3> )}
+                </Modal>
+{/*     Margin Top          */}
                 <Margin/> 
-{/* Properties      */}
+{/*     Properties          */}
                 <Container>
                     <Row>
-                    <Col xm="auto" sm="8">
+                    <Col sm="8">
                     {this.state.properties.length
                         ? (
                             <span>
@@ -281,12 +354,12 @@ class Home extends React.Component {
                                     .map(property => (
                                         <Card key={property._id}>
                                                 <Row>
-                                                    <Col sm="4">
-                                                        <CardPhoto id="myImage">
+                                                    <Col xs="12" sm="5">
+                                                        <CardPhoto>
                                                             {property.img}
                                                         </CardPhoto>
                                                     </Col>
-                                                    <Col sm="8">
+                                                    <Col xs="12" sm="7">
                                                         <CardBody>
                                                             <CardTitle>
                                                                 <strong>
@@ -319,33 +392,27 @@ class Home extends React.Component {
                             }}>No Results to Display</h3>
                         )}
                     </Col>
-{/* Acreddited Pro  */}
-                    <Col xm="auto" sm="4">
-                        <div style={{height: "150px", width: "330px", backgroundColor: "black", opacity: ".5", position: "fixed"}}></div>
-                        <div style={{padding: "20px 10px", position: "fixed"}}>
-                        <h2 className="text-center" style={{color: "orange"}}>Need Help?</h2>
+{/*     Acreddited Pro      */}
+                    <Col md="4">
+                        <PanelBox/>
+                        <SearchBox>
+                            <h2 className="text-center" style={{color: "orange"}}>Need Help?</h2>
                             <h5 style={{color: "orange"}}>Search For Acredited Professional</h5>
-                            <ButtonDropdown isOpen={this.state.dropdownOpen} toggle={this.toggle} style={{float:"right"}}>
-                                <Button id="caret" outline color="warning" style={{float:"right"}}>Search</Button>
-                                <DropdownToggle caret color="warning" />
-                                <DropdownMenu>
-                                    <DropdownItem>Header</DropdownItem>
-                                    <DropdownItem>Action</DropdownItem>
-                                    <DropdownItem>Another Action</DropdownItem>
-                                    {/* <DropdownItem divider/> */}
-                                    <DropdownItem>Another Action</DropdownItem>
-                                </DropdownMenu>
-                                </ButtonDropdown>
-                            <div style={{marginTop: "20px"}}>
-                            {/* <Button color="warning" onClick= { this.searchPro } style={{float: "right"}}>
+                            <Input
+                                type="text"
+                                value={this.state.searchValue}
+                                onChange={this.handleSearch}
+                                name="Pro"
+                                placeholder="E.g 'Plumber', 'HandyMan', or 'All'"/>
+                            <Button color="warning" onClick= { this.searchPro } style={{float: "right", margin: "1rem"}}>
                                 Search
-                            </Button> */}
-                            </div>
-                        </div>
+                            </Button> 
+                        </SearchBox>
+                        
                     </Col>
                     </Row>
                 </Container>
-                <a href="/findproperty" className="btn btn-large-success">Find a new home.</a>
+                <a href="/contact">Contact ProManager.com</a>
             </Body>
         );
     }

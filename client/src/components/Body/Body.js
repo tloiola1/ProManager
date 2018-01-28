@@ -1,5 +1,5 @@
 import React from "react";
-import "./Body.css";
+import "../CSS/Style.css";
 
 export const Body = ({ fluid, children }) =>
   <div>
