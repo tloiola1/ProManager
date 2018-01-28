@@ -360,13 +360,13 @@ class Manager extends Component {
                                                         <CardSubtitle>
                                                         {property.todos.map(task => (
                                                             <span key={task._id}>
+                                                            <hr></hr>
                                                                 {task.task}🔨
                                                                 <span>
                                                                 <Button color="danger" onClick={() => this.deleteTask(property._id, task._id)} style={{margin: "irem"}}>
                                                                 X
                                                                 </Button>
                                                             </span>
-                                                            <hr></hr>
                                                         </span>   
                                                         ))}
                                                         </CardSubtitle>

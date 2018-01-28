@@ -208,9 +208,9 @@ class Manager extends Component {
                 <Container>
                     <Row>
                         <Col sm="3">
-                            <Button className="col-sm-12" color="primary" onClick={this.addProsModal} style={{ margin: '.5rem' }}>Add Pros</Button>
-                            <Button className="col-sm-12" color="primary" onClick={this.myPros} style={{ margin: '.5rem' }}>My Pros</Button>
-                            <Button className="col-sm-12" color="primary" onClick={this.myProperties} style={{ margin: '.5rem' }}>
+                            <Button className="col-sm-12" color="success" onClick={this.addProsModal} style={{ margin: '.5rem' }}>Add Pros</Button>
+                            <Button className="col-sm-12" color="success" onClick={this.myPros} style={{ margin: '.5rem' }}>My Pros</Button>
+                            <Button className="col-sm-12" color="success" onClick={this.myProperties} style={{ margin: '.5rem' }}>
                                 Home Sweet Home
                             </Button>
                         </Col>
@@ -230,7 +230,7 @@ class Manager extends Component {
                                                             <strong>{property.propertyname}
                                                             </strong>
                                                             <br></br>
-                                                            LandLord:{" "}{landLord.name.firstName}{" "} {landLord.name.lastName}
+                                                            Owner:{" "}{landLord.name.firstName}{" "} {landLord.name.lastName}
                                                         </CardTitle>
                                                         <CardSubtitle>
                                                             <a herf={"mailto:"+ landLord.email}><span role="img" aria-label="emoji">📧</span>{" "}{landLord.email}</a>
@@ -364,7 +364,7 @@ class Manager extends Component {
                                 placeholder=""/>
                         </ModalBody>
                         <ModalFooter>
-                            <Button color="primary" onClick={this.submitMyPros}>
+                            <Button color="success" onClick={this.submitMyPros}>
                                 <i>Submit</i>
                             </Button>
                         </ModalFooter>
@@ -381,7 +381,7 @@ class Manager extends Component {
                             placeholder="E.g. 'Water leak' or 'Garage door jamed'"/>
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="primary" onClick={this.addTask}>
+                        <Button color="success" onClick={this.addTask}>
                             <i>Submit</i>
                         </Button>
                     </ModalFooter>

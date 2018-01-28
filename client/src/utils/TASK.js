@@ -7,7 +7,8 @@ export default {
   },
 
   deleteTask: function(data) {
-    return axios.post("/api/task/"+ data, data);
+    console.log(data);
+    return axios.post("/api/task/"+ data.propId, data.taskId);
   }
 //   // Saves a book to the database
 //   savePoperty: function(bookData) {
