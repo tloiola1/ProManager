@@ -9,7 +9,7 @@ export default {
   },
   deleteMessage: function(data) {
     // console.log("Data");
-    console.log(data);
+    // console.log(data);
     return axios.post("/api/message/"+ data.propertyId, data);
   }
 };

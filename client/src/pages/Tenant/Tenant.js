@@ -5,7 +5,7 @@ import React, { Component } from "react";
     import {Body} from "../../components/Body";
     import { FixedHeader } from "../../components/Header";
     import {Button, Modal, ModalHeader, ModalBody, ModalFooter, Card, CardTitle,CardSubtitle, CardBody, Col, Container, Row} from "reactstrap";
-    import { CardPhoto } from "../../components/Card";
+    import { CardPhoto } from "../../components/CardPhoto";
     import { Logo } from "../../components/Logo";
     import {Input } from "../../components/Form";
     import { Margin } from "../../components/Tag";
