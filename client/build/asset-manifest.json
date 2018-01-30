@@ -1,7 +1,14 @@
 {
+<<<<<<< HEAD
   "main.css": "static/css/main.32183201.css",
   "main.css.map": "static/css/main.32183201.css.map",
   "main.js": "static/js/main.394c4b9b.js",
   "main.js.map": "static/js/main.394c4b9b.js.map",
+=======
+  "main.css": "static/css/main.80cc6d08.css",
+  "main.css.map": "static/css/main.80cc6d08.css.map",
+  "main.js": "static/js/main.5db9832e.js",
+  "main.js.map": "static/js/main.5db9832e.js.map",
+>>>>>>> 645071b891ef78162aba8261fd3457e41a76eaff
   "static\\media\\apt1.jpg": "static/media/apt1.b7fe78f8.jpg"
 }

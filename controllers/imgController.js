@@ -1,35 +1,40 @@
-const request = require('superagent');
-const key = require('../key.js');
-
-
-
+// const request = require('superagent');
+// const key = require('../key.js');
+const db = require('../models');
 
 module.exports = {
-
-    upload: function(req, res) {
+    upload: function(req, res, next){
         console.log("****** Upload  ******") 
-        const file = req.body;
-        const CLOUDINARY_UPLOAD_PRESET = "adpt8bps";
-        const CLOUDINARY_UPLOAD_URL = "https://api.cloudinary.com/v1_1/promanager/image/upload";
-
-        let upload = request.post(CLOUDINARY_UPLOAD_URL)
-                     .field('upload_preset', CLOUDINARY_UPLOAD_PRESET)
-                     .field('file', file);
-
-            upload.end((err, res) => {
-            if (err) {
-                console.error(err);
-            }
-            console.log(res)
-            if (res.body.secure_url !== '') {
-                console.log(res.body.secure_url)
-            }
-            })
-            .then(cloud => res.json(cloud))
+        console.log(req.body);
+        db.User
+            .findOneAndUpdate({ _id: req.body._id }, {$set: {img: req.body.img}})
+            .then(dbModel => res.json(dbModel))
             .catch(err => res.status(422).json(err));
-    // 
-    // 
     }
+    // upload: function(req, res) {
+    //     console.log("****** Upload  ******") 
+    //     const file = req.body;
+    //     const CLOUDINARY_UPLOAD_PRESET = "adpt8bps";
+    //     const CLOUDINARY_UPLOAD_URL = "https://api.cloudinary.com/v1_1/promanager/image/upload";
+
+    //     let upload = request.post(CLOUDINARY_UPLOAD_URL)
+    //                  .field('upload_preset', CLOUDINARY_UPLOAD_PRESET)
+    //                  .field('file', file);
+
+    //         upload.end((err, res) => {
+    //         if (err) {
+    //             console.error(err);
+    //         }
+    //         console.log(res)
+    //         if (res.body.secure_url !== '') {
+    //             console.log(res.body.secure_url)
+    //         }
+    //         })
+    //         .then(cloud => res.json(cloud))
+    //         .catch(err => res.status(422).json(err));
+    // // 
+    // // 
+    // }
 }
 // import axios from "axios";
 

@@ -5,7 +5,7 @@ export default {
   getUser: function(getData) {
     // console.log("Utils API getUser");
     // console.log(getData);
-    return axios.get("/api/users", getData);
+    return axios.get("/api/users", getData); 
   },
   //Post New User
   postUser: function(postData) {
@@ -23,11 +23,10 @@ export default {
   deleteUser: function(id) {
     return axios.delete("/api/users/" + id);
   },
-  getMyPros: function(id) {
-    return axios.get("/api/users/" + id)
+  //
+  sendMessage: function(data){
+    // console.log("Utils API SendMessage");
+    // console.log(data);
+    return axios.post("/api/update/"+data.id, data.message);
   }
-  // Saves a book to the database
-  // saveUser: function(bookData) {
-  //   return axios.post("/api/books", bookData);
-  // }
 };

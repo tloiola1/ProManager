@@ -8,16 +8,10 @@ export default {
     return axios.get("/api/properties");
   },
   // Post New PropertY 
-  postProperty: function(data) {
+  postProperty: function(data) { 
     // console.log("Utils API postProperty");
     // console.log(data);
     return axios.post("/api/properties", data);
-  },
-  //Get Property with Id
-  getPropertyById: function(id) {
-    // console.log("Utils API getProperty by Id");
-    // console.log(id);
-    return axios.get("/api/properties/" + id);
   },
   //
   getUserProperties: function(id) {
@@ -29,8 +23,4 @@ export default {
   deleteProperty: function(id) {
     return axios.delete("/api/properties/" + id);
   }
-//   // Saves a book to the database
-//   savePoperty: function(bookData) {
-//     return axios.post("/api/books", bookData);
-//   }
 };

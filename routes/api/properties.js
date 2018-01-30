@@ -10,7 +10,7 @@ router.route("/:_id")
   .get(propertyController.findByForeignKey)
   .delete(propertyController.remove);
 
-router.route("/:user/:_id")
-  .get(propertyController.findById);
+// router.route("/id/:_id")
+//   .get(propertyController.findById);
 
 module.exports = router;

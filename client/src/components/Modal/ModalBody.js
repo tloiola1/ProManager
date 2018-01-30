@@ -1,6 +1,6 @@
-import React from "react";
+// import React from "react";
 
-export const ModalBody = ({ children }) =>
-<div className="modal-body">
-    { children }
-</div>;
+// export const ModalBody = ({ children }) =>
+// <div className="modal-body">
+//     { children }
+// </div>;

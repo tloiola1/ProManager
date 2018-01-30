@@ -4,28 +4,37 @@ import React, { Component } from "react";
     import request from 'superagent';
     import {Body} from "../../components/Body";
     import { FixedHeader } from "../../components/Header";
-    import {Button, Modal, ModalHeader, ModalBody, ModalFooter, Card, CardTitle,CardSubtitle, CardBody, Col, Container, Row} from "reactstrap";
+    import {Button, Modal, ModalHeader, ModalBody, ModalFooter, Card, CardTitle,CardSubtitle, CardBody, Col, Container, Row, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from "reactstrap";
     import { Logo } from "../../components/Logo";
     import {Input, TextArea } from "../../components/Form";
     import { Margin } from "../../components/Tag";
     import { NavButton } from "../../components/Nav";
     import { ProfilePicture } from "../../components/ProfilePicture";
+    import { SettingsIcon } from "../../components/SettingsIcon";
     import PROP from "../../utils/PROP";
-    import TASK from "../../utils/TASK";
+    import UPDATE from "../../utils/UPDATE";
+    import MESSAGE from "../../utils/MESSAGE";
     import PROS from "../../utils/PROS";
     import RES from "../../utils/RES";
     import USER from "../../utils/USER";
     import IMG from "../../utils/IMG";
+    import INBOX from "../../utils/INBOX";
+    // import { IncomingMessage } from "http";
 //Class Component
 class Manager extends Component {
     
     componentDidMount() {
-        if(sessionStorage.getItem("name") === null) { window.location = "/"; }
-        else {
+        if(sessionStorage.getItem("firstName") === null) { window.location = "/"; }
+        else { 
             this.setState({ profilePic: sessionStorage.getItem("img")});
-            this.setState({name: sessionStorage.getItem("name")});this.loadUserData()
+            this.setState({ profileFirstName: sessionStorage.getItem("firstName")});
+            this.setState({ profileLastName: sessionStorage.getItem("lastName")});
+            this.setState({ profileEmail: sessionStorage.getItem("email")});
+            this.setState({ profilePhone: sessionStorage.getItem("phone")});
+            this.setState({ profileId: sessionStorage.getItem("id")});
+            this.loadUserData();
         }
-        // this.loadUserInfo();
+        // this.loadUserInfo(); 
         
       };
     // Constructor
@@ -35,14 +44,19 @@ class Manager extends Component {
             addProsModalOpen: false,
             addProfilePictureModalOpen: false,
             addPropertyModalOpen: false,
-            addtaskModalOpen: false,
+            addMessageModalOpen: false,
             addResidentModalOpen: false,
+            myInboxModalOpen: false,
             myProsCollapse: false,
             myPropertiesCollapse: false,
+            dropdownOpen: false,
             properties: [], 
             pros: [],
-            todos: [],
-            name: "",
+            inbox: [],
+            profileFirstName: "",
+            profileLastName: "",
+            profilePhone: "",
+            profileId: "",
             firstName: "",
             lastName: "",
             email: "",
@@ -55,80 +69,95 @@ class Manager extends Component {
             type: "",
             available: "",
             phone: "",
-            todoSize: "",
             propertyId: "",
-            task: "",
+            message: "",
             id: "",
             business: "",
-            profilePic: ""
+            price: "",
+            update: false
         };
         this.addProsModal = this.addProsModal.bind(this);
         this.addProfilePictureModal = this.addProfilePictureModal.bind(this);
         this.addPropertyModal = this.addPropertyModal.bind(this);
-        this.addTaskModal = this.addTaskModal.bind(this);
+        this.addMessageModal = this.addMessageModal.bind(this);
         this.addResidentModal = this.addResidentModal.bind(this);
+        this.myInboxModal = this.myInboxModal.bind(this);
         this.myPros = this.myPros.bind(this);
         this.myProperties = this.myProperties.bind(this);
+        this.dropDown = this.dropDown.bind(this);
         this.state.uploadedFile= null;
         this.state.uploadedFileCloudinaryUrl= '';
         this.state.CLOUDINARY_UPLOAD_URL= "https://api.cloudinary.com/v1_1/promanager/image/upload";
         this.state.CLOUDINARY_UPLOAD_PRESET= "adpt8bps";
         // this.state = { items: [], text: '' };
         // this.login = this.login.bind(this);
-      };
+        };
+    //
+    clear() {
+        // this.setState({name: ''});
+        this.setState({firstName: ''});
+        this.setState({lastName: ''});
+        this.setState({email: ''});
+        this.setState({Name: ''});
+        this.setState({address1: ''});
+        this.setState({city: ''});
+        this.setState({state: ''});
+        this.setState({zipcode: ''});
+        this.setState({description: ''});
+        this.setState({type: ''});
+        this.setState({available: ''});
+        this.setState({phone: ''});
+        this.setState({todoSize: ''});
+        // this.setState({propertyId: ''});
+        this.setState({message: ''});
+        // this.setState({id: ''});
+        this.setState({business: ''});
+        // this.setState({profilePic: ''});
+        this.setState({price: ''});
+        this.setState({uploadedFileCloudinaryUrl: ''});
+        }
     //Display User Data
     loadUserData = () =>{
+        this.setState({update: false});
         PROP
-            .getUserProperties(sessionStorage.getItem("id"))
+            .getUserProperties(this.state.profileId)
             .then(res => {
-                // console.log("Test"); console.log(res.data[0].img);
                 this.setState({
                     properties: res.data 
                 });
+                console.log(res.status);
+            })
+            .catch(err => console.log(err));
+        PROS
+            .getAllPros()
+            .then(res => {
+                const data = [];
+                for (let i = 0; i < res.data.length; i++) {
+                    if(res.data[i].foreignkey === this.state.profileId) data.push(res.data[i]);
+                }
+                this.setState({ pros: data });
+                console.log(res.status);
             })
             .catch(err => console.log(err));
         USER
-            .getMyPros(sessionStorage.getItem("id"))
-            .then(res => {
-                this.setState({
-                    pros: res.data,
-                });
-                console.log(this.state.pros);
+            .getUser()
+            .then(res =>{                
+                const data = [];
+                for(let i = 0; i < res.data.length; i++){
+                    if(res.data[i]._id === this.state.profileId){
+                        for(let j = 0; j < res.data[i].message.length; j++){
+                            data.push(res.data[i].message[j]);
+                        }
+                        this.setState({ inbox: data });
+                    }
+                }
+                
+                
+                console.log(res.status);
             })
             .catch(err => console.log(err));
+            
       };
-    //Add Pros Modal Toggle
-    addProsModal() { 
-        this.setState({ addProsModalOpen: !this.state.addProsModalOpen })
-        };
-    //
-    addProfilePictureModal() { 
-        this.setState({ addProfilePictureModalOpen: !this.state.addProfilePictureModalOpen })
-        };
-    //Add Property Modal Toggle
-    addPropertyModal() { 
-        this.setState({ addPropertyModalOpen: !this.state.addPropertyModalOpen });
-        };
-    //
-    addTaskModal = (id) => {
-        console.log(id);
-        this.setState({ propertyId: id});
-        this.setState({ addTaskModalOpen: !this.state.addTaskModalOpen });     
-      };
-    //
-    addResidentModal = id => { 
-        console.log(id); 
-        this.setState({ addResidentModalOpen: !this.state.addResidentModalOpen });
-        this.setState({ propertyId: id});
-      };
-    //My Pros Collapse Toggle
-    myPros() { 
-        this.setState({ myProsCollapse: !this.state.myProsCollapse })
-        };
-    //Collapse My Properties
-    myProperties(){ 
-        this.setState({ myPropertiesCollapse: !this.state.myPropertiesCollapse })
-        }; 
     //Handle OnChange Events
     handleInputName = event =>  this.setState({ Name: event.target.value });
         handleAddress1 = event => this.setState({ address1: event.target.value });
@@ -143,31 +172,24 @@ class Manager extends Component {
         handleUserFirstName = event => this.setState({ firstName: event.target.value });
         handleUserLastName = event => this.setState({ lastName: event.target.value });
         handleUserEmail = event => this.setState({ email: event.target.value });
-        handleTask = event => this.setState({ task: event.target.value });
+        handleMessage = event => this.setState({ message: event.target.value });
         handleBusiness = event => this.setState({ business: event.target.value });
-    //Add Property
-    submitMyProperty = event => {
-        if (this.state.Name && this.state.address1 && this.state.city && this.state.state && this.state.zipcode && this.state.description && this.state.type && this.state.available) 
-        {
-            PROP
-                .postProperty({
-                    propertyname: this.state.Name, 
-                    address: {
-                        address1: this.state.address1, 
-                        city: this.state.city,
-                        state: this.state.state,
-                        zipcode: this.state.zipcode
-                    },
-                    description: this.state.description,
-                    type: this.state.type,
-                    available: this.state.available,
-                    foreignkey: sessionStorage.getItem("id"),
-                    img: this.state.uploadedFileCloudinaryUrl
-                })
-                .then(res => window.location.reload())
-                .catch(err => console.log(err));
-        }
-      };
+        handlePrice = event => this.setState({ price: event.target.value });
+    //DropDown
+    dropDown() {
+        this.setState({
+          dropdownOpen: !this.state.dropdownOpen
+        });
+      }
+    //Add Pros Modal Toggle
+    addProsModal() { 
+        this.clear();
+        this.setState({ addProsModalOpen: !this.state.addProsModalOpen })
+        };
+    //My Pros Collapse Toggle
+    myPros() { 
+        this.setState({ myProsCollapse: !this.state.myProsCollapse })
+        };
     //Add Pros
     submitMyPros = event => {
         //Mark Plumber 1221 qwertyuiop street 1234567890
@@ -183,49 +205,82 @@ class Manager extends Component {
                     },
                     phone: this.state.phone,
                     business: this.state.business,
-                    foreignkey: sessionStorage.getItem("id")
+                    foreignkey: this.state.profileId
                 })
-                .then(res => window.location.reload())
+                .then(res => console.log(res.status))
                 .catch(err => console.log(err));
-        } 
+        }
+        this.loadUserData();
+        this.setState({ addProsModalOpen: !this.state.addProsModalOpen })
      };
     //Delete Pro
     deletePro = id => {
-        console.log(id)
         PROS
                 .deletePros(id)
-                .then(res => console.log(res))//window.location.reload()
+                .then(res => console.log(res.status))//window.location.reload()
                 .catch(err => console.log(err));
+                this.loadUserData();
       };
     //Add Tasks
-    addTask = ()=> {
-        this.setState({ addTaskModalOpen: !this.state.addTaskModalOpen });
-        if(this.state.task){
-            TASK
-                .postTask({
+    addMessageModal = (id) => {
+        this.clear();
+        this.setState({ propertyId: id});
+        this.setState({ addMessageModalOpen: !this.state.addMessageModalOpen });     
+      };
+    //
+    addMessage = (id)=> {
+        if(this.state.message){
+            MESSAGE
+                .postMessage({
                     _id: this.state.propertyId,
-                    todos: {
-                        task: this.state.task
+                    message: {
+                        text: this.state.message
                     }
                 })
-                .then(res => window.location.reload())//
+                .then(res => console.log(res))
                 .catch(err => console.log(err));
         }
+        this.setState({ addMessageModalOpen: !this.state.addMessageModalOpen });
+        this.loadUserData();
      };
     //Delet Task
-    deleteTask = (propId, taskId) => {
-        console.log(propId, taskId);
+    deleteMessage = (propertyId, messageId) => {
+        // console.log(propertyId, messageId);
         const data ={
-            propId,
-            taskId
+            propertyId,
+            messageId
         }
-        TASK
-                .deleteTask(data)
+        MESSAGE
+                .deleteMessage(data)
                 .then(res => console.log(res))//window.location.reload()
                 .catch(err => console.log(err));
+        this.loadUserData();
+      }
+      addResidentModal = id => { 
+        this.clear(); 
+        this.setState({ addResidentModalOpen: !this.state.addResidentModalOpen });
+        this.setState({ propertyId: id});
+      };
+    //editResident
+    editResident = id => {
+        this.clear();
+        this.setState({update: true});
+        RES
+            .getResidentPropertyId(id)
+            .then( res => {
+                this.setState({firstName: res.data[0].resident.firstName});
+                this.setState({lastName: res.data[0].resident.lastName});
+                this.setState({firstName: res.data[0].resident.firstName});
+                this.setState({email: res.data[0].resident.email});
+                this.setState({phone: res.data[0].resident.phone});
+                this.setState({ addResidentModalOpen: !this.state.addResidentModalOpen });
+                this.setState({ propertyId: id});
+            })
+            .catch( err => console.log(err));
       }
     //Submit Resident
-    submitEditResident = id =>{
+    submitResident = id =>{
+        // console.log(this.state.propertyId);
         if (this.state.firstName && this.state.lastName && this.state.email && this.state.phone) {
             RES
                 .editResident({
@@ -237,45 +292,123 @@ class Manager extends Component {
                         phone: this.state.phone
                     }
                 })
-                .then(res => window.location.reload())//
+                .then(res => console.log(res))//
                 .catch(err => console.log(err));
         }
+        this.loadUserData(); // 
+        this.setState({ addResidentModalOpen: !this.state.addResidentModalOpen });
       }
     //
     deleteResident = id =>{
-        console.log(id);
+        // console.log(id);
         RES
                 .deleteResident(id)
-                .then(res => window.location.reload())
+                .then(res => console.log(res))
                 .catch(err => console.log(err));
+        this.setState({ myPropertiesCollapse: !this.state.myPropertiesCollapse });
+        this.loadUserData();
+      }
+    //Add Property Modal Toggle
+    addPropertyModal() {
+        this.clear();
+        this.setState({update: false});
+        this.setState({ addPropertyModalOpen: !this.state.addPropertyModalOpen });
+        };
+    //
+    editProperty = id => {
+        this.clear();
+        this.setState({ addPropertyModalOpen: !this.state.addPropertyModalOpen });
+        UPDATE
+            .getPropertyById(id)
+            .then( res => {
+                console.log(res);
+                    this.setState({ propertyId: res.data[0]._id });
+                    this.setState({ Name: res.data[0].propertyname });
+                    this.setState({ address1: res.data[0].address.address1 });
+                    this.setState({ city: res.data[0].address.city });
+                    this.setState({ state: res.data[0].address.state });
+                    this.setState({ zipcode: res.data[0].address.zipcode });
+                    this.setState({ description: res.data[0].description });
+                    this.setState({ type: res.data[0].type });
+                    this.setState({ id: res.data[0].foreignkey });
+                    this.setState({ price: res.data[0].price });
+                    this.setState({ uploadedFileCloudinaryUrl: res.data[0].img });
+                    this.setState({ update: true });
+            })
+            .catch( err => console.log(err));
+      }
+    //Collapse My Properties
+    myProperties(){ 
+        this.setState({ myPropertiesCollapse: !this.state.myPropertiesCollapse })
+        }; 
+    //Add Property
+    submitMyProperty = event => {
+        if (this.state.Name && this.state.address1 && this.state.city && this.state.state && this.state.zipcode && this.state.description && this.state.type) 
+        {
+            PROP
+                .postProperty({
+                    propertyname: this.state.Name, 
+                    address: {
+                        address1: this.state.address1, 
+                        city: this.state.city,
+                        state: this.state.state,
+                        zipcode: this.state.zipcode
+                    },
+                    description: this.state.description,
+                    type: this.state.type,
+                    foreignkey: sessionStorage.getItem("id"),
+                    price: this.state.price,
+                    img: this.state.uploadedFileCloudinaryUrl
+                })
+                .then(res => console.log(res))
+                .catch(err => console.log(err));
+        }
+        this.loadUserData();
+        this.setState({ addPropertyModalOpen: !this.state.addPropertyModalOpen });
+      };
+    //Update Property
+    updateProperty = id =>{
+        if (this.state.Name && this.state.address1 && this.state.city && this.state.state && this.state.zipcode && this.state.description && this.state.type) 
+        {
+            UPDATE
+                .updateProperty({
+                    _id: this.state.propertyId,
+                    propertyname: this.state.Name, 
+                    address: {
+                        address1: this.state.address1, 
+                        city: this.state.city,
+                        state: this.state.state,
+                        zipcode: this.state.zipcode
+                    },
+                    description: this.state.description,
+                    type: this.state.type,
+                    price: this.state.price,
+                    img: this.state.uploadedFileCloudinaryUrl
+                })
+                .then(res => console.log(res))
+                .catch(err => console.log(err));
+        }
+        this.loadUserData();
+        this.setState({ addPropertyModalOpen: !this.state.addPropertyModalOpen });
       }
     //
     deleteProperty = id =>{
         console.log(id);
         PROP
                 .deleteProperty(id)
-                .then(res => window.location.reload())
+                .then(res => {this.loadUserData(); this.myProperties() })
                 .catch(err => console.log(err));
       }
     //Upload Image
-    onImageDrop(files) {
-        this.setState({
-          uploadedFile: files[0]
-        });
-        this.handleImageUpload(files[0]);
-      }
+    addProfilePictureModal() { 
+        this.setState({ addProfilePictureModalOpen: !this.state.addProfilePictureModalOpen })
+        };
     //
-    onProfilePictureDrop(files) {
+    onImageDrop(files) {
+        const file = files[0];        
         this.setState({
           uploadedFile: files[0]
         });
-        this.handleImageUpload(files[0], (picURL)=>{
-            console.log(picURL)
-        })
-      }
-    //Upload Image
-    handleImageUpload(file) {
-          console.log("Test Passed")
         let upload = request.post(this.state.CLOUDINARY_UPLOAD_URL)
                          .field('upload_preset', this.state.CLOUDINARY_UPLOAD_PRESET)
                          .field('file', file);
@@ -290,9 +423,87 @@ class Manager extends Component {
               uploadedFileCloudinaryUrl: res.body.secure_url
             })
           }
+        })
+        // this.handleImageUpload(files[0]);
+      }
+    //
+    onProfilePictureDrop(files) {
+        const file = files[0];
+        this.setState({
+          uploadedFile: files[0]
         });
-            
-      };
+        let upload = request.post(this.state.CLOUDINARY_UPLOAD_URL)
+                         .field('upload_preset', this.state.CLOUDINARY_UPLOAD_PRESET)
+                         .field('file', file);
+    
+        upload.end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+        //   console.log(res)
+          if (res.body.secure_url !== '') {
+            this.setState({
+              profilePic: res.body.secure_url
+            })
+            sessionStorage.setItem("img", res.body.secure_url);
+            IMG
+                .postImage({
+                    _id: sessionStorage.getItem("id"),
+                    img: res.body.secure_url
+                })
+                .then(res => {
+                    this.addProfilePictureModal();
+                    this.setState({ addProfilePictureModalOpen: !this.state.addProfilePictureModalOpen });
+                })
+                .catch(err => console.log(err));
+          }
+        })
+      }
+    //
+    inboxMessage(){
+        this.setState({ inboxMessageModalOpen: !this.state.inboxMessageModalOpen });
+        }
+    //
+    inboxMessageModal = (_ownerId, propertyAddress) => {
+       this.inboxMessage();
+       this.setState({id: _ownerId});
+       this.setState({composedMessage: 
+       "Hello Mr. Landlord,\nMy name is "+this.state.profileFirstName+" "+this.state.profileLastName+" and am writing this letter to express my desire to take your property located at "+propertyAddress+", on rent. I came to know about this property from promanager.com website.\nMy application is ready for review; I would love to set up an appointment to see the property. My phone number is  "+this.state.profilePhone+".\n\nThank you for your time. I look forward to hearing from you.\n"+this.state.profileFirstName+"."})    
+       }
+    // thi function sends inbox message inquiries for property Owner
+    submitInboxMessage(){
+       this.inboxMessage()
+       INBOX
+           .postMessage({
+               _id: this.state.id,// the property foreignkey which is the user id
+               message: {
+                   text: this.state.composedMessage,// composed message
+                   sender_id: this.state.profileId
+               }
+           })
+           .then(res => console.log(res.status))
+           .catch(err => console.log(err));
+           this.setState({ inboxMessageModalOpen: !this.state.inboxMessageModalOpen });
+           this.loadUserData();
+        }
+
+    //Add Property Modal Toggle
+    myInboxModal() {
+        this.setState({ myInboxModalOpen: !this.state.myInboxModalOpen });
+        };
+    //Delete Inbox Message
+    deleteInboxMessage = (userId, messageId) => {
+        console.log(userId, messageId);
+        const data ={
+            userId,
+            messageId
+        }
+        INBOX
+                .deleteMessage(data)
+                .then(res => console.log(res.status))//window.location.reload()
+                .catch(err => console.log(err));
+                this.loadUserData();
+        }
     //
     render() {
         return (
@@ -302,16 +513,34 @@ class Manager extends Component {
                 <FixedHeader>
                     <Container>
                         <Row>
-                            <Logo/>
-                            <NavButton>
+                            <Col sm="2" xs="1">
+                                <Logo/>
+                            </Col>
+                            <Col sm="10" xs="11">
+                                <NavButton>
                                     <span> {/* onClick=this.addProfilePictureModal} */}
-                                        <a><ProfilePicture src={this.state.profilePic} onClick={this.addProfilePictureModal}></ProfilePicture></a>
+                                        <ProfilePicture src={this.state.profilePic}/>
                                         <strong> 
-                                            Hello<em>{this.state.name}</em>
+                                            {" "}<em>{this.state.profileFirstName}</em>
                                         </strong>
-                                    </span>
-                                    <a id="logoff" href="/"><strong> | Log Off</strong></a>
-                            </NavButton>
+                                    </span>    
+                                
+                                    <ButtonDropdown isOpen={this.state.dropdownOpen} toggle={this.dropDown}>
+                                        <DropdownToggle outline color="secondary">
+                                        <SettingsIcon/>
+                                        </DropdownToggle>
+                                        <DropdownMenu>
+                                            <DropdownItem>Settings</DropdownItem>
+                                            <DropdownItem/>
+                                            <DropdownItem >Eddit Profile Info</DropdownItem>
+                                            <DropdownItem><a onClick={this.addProfilePictureModal}>Edit Profile Picture</a></DropdownItem>
+                                            
+                                            <DropdownItem><a onClick={this.myInboxModal}>You Have {this.state.inbox.length} Messages</a></DropdownItem>
+                                        </DropdownMenu>
+                                    </ButtonDropdown>
+                                </NavButton>
+                            </Col>
+                                    {/* <a id="logoff" href="/"><strong> | Log Off</strong></a> */}
                         </Row>
                     </Container>
                 </FixedHeader>
@@ -327,7 +556,7 @@ class Manager extends Component {
                             </Button>
                             <Button className="col-sm-12" color="success" onClick={this.addPropertyModal} style={{ margin: '.5rem' }}>Add Property</Button>
                         </Col>
-{/*     Tasks TODO                  */}
+{/*     Message TODO                */}
                         <Col xs="auto" sm="9">
                             {this.state.properties.length ? (
                                 <span>
@@ -342,28 +571,39 @@ class Manager extends Component {
                                                             <strong>{property.propertyname}
                                                             </strong>
                                                             <br></br>
-                                                            Resident:{" "}{property.resident.firstName}{" "}{property.resident.lastName}
+                                                            Resident:{property.resident.lastName === null ? 
+                                                            <Button color="info" onClick={()=>{ this.addResidentModal(property._id)}} style={{margin: "1rem 1rem 0rem 0rem"}}>
+                                                            Add Resident
+                                                        </Button> : <span> {" "}{property.resident.firstName}{" "}{property.resident.lastName}
+                                                           </span> }
                                                         </CardTitle>
-                                                        <CardSubtitle>
-                                                            <Button color="info" style={{margin: "1rem"}} onClick={() => this.addTaskModal(property._id)}>
-                                                                Add Task
+                                                        <CardSubtitle>      {property.resident.lastName === null ? "" :
+                                                            <Button color="info" style={{margin: "1rem"}} onClick={() => this.addMessageModal(property._id)}>
+                                                                Message Resident
                                                             </Button>
+                                                             }
                                                         </CardSubtitle>
                                                     </CardBody>
                                                 </Col>
                                                 <Col xs="auto" sm="5">
                                                     <CardBody>
                                                         <CardTitle>
-                                                            <strong>My Tasks
+                                                            <strong>My Inbox
                                                             </strong>
                                                         </CardTitle>
                                                         <CardSubtitle>
+<<<<<<< HEAD
                                                         {property.todos.map(task => (
                                                             <span key={task._id}>
                                                             <hr></hr>
                                                                 {task.task}🔨
+=======
+                                                        {property.message.map(message => (
+                                                            <span key={message._id}>       <hr></hr>
+                                                                {message.text}🔨
+>>>>>>> 645071b891ef78162aba8261fd3457e41a76eaff
                                                                 <span>
-                                                                <Button color="danger" onClick={() => this.deleteTask(property._id, task._id)} style={{margin: "irem"}}>
+                                                                <Button color="danger" onClick={() => this.deleteMessage(property._id, message._id)} style={{margin: "irem"}}>
                                                                 X
                                                                 </Button>
                                                             </span>
@@ -411,7 +651,7 @@ class Manager extends Component {
                             </span>
                         ))}
                         </span>
-                    ) : ( <h3>Add Some Contacts Here</h3> )}
+                    ) : ( <h3>Your COntact List is Empty</h3> )}
                 </Modal>
 {/*     Load My Propeties Modal     */}
                 <Modal isOpen={this.state.myPropertiesCollapse}>
@@ -430,23 +670,40 @@ class Manager extends Component {
                                         , {property.address.city}
                                         , {property.address.state}
                                         , {property.address.zipcode}
-                                        <br></br>{property.description}
+                                        <br/>{property.description}
+                                        <br/>{"$"}{property.price}
                                     </strong>
                                 </ModalBody>
                                 <ModalFooter style={{padding: "0rem"}}>
+                                    <Button color="info" onClick={()=>{ this.editProperty(property._id)}} style={{margin: "1rem 1rem 0rem 0rem"}}>
+                                        Edit Property
+                                    </Button>
                                     <Button color="danger" onClick={() => this.deleteProperty(property._id)} style={{margin: "1rem 1rem 0rem 0rem"}}>
                                         Delete Property
                                     </Button>
                                 </ModalFooter>
-                                <hr></hr>
+                                <hr/>
                                 
 {/*     Load My Residents           */}
+                                {property.resident.lastName !== null ?
                                 <ModalHeader>
                                     <strong>
                                         {property.resident.firstName}{" "}
                                         {property.resident.lastName}
                                     </strong>
                                 </ModalHeader>
+                                :<span>
+                                    <ModalHeader>
+                                        To add resident click "Add Resident"
+                                    </ModalHeader>
+                                    <ModalFooter style={{padding: "0px"}}>
+                                        <Button color="info" onClick={()=>{ this.addResidentModal(property._id)}} style={{margin: "1rem 1rem 0rem 0rem"}}>
+                                            Add Resident
+                                        </Button>
+                                    </ModalFooter>
+                                </span>
+                                }
+                                {property.resident.lastName !== null ?
                                 <ModalBody>
                                     <strong>
                                     <a herf={"mailto:"+ property.resident.email}><span role="img" aria-label="emoji">📧</span>{" "}{property.resident.email}</a>
@@ -454,14 +711,17 @@ class Manager extends Component {
                                     <a href={"tel:"+ property.resident.phone}><span role="img" aria-label="emoji">📞</span>{" "}{property.resident.phone}</a>
                                     </strong>
                                 </ModalBody>
+                                : ''}
+                                {property.resident.lastName !== null ?
                                 <ModalFooter style={{padding: "0px"}}>
-                                    <Button color="info" onClick={()=>{ this.addResidentModal(property._id)}} style={{margin: "1rem 1rem 0rem 0rem"}}>
-                                        Edit
+                                    <Button color="info" onClick={()=>{ this.editResident(property._id)}} style={{margin: "1rem 1rem 0rem 0rem"}}>
+                                        Edit Resident
                                     </Button>
                                     <Button color="danger" onClick={() => this.deleteResident(property._id)} style={{margin: "1rem 1rem 0rem 0rem"}}>
-                                        Delete
+                                        Delete Resident
                                     </Button>
                                 </ModalFooter>
+                                : ''}
                                 <hr style={{border: "2px solid #000"}}></hr>
                             </span>
                         ))}
@@ -474,7 +734,7 @@ class Manager extends Component {
                 </Modal>
 {/*     Add Property Modal          */}
                 <Modal isOpen={this.state.addPropertyModalOpen} toggle={this.addPropertyModal} className={this.props.className}>
-                    <ModalHeader>Add Property</ModalHeader>
+                    <ModalHeader toggle={this.addPropertyModal} >Add Property</ModalHeader>
                     <ModalBody>
                         Name the Property
                         <Input
@@ -552,39 +812,14 @@ class Manager extends Component {
                             }}/>
                             This is a Bussiness Office for Rental.
                         </div>
+                        Monthly Rent Price:
+                        <Input
+                            type="text"
+                            value={this.state.price}
+                            onChange={this.handlePrice}
+                            name="price"
+                            placeholder="$"/>
                         <hr></hr>
-                        <div
-                            className="col-sm-12"
-                            style={{
-                            marginLeft: "5px"
-                        }}>
-                            <Input
-                                type="radio"
-                                className="form-check-input"
-                                name= "available-radio"
-                                value= "true"
-                                onChange={this.handleAvailability}
-                                style={{
-                                marginTop: "7px"
-                            }}/>
-                            This Location is Available for Rent.
-                        </div>
-                        <div
-                            className="col-sm-12"
-                            style={{
-                            marginLeft: "5px"
-                        }}>
-                            <Input
-                                type="radio"
-                                className="form-check-input"
-                                name= "available-radio"
-                                value= "false"
-                                onChange={this.handleAvailability}
-                                style={{
-                                marginTop: "7px"
-                            }}/>
-                            This Location is <span style={{color: "red"}}>Not</span> Available for Rent.
-                        </div>
                         <form>
                             <div className="FileUpload">
                             <Dropzone id="dropZone" onDrop={this.onImageDrop.bind(this)}
@@ -592,7 +827,7 @@ class Manager extends Component {
                                 accept="image/*">
                                 
                             <div>
-                            <img src={this.state.uploadedFileCloudinaryUrl} style={{height: "10rem", with: "10rem"}}/>
+                            <img alt="PropImage" src={this.state.uploadedFileCloudinaryUrl} style={{height: "10rem", with: "10rem"}}/>
                             </div>
                             <small>Click to select a file to upload.</small>
                             </Dropzone>
@@ -600,14 +835,24 @@ class Manager extends Component {
                         </form>
                     </ModalBody>
                     <ModalFooter>
+<<<<<<< HEAD
+=======
+                    {this.state.update === false ? 
+>>>>>>> 645071b891ef78162aba8261fd3457e41a76eaff
                         <Button color="success" onClick={this.submitMyProperty}>
                             <i>Submit</i>
                         </Button>
+                    : 
+                        <Button color="success" onClick={this.updateProperty}>
+                            <i>Update</i>
+                        </Button>
+                    }
                     </ModalFooter>
                 </Modal>
 {/*     Add Resident Modal          */}
                 <Modal isOpen={this.state.addResidentModalOpen} toggle={this.addResidentModal} className={this.props.className}>
-                    <ModalHeader toggle={this.addResidentModal}>Edit Resident</ModalHeader>
+                    <ModalHeader toggle={this.addResidentModal}>
+                        {this.state.lastName === null ? <span>Add</span> : <span>Edit</span>} Resident</ModalHeader>
                     <ModalBody>
                         First Name
                         <Input
@@ -639,8 +884,15 @@ class Manager extends Component {
                             placeholder=""/>
                     </ModalBody>
                     <ModalFooter>
+<<<<<<< HEAD
                         <Button color="success" onClick={this.submitEditResident}>
                             <i>Submit</i>
+=======
+                        <Button color="success" onClick={this.submitResident}>
+                            {this.state.update === false ?
+                                <i>Submit</i>
+                            : <i>Update</i> }
+>>>>>>> 645071b891ef78162aba8261fd3457e41a76eaff
                         </Button>
                     </ModalFooter>
                 </Modal>
@@ -654,7 +906,7 @@ class Manager extends Component {
                                 value={this.state.Name}
                                 onChange={this.handleInputName}
                                 name="name"
-                                placeholder="E.g. 'Mark, Plumber' or 'Handyman'"/>
+                                placeholder=""/>
                             Address
                             <Input
                                 type="text"
@@ -696,7 +948,7 @@ class Manager extends Component {
                                 value={this.state.business}
                                 onChange={this.handleBusiness}
                                 name="phone"
-                                placeholder=""/>
+                                placeholder="E.g. 'Mark, Plumber' or 'Handyman'"/>
                         </ModalBody>
                         <ModalFooter>
                             <Button color="success" onClick={this.submitMyPros}>
@@ -704,19 +956,23 @@ class Manager extends Component {
                             </Button>
                         </ModalFooter>
                     </Modal>
-{/*     Add Task Modal              */}
-                <Modal isOpen={this.state.addTaskModalOpen} toggle={this.addTaskModal} className={this.props.className}>
-                    <ModalHeader toggle={this.addTaskModal}>Add Task</ModalHeader>
+{/*     Add message Modal           */}
+                <Modal isOpen={this.state.addMessageModalOpen} toggle={this.addMessageModal} className={this.props.className}>
+                    <ModalHeader toggle={this.addMessageModal}>Add Task</ModalHeader>
                     <ModalBody>
                         <Input
                             type="text"
-                            value={this.state.task}
-                            onChange={this.handleTask}
+                            value={this.state.message}
+                            onChange={this.handleMessage}
                             name="task"
                             placeholder="E.g. 'Water leak' or 'Garage door jamed'"/>
                     </ModalBody>
                     <ModalFooter>
+<<<<<<< HEAD
                         <Button color="success" onClick={this.addTask}>
+=======
+                        <Button color="success" onClick={this.addMessage}>
+>>>>>>> 645071b891ef78162aba8261fd3457e41a76eaff
                             <i>Submit</i>
                         </Button>
                     </ModalFooter>
@@ -732,13 +988,53 @@ class Manager extends Component {
                             accept="image/*">
                             
                         <div>
-                        <img src={this.state.uploadedFileCloudinaryUrl} style={{height: "10rem", with: "10rem"}}/>
+                        <img alt="ProfileImage" src={this.state.uploadedFileCloudinaryUrl} style={{height: "10rem", with: "10rem"}}/>
                         </div>
                         <small>Click to select a file to upload.</small>
                         </Dropzone>
                         </div>
                     </form>
                     </ModalBody>
+                </Modal>
+{/*     Send Message Modal */}
+                <Modal isOpen={this.state.inboxMessageModalOpen} toggle={this.inboxMessageModal} className={this.props.className}>
+                    <ModalHeader toggle={this.inboxMessageModal}>Message This Owner</ModalHeader>
+                    <ModalBody>
+                        Message
+                        <TextArea
+                            type="textarea"
+                            rows="12" 
+                            value={this.state.composedMessage}
+                            onChange={this.handleComposedMessage}
+                            name="composedMessage"
+                            placeholder=""/>
+                    </ModalBody>
+                    <ModalFooter>
+                       <Button color="success" onClick={()=> {this.submitInboxMessage()}}>
+                            <i>Submit</i>
+                        </Button>
+                    </ModalFooter>
+                </Modal>
+{/*     My Inbox Modal              */}
+                <Modal isOpen={this.state.myInboxModalOpen} toggle={this.myInboxModal} className={this.props.className}>
+                {this.state.inbox.length ? (
+                    <span>
+                    {this.state.inbox.map(message => (
+                        <span key={message._id}>
+                        <ModalHeader toggle={this.myInboxModal}>Inbox</ModalHeader>
+                        <ModalBody>
+                            {message.text}
+                        </ModalBody>
+                        <ModalFooter style={{padding: "0rem"}}>
+                            <Button color="danger" onClick={()=>{this.deleteInboxMessage(this.state.profileId, message._id)}} style={{margin: "1rem 1rem 0rem 0rem"}}>
+                                Delete
+                            </Button>
+                        </ModalFooter>
+                        <hr style={{border: "2px solid #000"}}></hr>
+                        </span>
+                    ))}
+                    </span>
+                ) : ( <h3>Your Inbox is Empty</h3> )}
                 </Modal>
             </Body>
         );

@@ -28,15 +28,22 @@ var UserSchema = new Schema({
     ]
   },
   //
-  phone: { type: String, require: true },
+  phone:        { type: String, require: true },
   //
-  title: { type: String, require: true },
+  title:        { type: String, require: true },
   //
   pros:{
-    name:  { type: String, trim: true },
-    address: { type: String, trim: true },
-    phone: {  type: String, trim: true }
+    name:       { type: String, trim: true },
+    address:    { type: String, trim: true },
+    phone:      { type: String, trim: true }
   },
+  message: [
+    {
+      _id:      { type: Schema.ObjectId, auto: true },
+    text:       {type: String, default: ""},
+    sender_id:  {type: String, require: true}
+    }
+  ],
   img: {
     type: String, default: "http://res.cloudinary.com/promanager/image/upload/v1516933592/d2q6rok9cvakg5g2zyrp.svg"
   }
