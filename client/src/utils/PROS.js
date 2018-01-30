@@ -3,14 +3,14 @@ import axios from "axios";
 export default {
   // Gets User login
   getProsById: function(id) {
-    console.log("Utils API getPros");
-    console.log(id);
+    // console.log("Utils API getPros");
+    // console.log(id);
     return axios.get("/api/pros/" + id);
   },
   //Post New Pros
   postPros: function(postData) { 
-    console.log("Utils API postPros"); 
-    console.log(postData);
+    // console.log("Utils API postPros"); 
+    // console.log(postData);
     return axios.post("/api/pros", postData);
   },
   // Gets All Pros

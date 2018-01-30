@@ -842,7 +842,7 @@ class Manager extends Component {
                             </Button>
                         </ModalFooter>
                     </Modal>
-{/*     Add Task Modal              */}
+{/*     Add message Modal              */}
                 <Modal isOpen={this.state.addMessageModalOpen} toggle={this.addMessageModal} className={this.props.className}>
                     <ModalHeader toggle={this.addMessageModal}>Add Task</ModalHeader>
                     <ModalBody>

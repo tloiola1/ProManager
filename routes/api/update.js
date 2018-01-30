@@ -6,5 +6,6 @@ router.route("/")
 
 router.route("/:_id")
   .get(updateController.findById)
+  .post(updateController.postMessage);
 
 module.exports = router;

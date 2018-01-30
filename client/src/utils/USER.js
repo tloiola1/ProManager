@@ -25,9 +25,11 @@ export default {
   },
   getMyPros: function(id) {
     return axios.get("/api/users/" + id)
+  },
+  //
+  sendMessage: function(data){
+    // console.log("Utils API SendMessage");
+    // console.log(data);
+    return axios.post("/api/update/"+data.id, data.message);
   }
-  // Saves a book to the database
-  // saveUser: function(bookData) {
-  //   return axios.post("/api/books", bookData);
-  // }
 };

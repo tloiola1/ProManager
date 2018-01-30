@@ -1,11 +1,11 @@
 const router = require("express").Router();
-const messageController = require("../../controllers/messageController");
+const inboxController = require("../../controllers/inboxController");
 
 router.route("/") 
-  .post(messageController.create);
+  .post(inboxController.create);
   // .put(messageController.update); 
 
 router.route("/:_id") 
-  .post(messageController.remove);
+  .post(inboxController.remove);
 
 module.exports = router; 

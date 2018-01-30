@@ -7,15 +7,16 @@ import React, { Component } from "react";
     import {Button, Modal, ModalHeader, ModalBody, ModalFooter, Card, CardTitle,CardSubtitle, CardBody, Col, Container, Row} from "reactstrap";
     import { CardPhoto } from "../../components/CardPhoto";
     import { Logo } from "../../components/Logo";
-    import {Input } from "../../components/Form";
+    import {Input, TextArea } from "../../components/Form";
     import { Margin } from "../../components/Tag";
     import { NavButton } from "../../components/Nav";
     import { ProfilePicture } from "../../components/ProfilePicture";
     import PROP from "../../utils/PROP";
-    import MESSAGE from "../../utils/MESSAGE";
+    import MESSAGE from "../../utils/MESSAGE";// this route handles tthe tenants to owner messages
     import PROS from "../../utils/PROS";
     import IMG from "../../utils/IMG";
     import USER from "../../utils/USER";
+    import INBOX from "../../utils/INBOX";// htis route handles Inbox Messages for rental inquire
 //
 class Manager extends Component {
     
@@ -23,8 +24,11 @@ class Manager extends Component {
         if(sessionStorage.getItem("name") === null) { window.location = "/"; }
         else { 
             this.setState({ profilePic: sessionStorage.getItem("img")});
-            this.setState({name: sessionStorage.getItem("name")});
-            this.setState({id: sessionStorage.getItem("id")});
+            this.setState({ profileFirstName: sessionStorage.getItem("firstName")});
+            this.setState({ profileLastName: sessionStorage.getItem("lastName")});
+            this.setState({ profileEmail: sessionStorage.getItem("email")});
+            this.setState({ profilePhone: sessionStorage.getItem("phone")});
+            this.setState({ profileId: sessionStorage.getItem("id")});
             this.loadUserData();
         }
       };
@@ -37,12 +41,17 @@ class Manager extends Component {
             myProsModalOpen: false,
             allPropertiesModalOpen: false,
             findPropertiesModalOpen: false,
+            messageOwnerModalOpen: false,
             properties: [], 
             pros: [],
             owner: [],
             searchProperties: [],
+            tenant: [],
             ownerId: "",
-            name: "",
+            profileFirstName: "",
+            profileLastName: "",
+            profilePhone: "",
+            profileId: "",
             firstName: "",
             lastName: "",
             email: "",
@@ -53,8 +62,8 @@ class Manager extends Component {
             zipcode: "",
             phone: "",
             propertyId: "",
-            profilePic: "",
             message: "",
+            composedMessage: "",
             id: "",
             business: "",
             type: "",
@@ -67,6 +76,7 @@ class Manager extends Component {
         this.allPropertiesModal = this.allPropertiesModal.bind(this);
         this.findAllProperties = this.findAllProperties.bind(this);
         this.findProperties = this.findProperties.bind(this);
+        this.messageOwnerModal = this.messageOwnerModal.bind(this);
         this.state.uploadedFile= null;
         this.state.uploadedFileCloudinaryUrl= '';
         this.state.CLOUDINARY_UPLOAD_URL= "https://api.cloudinary.com/v1_1/promanager/image/upload";
@@ -77,17 +87,15 @@ class Manager extends Component {
         PROP
             .getAllProperties()
             .then(res => { 
-                // console.log(res.data);
-                const email = sessionStorage.getItem("email");
                 const data = [];
                 for(let i = 0; i < res.data.length; i++){
-                    if(res.data[i].resident.email === email){
+                    if(res.data[i].resident.email === this.state.profileEmail){
                         data.push(res.data[i]);
                     }
                 }
                 this.setState({ownerId: data[0].foreignkey});
                 this.setState({ properties: data });
-                // console.log(this.state.properties);
+                console.log(res.status);
             })
             .catch(err => console.log(err));
 
@@ -102,6 +110,7 @@ class Manager extends Component {
                     }
                 }
                 this.setState({ owner: data });
+                console.log(res.status);
             })
             .catch(err => console.log(err));
 
@@ -111,11 +120,12 @@ class Manager extends Component {
                 // console.log(res.data[0].foreignkey)
                 const data = [];
                 for (let i = 0; i < res.data.length; i++) {
-                    if(res.data[i].foreignkey === this.state.ownerId || res.data[i].foreignkey === this.state.id){
+                    if(res.data[i].foreignkey === this.state.ownerId || res.data[i].foreignkey === this.state.profileId){
                         data.push(res.data[i]);
                     }
                 }
                 this.setState({ pros: data });
+                console.log(res.status);
             })
             .catch(err => console.log(err));
       };
@@ -131,6 +141,7 @@ class Manager extends Component {
         handleUserLastName = event => this.setState({ lastName: event.target.value });
         handleUserEmail = event => this.setState({ email: event.target.value });
         handleMessage = event => this.setState({ message: event.target.value });
+        // handleComposedMessage = event => this.setState({ composedMessage: event.target.value });
         handleBusiness = event => this.setState({ business: event.target.value });
         handlePropertyType = event => this.setState({ type: event.target.value });
         handleLocation = event => this.setState({ location: event.target.value });
@@ -158,7 +169,7 @@ class Manager extends Component {
                     },
                     phone: this.state.phone,
                     business: this.state.business,
-                    foreignkey: sessionStorage.getItem("id")
+                    foreignkey: this.state.profileId
                 })
                 .then(res => console.log(res.status))
                 .catch(err => console.log(err));
@@ -168,11 +179,13 @@ class Manager extends Component {
         };
     //Delete Pro
     deletePro = id => {
-        console.log(id)
+        // console.log(id)
         PROS
                 .deletePros(id)
                 .then(res => console.log(res.status))//window.location.reload()
                 .catch(err => console.log(err));
+        this.loadUserData();
+        this.myPros();
       };
     //
     addMessageModal = (id) => {
@@ -210,7 +223,9 @@ class Manager extends Component {
                 .catch(err => console.log(err));
         }
     //All Properties Modal
-    allPropertiesModal(){this.setState({ allPropertiesModalOpen: !this.state.allPropertiesModalOpen })}
+    allPropertiesModal(){
+        this.setState({ allPropertiesModalOpen: !this.state.allPropertiesModalOpen })
+        }
     //My Properties Modal
     findAllProperties(){
         // console.log(this.state.type);       
@@ -264,7 +279,7 @@ class Manager extends Component {
             sessionStorage.setItem("img", res.body.secure_url);
             IMG
                 .postImage({
-                    _id: sessionStorage.getItem("id"),
+                    _id: this.state.profileId,
                     img: res.body.secure_url
                 })
                 .then(res => {
@@ -276,21 +291,28 @@ class Manager extends Component {
         })
       }
     //
-    emailOwner = id => {
-        USER
-            .getUser()
-            .then(res =>{
-                // const data = [];
-                for(let i = 0; i < res.data.length; i++){
-                    if(res.data[i]._id === id){
-                        console.log(res.data[i].email);
-                        return;
-                    }
-                }
-            })
-            .catch(err => console.log(err));
-
+    messageOwnerModal = (_ownerId, propertyAddress) => {
+        // this.setState({id: _ownerId});
+        console.log(_ownerId, propertyAddress);
+        // this.setState({composedMessage: 
+        // "Hello Mr. Landlord,\nMy name is "+this.state.profileFirstName+" "+this.state.profileLastName+" and am writing this letter to express my desire to take your property located at "+ propertyAddress+", on rent. I came to know about this property from promanager.com website.\nMy application is ready for review; I would love to set up an appointment to see the property. My phone number is  "+this.state.profilePhone+".\n\nThank you for your time. I look forward to hearing from you.\n"+this.state.profileFirstName+"."})
+        this.setState({ messageOwnerModalOpen: !this.state.messageOwnerModalOpen });
+        this.loadUserData();        
     }
+    // thi function sends inbox message inquiries for 
+    submitMessageOwner(){
+            // this.messageOwnerModal()
+    //     console.log(this.state.id)
+    //     console.log(message);
+        INBOX
+            .postMessage({
+                id: this.state.id,// the property foreignkey which is the user id
+                message: message// composed message
+            })
+            .then(res => console.log(res))
+            .catch(err => console.log(err));
+        }
+    //This Function removes properties from the load my properties modal view
     removeProperty= id => {
         const temp =[];
         for(let i = 0; i < this.state.searchProperties.length; i++){
@@ -317,7 +339,7 @@ class Manager extends Component {
                                     <span>
                                         <a><ProfilePicture src={this.state.profilePic} onClick={this.addProfilePictureModal}></ProfilePicture></a>
                                         <strong> 
-                                            Hello <em>{this.state.name}</em>
+                                            Hello <em>{this.state.profileFirstName}</em>
                                         </strong>
                                     </span>
                                     <a id="logoff" href="/"><strong> | Log Off</strong></a>
@@ -493,7 +515,7 @@ class Manager extends Component {
                             </Button>
                         </ModalFooter>
                     </Modal>
-{/*     Add Message Modal      */}
+{/*     Add Message Modal   */}
                 <Modal isOpen={this.state.addMessageModalOpen} toggle={this.addMessageModal} className={this.props.className}>
                     <ModalHeader toggle={this.addMessageModal}>Add Message</ModalHeader>
                     <ModalBody>
@@ -506,6 +528,25 @@ class Manager extends Component {
                     </ModalBody>
                     <ModalFooter>
                         <Button color="success" onClick={this.addMessage}>
+                            <i>Submit</i>
+                        </Button>
+                    </ModalFooter>
+                </Modal>
+{/*     Message Owner Modal */}
+                <Modal isOpen={this.state.messageOwnerModalOpen} toggle={this.messageOwnerModal} className={this.props.className}>
+                    <ModalHeader toggle={this.messageOwnerModal}>Message This Owner</ModalHeader>
+                    <ModalBody>
+                        Message
+                        <TextArea
+                            type="textarea"
+                            rows="8" 
+                            value={this.state.composedMessage}
+                            onChange={this.handleComposedMessage}
+                            name="composedMessage"
+                            placeholder=""/>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="success" onClick={this.submitMessageOwner()}>
                             <i>Submit</i>
                         </Button>
                     </ModalFooter>
@@ -589,7 +630,7 @@ class Manager extends Component {
                                     </strong>
                                 </ModalBody>
                                 <ModalFooter style={{padding: "0rem"}}>
-                                    <Button color="info" onClick={()=>{ this.emailOwner(property.foreignkey)}} style={{ margin: "1rem 1rem 0rem 0rem" }}>
+                                    <Button color="info" onClick={() => {this.messageOwnerModal(property.foreignkey,  property.address.address1)}} style={{ margin: "1rem 1rem 0rem 0rem" }}>
                                         Interersted? Email the Owner
                                     </Button>
                                     <Button color="danger" onClick={() => this.removeProperty(property._id)} style={{margin: "1rem 1rem 0rem 0rem"}}>

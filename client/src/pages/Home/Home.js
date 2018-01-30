@@ -136,8 +136,10 @@ class Home extends React.Component {
         for(var i = 0; i < res.data.length; i++){
             if(this.state.email === res.data[i].email && this.state.password === res.data[i].password){
                 sessionStorage.setItem("path", res.data[i].title);
-                sessionStorage.setItem("name", res.data[i].name.firstName);
+                sessionStorage.setItem("firstName", res.data[i].name.firstName);
+                sessionStorage.setItem("lastName", res.data[i].name.lastName);
                 sessionStorage.setItem("email", res.data[i].email);
+                sessionStorage.setItem("phone", res.data[i].phone);
                 sessionStorage.setItem("id", res.data[i]._id);
                 sessionStorage.setItem("img", res.data[i].img);
                 isValidUser = true;
