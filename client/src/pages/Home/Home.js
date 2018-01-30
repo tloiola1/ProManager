@@ -16,6 +16,7 @@ import React from "react";
 class Home extends React.Component {
     
     componentDidMount() {
+        sessionStorage.clear();
         this.loadProperties();
       };
     // Constructor
