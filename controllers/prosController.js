@@ -10,6 +10,14 @@ module.exports = {
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
+  findMyProsById: function(req, res) {
+    console.log("Pros Controller Find User Pros");
+    console.log(req.params._id);
+    db.Pros
+      .find({foreignkey: req.params._id})
+      .then(dbModel => res.json(dbModel))
+      .catch(err => res.status(422).json(err));
+  },
   create: function(req, res) {
     console.log("Pros Controller Create");
     console.log(req.body);

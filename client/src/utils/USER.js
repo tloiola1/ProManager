@@ -5,7 +5,7 @@ export default {
   getUser: function(getData) {
     // console.log("Utils API getUser");
     // console.log(getData);
-    return axios.get("/api/users", getData);
+    return axios.get("/api/users", getData); 
   },
   //Post New User
   postUser: function(postData) {
@@ -22,9 +22,6 @@ export default {
   // Deletes the book with the given id
   deleteUser: function(id) {
     return axios.delete("/api/users/" + id);
-  },
-  getMyPros: function(id) {
-    return axios.get("/api/users/" + id)
   },
   //
   sendMessage: function(data){

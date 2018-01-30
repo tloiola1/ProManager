@@ -28,19 +28,20 @@ var UserSchema = new Schema({
     ]
   },
   //
-  phone: { type: String, require: true },
+  phone:        { type: String, require: true },
   //
-  title: { type: String, require: true },
+  title:        { type: String, require: true },
   //
   pros:{
-    name:  { type: String, trim: true },
-    address: { type: String, trim: true },
-    phone: {  type: String, trim: true }
+    name:       { type: String, trim: true },
+    address:    { type: String, trim: true },
+    phone:      { type: String, trim: true }
   },
   message: [
     {
-    text: {type: String, default: ""},
-    _id: { type: Schema.ObjectId, auto: true }
+      _id:      { type: Schema.ObjectId, auto: true },
+    text:       {type: String, default: ""},
+    sender_id:  {type: String, require: true}
     }
   ],
   img: {

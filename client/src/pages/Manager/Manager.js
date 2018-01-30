@@ -4,12 +4,13 @@ import React, { Component } from "react";
     import request from 'superagent';
     import {Body} from "../../components/Body";
     import { FixedHeader } from "../../components/Header";
-    import {Button, Modal, ModalHeader, ModalBody, ModalFooter, Card, CardTitle,CardSubtitle, CardBody, Col, Container, Row} from "reactstrap";
+    import {Button, Modal, ModalHeader, ModalBody, ModalFooter, Card, CardTitle,CardSubtitle, CardBody, Col, Container, Row, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from "reactstrap";
     import { Logo } from "../../components/Logo";
     import {Input, TextArea } from "../../components/Form";
     import { Margin } from "../../components/Tag";
     import { NavButton } from "../../components/Nav";
     import { ProfilePicture } from "../../components/ProfilePicture";
+    import { SettingsIcon } from "../../components/SettingsIcon";
     import PROP from "../../utils/PROP";
     import UPDATE from "../../utils/UPDATE";
     import MESSAGE from "../../utils/MESSAGE";
@@ -17,17 +18,23 @@ import React, { Component } from "react";
     import RES from "../../utils/RES";
     import USER from "../../utils/USER";
     import IMG from "../../utils/IMG";
+    import INBOX from "../../utils/INBOX";
     // import { IncomingMessage } from "http";
 //Class Component
 class Manager extends Component {
     
     componentDidMount() {
-        if(sessionStorage.getItem("name") === null) { window.location = "/"; }
-        else {
+        if(sessionStorage.getItem("firstName") === null) { window.location = "/"; }
+        else { 
             this.setState({ profilePic: sessionStorage.getItem("img")});
-            this.setState({name: sessionStorage.getItem("name")});this.loadUserData()
+            this.setState({ profileFirstName: sessionStorage.getItem("firstName")});
+            this.setState({ profileLastName: sessionStorage.getItem("lastName")});
+            this.setState({ profileEmail: sessionStorage.getItem("email")});
+            this.setState({ profilePhone: sessionStorage.getItem("phone")});
+            this.setState({ profileId: sessionStorage.getItem("id")});
+            this.loadUserData();
         }
-        // this.loadUserInfo();
+        // this.loadUserInfo(); 
         
       };
     // Constructor
@@ -39,11 +46,17 @@ class Manager extends Component {
             addPropertyModalOpen: false,
             addMessageModalOpen: false,
             addResidentModalOpen: false,
+            myInboxModalOpen: false,
             myProsCollapse: false,
             myPropertiesCollapse: false,
+            dropdownOpen: false,
             properties: [], 
             pros: [],
-            name: "",
+            inbox: [],
+            profileFirstName: "",
+            profileLastName: "",
+            profilePhone: "",
+            profileId: "",
             firstName: "",
             lastName: "",
             email: "",
@@ -60,7 +73,6 @@ class Manager extends Component {
             message: "",
             id: "",
             business: "",
-            profilePic: "",
             price: "",
             update: false
         };
@@ -69,15 +81,18 @@ class Manager extends Component {
         this.addPropertyModal = this.addPropertyModal.bind(this);
         this.addMessageModal = this.addMessageModal.bind(this);
         this.addResidentModal = this.addResidentModal.bind(this);
+        this.myInboxModal = this.myInboxModal.bind(this);
         this.myPros = this.myPros.bind(this);
         this.myProperties = this.myProperties.bind(this);
+        this.dropDown = this.dropDown.bind(this);
         this.state.uploadedFile= null;
         this.state.uploadedFileCloudinaryUrl= '';
         this.state.CLOUDINARY_UPLOAD_URL= "https://api.cloudinary.com/v1_1/promanager/image/upload";
         this.state.CLOUDINARY_UPLOAD_PRESET= "adpt8bps";
         // this.state = { items: [], text: '' };
         // this.login = this.login.bind(this);
-      };
+        };
+    //
     clear() {
         // this.setState({name: ''});
         this.setState({firstName: ''});
@@ -105,23 +120,43 @@ class Manager extends Component {
     loadUserData = () =>{
         this.setState({update: false});
         PROP
-            .getUserProperties(sessionStorage.getItem("id"))
+            .getUserProperties(this.state.profileId)
             .then(res => {
-                // console.log("Test"); console.log(res.data[0].img);
                 this.setState({
                     properties: res.data 
                 });
-                // console.log(this.state.properties.length)
+                console.log(res.status);
+            })
+            .catch(err => console.log(err));
+        PROS
+            .getAllPros()
+            .then(res => {
+                const data = [];
+                for (let i = 0; i < res.data.length; i++) {
+                    if(res.data[i].foreignkey === this.state.profileId) data.push(res.data[i]);
+                }
+                this.setState({ pros: data });
+                console.log(res.status);
             })
             .catch(err => console.log(err));
         USER
-            .getMyPros(sessionStorage.getItem("id"))
-            .then(res => {
-                this.setState({
-                    pros: res.data,
-                });
+            .getUser()
+            .then(res =>{                
+                const data = [];
+                for(let i = 0; i < res.data.length; i++){
+                    if(res.data[i]._id === this.state.profileId){
+                        for(let j = 0; j < res.data[i].message.length; j++){
+                            data.push(res.data[i].message[j]);
+                        }
+                        this.setState({ inbox: data });
+                    }
+                }
+                
+                
+                console.log(res.status);
             })
             .catch(err => console.log(err));
+            
       };
     //Handle OnChange Events
     handleInputName = event =>  this.setState({ Name: event.target.value });
@@ -140,6 +175,12 @@ class Manager extends Component {
         handleMessage = event => this.setState({ message: event.target.value });
         handleBusiness = event => this.setState({ business: event.target.value });
         handlePrice = event => this.setState({ price: event.target.value });
+    //DropDown
+    dropDown() {
+        this.setState({
+          dropdownOpen: !this.state.dropdownOpen
+        });
+      }
     //Add Pros Modal Toggle
     addProsModal() { 
         this.clear();
@@ -164,9 +205,9 @@ class Manager extends Component {
                     },
                     phone: this.state.phone,
                     business: this.state.business,
-                    foreignkey: sessionStorage.getItem("id")
+                    foreignkey: this.state.profileId
                 })
-                .then(res => console.log(res))
+                .then(res => console.log(res.status))
                 .catch(err => console.log(err));
         }
         this.loadUserData();
@@ -174,11 +215,11 @@ class Manager extends Component {
      };
     //Delete Pro
     deletePro = id => {
-        console.log(id)
         PROS
                 .deletePros(id)
-                .then(res => console.log(res))//window.location.reload()
+                .then(res => console.log(res.status))//window.location.reload()
                 .catch(err => console.log(err));
+                this.loadUserData();
       };
     //Add Tasks
     addMessageModal = (id) => {
@@ -418,7 +459,51 @@ class Manager extends Component {
           }
         })
       }
-    
+    //
+    inboxMessage(){
+        this.setState({ inboxMessageModalOpen: !this.state.inboxMessageModalOpen });
+        }
+    //
+    inboxMessageModal = (_ownerId, propertyAddress) => {
+       this.inboxMessage();
+       this.setState({id: _ownerId});
+       this.setState({composedMessage: 
+       "Hello Mr. Landlord,\nMy name is "+this.state.profileFirstName+" "+this.state.profileLastName+" and am writing this letter to express my desire to take your property located at "+propertyAddress+", on rent. I came to know about this property from promanager.com website.\nMy application is ready for review; I would love to set up an appointment to see the property. My phone number is  "+this.state.profilePhone+".\n\nThank you for your time. I look forward to hearing from you.\n"+this.state.profileFirstName+"."})    
+       }
+    // thi function sends inbox message inquiries for property Owner
+    submitInboxMessage(){
+       this.inboxMessage()
+       INBOX
+           .postMessage({
+               _id: this.state.id,// the property foreignkey which is the user id
+               message: {
+                   text: this.state.composedMessage,// composed message
+                   sender_id: this.state.profileId
+               }
+           })
+           .then(res => console.log(res.status))
+           .catch(err => console.log(err));
+           this.setState({ inboxMessageModalOpen: !this.state.inboxMessageModalOpen });
+           this.loadUserData();
+        }
+
+    //Add Property Modal Toggle
+    myInboxModal() {
+        this.setState({ myInboxModalOpen: !this.state.myInboxModalOpen });
+        };
+    //Delete Inbox Message
+    deleteInboxMessage = (userId, messageId) => {
+        console.log(userId, messageId);
+        const data ={
+            userId,
+            messageId
+        }
+        INBOX
+                .deleteMessage(data)
+                .then(res => console.log(res.status))//window.location.reload()
+                .catch(err => console.log(err));
+                this.loadUserData();
+        }
     //
     render() {
         return (
@@ -434,14 +519,28 @@ class Manager extends Component {
                             <Col sm="10" xs="11">
                                 <NavButton>
                                     <span> {/* onClick=this.addProfilePictureModal} */}
-                                        <a><ProfilePicture src={this.state.profilePic} onClick={this.addProfilePictureModal}></ProfilePicture></a>
+                                        <ProfilePicture src={this.state.profilePic}/>
                                         <strong> 
-                                            Hello<em>{this.state.name}</em>
+                                            {" "}<em>{this.state.profileFirstName}</em>
                                         </strong>
-                                    </span>
-                                    <a id="logoff" href="/"><strong> | Log Off</strong></a>
+                                    </span>    
+                                
+                                    <ButtonDropdown isOpen={this.state.dropdownOpen} toggle={this.dropDown}>
+                                        <DropdownToggle outline color="secondary">
+                                        <SettingsIcon/>
+                                        </DropdownToggle>
+                                        <DropdownMenu>
+                                            <DropdownItem>Settings</DropdownItem>
+                                            <DropdownItem/>
+                                            <DropdownItem >Eddit Profile Info</DropdownItem>
+                                            <DropdownItem><a onClick={this.addProfilePictureModal}>Edit Profile Picture</a></DropdownItem>
+                                            
+                                            <DropdownItem><a onClick={this.myInboxModal}>You Have {this.state.inbox.length} Messages</a></DropdownItem>
+                                        </DropdownMenu>
+                                    </ButtonDropdown>
                                 </NavButton>
                             </Col>
+                                    {/* <a id="logoff" href="/"><strong> | Log Off</strong></a> */}
                         </Row>
                     </Container>
                 </FixedHeader>
@@ -842,7 +941,7 @@ class Manager extends Component {
                             </Button>
                         </ModalFooter>
                     </Modal>
-{/*     Add message Modal              */}
+{/*     Add message Modal           */}
                 <Modal isOpen={this.state.addMessageModalOpen} toggle={this.addMessageModal} className={this.props.className}>
                     <ModalHeader toggle={this.addMessageModal}>Add Task</ModalHeader>
                     <ModalBody>
@@ -877,6 +976,46 @@ class Manager extends Component {
                         </div>
                     </form>
                     </ModalBody>
+                </Modal>
+{/*     Send Message Modal */}
+                <Modal isOpen={this.state.inboxMessageModalOpen} toggle={this.inboxMessageModal} className={this.props.className}>
+                    <ModalHeader toggle={this.inboxMessageModal}>Message This Owner</ModalHeader>
+                    <ModalBody>
+                        Message
+                        <TextArea
+                            type="textarea"
+                            rows="12" 
+                            value={this.state.composedMessage}
+                            onChange={this.handleComposedMessage}
+                            name="composedMessage"
+                            placeholder=""/>
+                    </ModalBody>
+                    <ModalFooter>
+                       <Button color="success" onClick={()=> {this.submitInboxMessage()}}>
+                            <i>Submit</i>
+                        </Button>
+                    </ModalFooter>
+                </Modal>
+{/*     My Inbox Modal              */}
+                <Modal isOpen={this.state.myInboxModalOpen} toggle={this.myInboxModal} className={this.props.className}>
+                {this.state.inbox.length ? (
+                    <span>
+                    {this.state.inbox.map(message => (
+                        <span key={message._id}>
+                        <ModalHeader toggle={this.myInboxModal}>Inbox</ModalHeader>
+                        <ModalBody>
+                            {message.text}
+                        </ModalBody>
+                        <ModalFooter style={{padding: "0rem"}}>
+                            <Button color="danger" onClick={()=>{this.deleteInboxMessage(this.state.profileId, message._id)}} style={{margin: "1rem 1rem 0rem 0rem"}}>
+                                Delete
+                            </Button>
+                        </ModalFooter>
+                        <hr style={{border: "2px solid #000"}}></hr>
+                        </span>
+                    ))}
+                    </span>
+                ) : ( <h3>Your Inbox is Empty</h3> )}
                 </Modal>
             </Body>
         );

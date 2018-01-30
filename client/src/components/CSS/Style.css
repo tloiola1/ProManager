@@ -80,6 +80,16 @@ h1{
 	padding: 20px 10px;
 	position: relative;                  
 }
+.btn-outline-secondary{
+	border: none;
+}
+.btn-outline-secondary:hover{
+	background-color: transparent !important;
+}
+span.icon img{
+	heigth: 20px;
+	width: 20px;
+}
 /* <h2 className="text-center" style={{color: "orange"}}>Need Help?</h2>
                             <h5 style={{color: "orange"}}>Search For Acredited Professional</h5>
                             <Input
