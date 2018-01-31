@@ -18,6 +18,7 @@ import React, { Component } from "react";
     import IMG from "../../utils/IMG";
     import USER from "../../utils/USER";
     import INBOX from "../../utils/INBOX";// htis route handles Inbox Messages for rental inquire
+    import "../../components/MediaQuery/MediaQuery.css";
 //
 class Manager extends Component {
     
@@ -105,28 +106,6 @@ class Manager extends Component {
             })
             .catch(err => console.log(err));
 
-        USER
-            .getUser()
-            .then(res =>{
-                const data1 = [];
-                const data2 = [];
-                for(let i = 0; i < res.data.length; i++){
-                    if(res.data[i]._id === this.state.ownerId){
-                        data1.push(res.data[i]);
-                    }
-                    if(res.data[i]._id === this.state.profileId){
-                        for(let j = 0; j < res.data[i].message.length; j++){
-                            data2.push(res.data[i].message[j]);
-                        }
-                        this.setState({ inbox: data2 });
-                        console.log(this.state.inbox);
-                    }
-                }
-                this.setState({ owner: data1 });
-                console.log(this.state.owner);
-                console.log(res.status);
-            })
-            .catch(err => console.log(err));
         PROS
             .getAllPros()
             .then(res => {
@@ -419,20 +398,20 @@ class Manager extends Component {
                                     <Card key={property._id}>
                                         <Container>
                                             <Row>
-                                            {this.state.owner.map(owner => (
-                                                <Col xs="auto" sm="5" key={owner._id}>
+                                            {/* {this.state.owner.map(owner => ( */}
+                                                <Col xs="auto" sm="5" key={property.owner._id}>
                                                     <CardBody>
-                                                        <CardTitle key={owner._id}>
+                                                        <CardTitle key={property.owner._id}>
                                                             Property:{" "}
                                                             <strong>{property.propertyname}
                                                             </strong>
                                                             <br></br>
-                                                            Owner:{" "}{owner.name.firstName}{" "} {owner.name.lastName}
+                                                            Owner:{" "}{property.owner.firstName}{" "} {property.owner.lastName}
                                                         </CardTitle>
                                                         <CardSubtitle>
-                                                            <a herf={"mailto:"+ owner.email}><span role="img" aria-label="emoji">📧</span>{" "}{owner.email}</a>
+                                                            <a herf={"mailto:"+ property.owner.email}><span role="img" aria-label="emoji">📧</span>{" "}{property.owner.email}</a>
                                                             <br></br>
-                                                            <a href={"tel:"+ owner.phone}><span role="img" aria-label="emoji">📞</span>{" "}{owner.phone}</a>
+                                                            <a href={"tel:"+ property.owner.phone}><span role="img" aria-label="emoji">📞</span>{" "}{property.owner.phone}</a>
                                                         </CardSubtitle>
                                                         <CardSubtitle>
                                                             <Button color="info" style={{margin: "1rem"}} onClick={() => this.addMessageModal(property._id)}>
@@ -441,7 +420,7 @@ class Manager extends Component {
                                                         </CardSubtitle>
                                                     </CardBody>
                                                 </Col>
-                                            ))}
+                                            {/* ))} */}
 {/*     My Inbox            */}
                                                 <Col xs="auto" sm="5">
                                                     <CardBody>

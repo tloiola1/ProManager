@@ -354,13 +354,20 @@ class Manager extends Component {
                         state: this.state.state,
                         zipcode: this.state.zipcode
                     },
+                    owner:{
+                        firstName: this.state.profileFirstName,
+                        lastName: this.state.profileLastName,
+                        email: this.state.profileEmail,
+                        phone: this.state.profilePhone,
+                        _id: this.state.profileId
+                    },
                     description: this.state.description,
                     type: this.state.type,
                     foreignkey: sessionStorage.getItem("id"),
                     price: this.state.price,
                     img: this.state.uploadedFileCloudinaryUrl
                 })
-                .then(res => console.log(res))
+                .then(res => console.log(res.status))
                 .catch(err => console.log(err));
         }
         this.loadUserData();
@@ -385,7 +392,7 @@ class Manager extends Component {
                     price: this.state.price,
                     img: this.state.uploadedFileCloudinaryUrl
                 })
-                .then(res => console.log(res))
+                .then(res => console.log(res.status))
                 .catch(err => console.log(err));
         }
         this.loadUserData();
@@ -564,7 +571,7 @@ class Manager extends Component {
                                     <Card key={property._id}>
                                         <Container>
                                             <Row>
-                                                <Col xs="auto" sm="5">
+                                                <Col xs="auto" md="6" sm="12">
                                                     <CardBody>
                                                         <CardTitle>
                                                             Property:{" "}
@@ -585,7 +592,7 @@ class Manager extends Component {
                                                         </CardSubtitle>
                                                     </CardBody>
                                                 </Col>
-                                                <Col xs="auto" sm="5">
+                                                <Col xs="auto" md="6" sm="12">
                                                     <CardBody>
                                                         <CardTitle>
                                                             <strong>My Inbox

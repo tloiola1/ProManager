@@ -12,6 +12,7 @@ import React from "react";
     import PROP from "../../utils/PROP";
     import USER from "../../utils/USER";
     import PROS from "../../utils/PROS";
+    import LOGIN from "../../utils/LOGIN";
 
 class Home extends React.Component {
     
@@ -119,13 +120,15 @@ class Home extends React.Component {
             this.setState({confirm: true})
         }
       };
-    //Create New User
-    newUser = (res) => {
-        sessionStorage.setItem("path", res.data.title);
-        sessionStorage.setItem("name", res.data.name.firstName);
-        sessionStorage.setItem("id", res.data._id);
+      //Create New User
+      newUser = (res) => {
+        sessionStorage.setItem("firstName", res.data.name.firstName);
+        sessionStorage.setItem("lastName", res.data.name.lastName);
+        sessionStorage.setItem("phone", res.data.phone);
         sessionStorage.setItem("email", res.data.email);
+        sessionStorage.setItem("path", res.data.title);
         sessionStorage.setItem("img", res.data.img);        
+        sessionStorage.setItem("id", res.data._id);
         // console.log(sessionStorage.getItem("path"));
         if(sessionStorage.getItem("path") === 'tenant'){ window.location = '/tenant'
         }
@@ -136,17 +139,17 @@ class Home extends React.Component {
         let isValidUser = false;
         for(var i = 0; i < res.data.length; i++){
             if(this.state.email === res.data[i].email && this.state.password === res.data[i].password){
-                sessionStorage.setItem("path", res.data[i].title);
                 sessionStorage.setItem("firstName", res.data[i].name.firstName);
                 sessionStorage.setItem("lastName", res.data[i].name.lastName);
                 sessionStorage.setItem("email", res.data[i].email);
                 sessionStorage.setItem("phone", res.data[i].phone);
+                sessionStorage.setItem("path", res.data[i].title);
                 sessionStorage.setItem("id", res.data[i]._id);
                 sessionStorage.setItem("img", res.data[i].img);
                 isValidUser = true;
             }
         }
-        console.log(isValidUser);
+        // console.log(isValidUser);
         if(isValidUser) window.location = `/${sessionStorage.getItem("path")}`;
         else this.notAllow();
      };

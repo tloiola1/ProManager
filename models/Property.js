@@ -24,6 +24,13 @@ const PropertySchema = new Schema({
       email: { type: String, default: null },
       phone: { type: String, default: null }
   },
+  owner: {
+    
+    firstName: { type: String, default: null },
+    lastName: { type: String, default: null },
+    email: { type: String, default: null },
+    phone: { type: String, default: null }
+},
   message: [
     {
     text: {type: String, default: ""},
