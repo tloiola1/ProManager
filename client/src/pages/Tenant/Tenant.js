@@ -3,12 +3,13 @@ import React, { Component } from "react";
     import Dropzone from 'react-dropzone';
     import request from 'superagent';
     import {Body} from "../../components/Body";
+    import Moment from 'react-moment';
     import { FixedHeader } from "../../components/Header";
     import {Button, Modal, ModalHeader, ModalBody, ModalFooter, Card, CardTitle,CardSubtitle, CardBody, Col, Container, Row, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from "reactstrap";
     import { CardPhoto } from "../../components/CardPhoto";
     import { Logo } from "../../components/Logo";
     import {Input, TextArea } from "../../components/Form";
-    import { Margin } from "../../components/Tag";
+    import { Margin, MarginTop } from "../../components/Tag";
     import { NavButton } from "../../components/Nav";    
     import { SettingsIcon, HomeIcon, ButtonIcon } from "../../components/Icon";
     import { ProfilePicture } from "../../components/ProfilePicture";    
@@ -76,6 +77,8 @@ class Manager extends Component {
             business: "",
             type: "",
             location: "",
+            due: "05",
+            date: ""
         };
         this.addProsModal = this.addProsModal.bind(this);
         this.addProfilePictureModal = this.addProfilePictureModal.bind(this);
@@ -143,7 +146,11 @@ class Manager extends Component {
                 console.log(res.status);
             })
             .catch(err => console.log(err));
+            
+        this.setState({date: new Date()});
+        
       };
+      
     //Handle OnChange Events
     handleInputName = event =>  this.setState({ Name: event.target.value });
         handleAddress1 = event => this.setState({ address1: event.target.value });
@@ -462,8 +469,15 @@ class Manager extends Component {
                                                 <Col xs="12" sm="12" md="6">
                                                     <CardBody>
                                                         <CardTitle>
-                                                            <strong>My Inbox
+                                                            <strong>
+                                                                My Messages
                                                             </strong>
+                                                            <br/>
+                                                            <small>Rent is due{" "}
+                                                            <Moment to="2018/02/10" unit= "days">
+                                                            {this.state.date}
+                                                            </Moment>
+                                                             </small>
                                                         </CardTitle>
                                                         <CardSubtitle>
                                                         {property.message.map(message => (
@@ -731,13 +745,13 @@ class Manager extends Component {
                     </form>
                     </ModalBody>
                 </Modal>
-{/*     My Inbox Modal          */}
+{/*     My Mail Inbox Modal     */}
                 <Modal isOpen={this.state.myInboxModalOpen} toggle={this.myInboxModal} className={this.props.className}>
                 {this.state.inbox.length ? (
                     <span>
                     {this.state.inbox.map(message => (
                         <span key={message._id}>
-                        <ModalHeader toggle={this.myInboxModal}>Inbox</ModalHeader>
+                        <ModalHeader toggle={this.myInboxModal}>Email Inbox</ModalHeader>
                         <ModalBody>
                             {message.text}
                         </ModalBody>

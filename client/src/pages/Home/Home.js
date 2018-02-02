@@ -2,7 +2,7 @@
 import React from "react";
     import {FixedHeader} from "../../components/Header";
     import {Body} from "../../components/Body";
-    import {Margin} from "../../components/Tag";
+    import {Margin, MarginTop} from "../../components/Tag";
     import {Button, Modal, ModalHeader, InputGroup, InputGroupAddon, Input, ModalBody, ModalFooter, Card, CardTitle,CardSubtitle, CardBody, CardText, Col, Container, Row} from "reactstrap";//, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem
     import {Logo} from "../../components/Logo";
     import {NavButton} from "../../components/Nav";
@@ -13,7 +13,7 @@ import React from "react";
     import PROS from "../../utils/PROS";
     // import LOGIN from "../../utils/LOGIN";
     import USER from "../../utils/USER";
-
+//
 class Home extends React.Component {
     
     componentDidMount() {
