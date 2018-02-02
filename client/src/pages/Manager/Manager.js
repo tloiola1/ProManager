@@ -7,7 +7,7 @@ import React, { Component } from "react";
     import {Button, Modal, ModalHeader, ModalBody, ModalFooter, Card, CardTitle,CardSubtitle, CardBody, Col, Container, Row, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from "reactstrap";
     import { Logo } from "../../components/Logo";
     import {Input, TextArea } from "../../components/Form";
-    import { Margin } from "../../components/Tag";
+    import { Margin, MarginTop } from "../../components/Tag";
     import { NavButton } from "../../components/Nav";
     import { ProfilePicture } from "../../components/ProfilePicture";
     import { SettingsIcon, HomeIcon, ButtonIcon } from "../../components/Icon";
@@ -1037,6 +1037,8 @@ class Manager extends Component {
                     </span>
                 ) : (<ModalHeader toggle={this.myInboxModal}>Your Inbox is Empty</ModalHeader>)}
                 </Modal>
+                
+            <MarginTop/>
 {/* Footer */}
                 
                 <nav className="navbar fixed-bottom navbar-light visible" sm="12">

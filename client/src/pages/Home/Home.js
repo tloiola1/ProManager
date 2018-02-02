@@ -419,6 +419,7 @@ class Home extends React.Component {
                     </Row>
                 </Container>
 {/*     Footer              */}
+                <MarginTop/>
                 <nav className="navbar fixed-bottom navbar-light clearfix" sm="12">
                 <PanelBox/>
                 <h5 className="needHelp">Need Help?</h5>

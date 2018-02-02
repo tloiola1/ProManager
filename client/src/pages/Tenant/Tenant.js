@@ -752,8 +752,8 @@ class Manager extends Component {
                     </span>
                 ) : ( <ModalHeader toggle={this.myInboxModal}>Your Inbox is Empty</ModalHeader>)}
                 </Modal>
+                <MarginTop/>
 {/* Footer */}
-                
                 <nav className="navbar fixed-bottom navbar-light visible" sm="12">
                 <PanelBox/>
                 <Row>
