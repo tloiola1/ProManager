@@ -3,16 +3,16 @@ import React from "react";
     import {FixedHeader} from "../../components/Header";
     import {Body} from "../../components/Body";
     import {Margin} from "../../components/Tag";
-    import {Button, Modal, ModalHeader, ModalBody, ModalFooter, Card, CardTitle,CardSubtitle, CardBody, CardText, Col, Container, Row} from "reactstrap";//, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem
+    import {Button, Modal, ModalHeader, InputGroup, InputGroupAddon, Input, ModalBody, ModalFooter, Card, CardTitle,CardSubtitle, CardBody, CardText, Col, Container, Row} from "reactstrap";//, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem
     import {Logo} from "../../components/Logo";
     import {NavButton} from "../../components/Nav";
     import { CardPhoto } from "../../components/CardPhoto";
     import { SearchBox, PanelBox } from "../../components/SearchBox";
-    import {Input } from "../../components/Form";
+    // import {Input } from "../../components/Form";
     import PROP from "../../utils/PROP";
-    import USER from "../../utils/USER";
     import PROS from "../../utils/PROS";
-    import LOGIN from "../../utils/LOGIN";
+    // import LOGIN from "../../utils/LOGIN";
+    import USER from "../../utils/USER";
 
 class Home extends React.Component {
     
@@ -202,8 +202,8 @@ class Home extends React.Component {
                     </Col>
                     <Col sm="10" xs="11">
                         <NavButton>
-                          <Button color="success" onClick={this.login}style={{margin: "1rem"}}>Login</Button>{''}
-                          <Button color="success"onClick={this.register}style={{margin: "1rem"}}>Register</Button>
+                          <Button outline color="success" onClick={this.login}style={{margin: "1rem"}}>Login</Button>{''}
+                          <Button outline color="success"onClick={this.register}style={{margin: "1rem"}}>Register</Button>
                         </NavButton>
                     </Col>
                     </Row>
@@ -343,14 +343,14 @@ class Home extends React.Component {
                             </span>
                         ))}
                         </span>
-                    ) : ( <h3>Your Contact List is Empty</h3> )}
+                    ) : ( <ModalHeader toggle={this.myPros}>This List is Empty</ModalHeader> )}
                 </Modal>
 {/*     Margin Top          */}
                 <Margin/> 
 {/*     Properties          */}
                 <Container>
                     <Row>
-                    <Col sm="8">
+                    <Col md="8" sm="12">
                     {this.state.properties.length
                         ? (
                             <span>
@@ -399,11 +399,11 @@ class Home extends React.Component {
                         )}
                     </Col>
 {/*     Acreddited Pro      */}
-                    <Col md="4">
+                    <Col md="4" sm="12" className="panelSearch">
                         <PanelBox/>
                         <SearchBox>
-                            <h2 className="text-center" style={{color: "orange"}}>Need Help?</h2>
-                            <h5 style={{color: "orange"}}>Search For Acredited Professional</h5>
+                            <h2 className="text-center">Need Help?</h2>
+                            <h5 className="text-center" >Search For Accredited Professionals</h5>
                             <Input
                                 type="text"
                                 value={this.state.searchValue}
@@ -418,7 +418,25 @@ class Home extends React.Component {
                     </Col>
                     </Row>
                 </Container>
-                <a href="/contact">Contact ProManager.com</a>
+{/*     Footer              */}
+                <nav className="navbar fixed-bottom navbar-light clearfix" sm="12">
+                <PanelBox/>
+                <h5 className="needHelp">Need Help?</h5>
+                    <InputGroup>
+                        <Input
+                            type="text"
+                            value={this.state.searchValue}
+                            onChange={this.handleSearch}
+                            name="Pro"
+                            placeholder="Search For Acredited Professional"/>
+                        <InputGroupAddon addontype="append">
+                                <Button className="searchBtn" color="warning" onClick= { this.searchPro } style={{float: "right"}}>
+                                    Search
+                                </Button>
+                        </InputGroupAddon>
+                    </InputGroup>
+                </nav>
+                
             </Body>
         );
     }

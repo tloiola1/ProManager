@@ -1,5 +1,5 @@
 import React from "react";
 
 export const Margin = ({ children }) =>
-<div style={{marginTop: "200px"}}>
+<div style={{marginTop: "150px"}}>
 </div>;

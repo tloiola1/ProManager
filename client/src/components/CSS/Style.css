@@ -7,7 +7,9 @@ body{
 	display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden
+	overflow: hidden;
+	width: 100%;
+	height: 100%;
 }
 .card-photo img{
 	flex-shrink: 0;
@@ -26,6 +28,7 @@ body{
 }
 .nav-buttons{
 	text-align: right;
+	float: right;
 }
 h1{
 	color: #007bff;
@@ -49,14 +52,6 @@ h1{
 	border: 1px solid #3dce5c;
 }
 
-#logoff{
-	color: black;
-}
-
-#logoff:hover{
-	text-decoration-line: none;
-}
-
 .btn-success{
 	background-color: #3dce5c;
 	border: 1px solid #3dce5c;	
@@ -72,13 +67,15 @@ h1{
     height: 200px;
     width: inherit;
     background-color: black; 
-	opacity: .5;
-    position: absolute;
+	opacity: .8;
+	position: absolute;
+	border-radius: 3%;
 }
 .searchBox{
+	color: orange;
 	opacity: .9;
 	padding: 20px 10px;
-	position: relative;                  
+	position: absolute;                  
 }
 .btn-outline-secondary{
 	border: none;
@@ -90,15 +87,186 @@ span.icon img{
 	heigth: 20px;
 	width: 20px;
 }
-/* <h2 className="text-center" style={{color: "orange"}}>Need Help?</h2>
-                            <h5 style={{color: "orange"}}>Search For Acredited Professional</h5>
-                            <Input
-                            />
 
-                            <div style={{marginTop: "20px"}}>
-                            <Button color="warning" onClick= { this.searchPro } style={{float: "right"}}>
-                                Search
-                            </Button> 
-                            </div>
-                        </div> */
-/* style={{height: "150px", width: "330px", backgroundColor: "black", opacity: ".5", position: "fixed"}} */
+@media (min-width: 1200px){
+	.container{
+		min-width: 90%;
+	}
+	.panelBox {
+		width: 341px;
+	}
+	}
+	@media (max-width: 1200px){
+	.container{
+		min-width: 90%;
+	}
+	.panelBox {
+		height: 220px;
+		width: 337px;
+	}
+	}
+	@media (max-width: 1124px){
+	.panelBox {
+		width: 322px;
+	}
+	}
+	@media (max-width: 1090px){
+	.panelBox {
+		width: 312px;
+	}
+	}
+	@media (max-width: 993px){
+	.panelBox {
+		width: 305px;
+	}
+	}
+	@media (max-width: 990px){
+	.panelBox {
+		width: 277px;
+	}
+	}
+	@media (max-width: 980px){
+	.panelBox {
+		width: 278px;
+	}
+	}
+	@media (max-width: 934px){
+	.panelBox {
+		width: 260px;
+	}
+	}
+	@media (max-width: 920px){
+	.panelBox {
+		width: 261px;
+	}
+	}
+	@media (max-width: 887px){
+	.panelBox {
+		width: 246px;
+	}
+	}
+	@media (max-width: 878px){
+	.panelBox {
+		width: 243px;
+	}
+	}
+	@media (max-width: 870px){
+	.panelBox {
+		width: 241px;
+	}
+	}
+	@media (max-width: 862px){
+	.panelBox {
+		width: 239px;
+	}
+	}
+	@media (max-width: 850px){
+	.panelBox {
+		width: 240px;
+	}
+	}
+	@media (max-width: 800px){
+	.panelBox {
+		width: 225px;
+	}
+	}
+	@media (min-width: 769px){
+	.visibleSettings{
+		visibility: hidden !important;
+	}
+	.visible{
+		visibility: hidden !important;
+	}
+	.fixed-bottom{
+		visibility: hidden; 
+	}
+	}
+	@media (max-width: 768px){
+	div.fa.fa-home.fa-5x{
+		font-size: 3em;
+	}
+	div.proManager{
+		width: 100px;
+		height: 80px;
+	}
+	.visibleSettings{
+		position: fixed;
+		right: 0;
+		visibility: visible;
+		top: 80%;
+	}
+	.visible{
+		visibility: visible;
+	}
+	.panelSearch{
+		display: none;
+	}
+	.needHelp{
+		color: orange;
+		position: relative;
+	}
+	.panelBox{
+		left: 0;
+		botton: 0;
+		width: 100%;
+		height: 110px;
+	}
+	.fixed-bottom{
+		height: 80px;
+		display: inline-block;
+		padding-bottom: 0;
+	}
+	button.searchBtn.btn.btn-warning{
+		margin-top: 0;
+		margin-botton: 10px;
+	}
+	input.form-control{
+		height: 35px;
+	}
+	div.input-group-addon{
+		height: 35px;
+		padding: 0px;
+		margin: 0;
+	}
+	.hideMeAt768{
+		display: none;
+	}
+	span.icon img{
+		heigth: 30px;
+		width: 30px;
+		font-size: 20px;
+	}
+	button.btn.btn-outline-secondary{
+		margin: auto !important;
+	}
+	button.dropdown-toggle.btn.btn-outline-secondary{
+		margin: auto !important;
+	}
+	div.col.col-sm-4{
+		margin: auto !important;
+	}
+	}
+
+	@media (max-width: 576px){
+	div.fa.fa-home.fa-5x{
+		font-size: 3em;
+	}
+	div.proManager{
+		width: 100px;
+		height: 80px;
+	}
+	.card-photo{
+		width: 100%;
+		height: 200px;
+	}
+	div.card-body{
+		padding-top: .5rem;
+		padding-bottom: .5rem;
+	}
+	hr{
+		margin: 0;
+	}
+	button.btn.btn.success{
+		margin: 0 0 0 0 !important;
+	}
+	}

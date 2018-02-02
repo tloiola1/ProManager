@@ -10,15 +10,16 @@ import React, { Component } from "react";
     import {Input, TextArea } from "../../components/Form";
     import { Margin } from "../../components/Tag";
     import { NavButton } from "../../components/Nav";    
-    import { SettingsIcon } from "../../components/SettingsIcon";
-    import { ProfilePicture } from "../../components/ProfilePicture";
+    import { SettingsIcon, HomeIcon, ButtonIcon } from "../../components/Icon";
+    import { ProfilePicture } from "../../components/ProfilePicture";    
+    import { PanelBox } from "../../components/SearchBox";
     import PROP from "../../utils/PROP";
     import MESSAGE from "../../utils/MESSAGE";// this route handles tthe tenants to owner messages
     import PROS from "../../utils/PROS";
     import IMG from "../../utils/IMG";
     import USER from "../../utils/USER";
     import INBOX from "../../utils/INBOX";// htis route handles Inbox Messages for rental inquire
-    import "../../components/MediaQuery/MediaQuery.css";
+    // import "../../components/MediaQuery/MediaQuery.css";
 //
 class Manager extends Component {
     
@@ -46,6 +47,8 @@ class Manager extends Component {
             inboxMessageModalOpen: false,
             myInboxModalOpen: false,
             dropdownOpen: false,
+            dropupOpen: false,
+            dropupButtonOpen: false,
             properties: [], 
             pros: [],
             owner: [],
@@ -84,6 +87,8 @@ class Manager extends Component {
         this.inboxMessageModal = this.inboxMessageModal.bind(this);
         this.myInboxModal = this.myInboxModal.bind(this);
         this.dropDown = this.dropDown.bind(this);
+        this.dropUpButton = this.dropUpButton.bind(this);
+        this.dropUp = this.dropUp.bind(this);
         this.state.uploadedFile= null;
         this.state.uploadedFileCloudinaryUrl= '';
         this.state.CLOUDINARY_UPLOAD_URL= "https://api.cloudinary.com/v1_1/promanager/image/upload";
@@ -120,6 +125,24 @@ class Manager extends Component {
                 console.log(res.status);
             })
             .catch(err => console.log(err));
+        
+        USER
+            .getUser()
+            .then(res =>{                
+                const data = [];
+                for(let i = 0; i < res.data.length; i++){
+                    if(res.data[i]._id === this.state.profileId){
+                        for(let j = 0; j < res.data[i].message.length; j++){
+                            data.push(res.data[i].message[j]);
+                        }
+                        this.setState({ inbox: data });
+                    }
+                }
+                
+                
+                console.log(res.status);
+            })
+            .catch(err => console.log(err));
       };
     //Handle OnChange Events
     handleInputName = event =>  this.setState({ Name: event.target.value });
@@ -142,6 +165,18 @@ class Manager extends Component {
     dropDown() {
         this.setState({
           dropdownOpen: !this.state.dropdownOpen
+        });
+      }
+      //DropUp
+    dropUp() {
+        this.setState({
+          dropupOpen: !this.state.dropupOpen
+        });
+      }
+    //DropUpButton
+    dropUpButton() {
+        this.setState({
+          dropupButtonOpen: !this.state.dropupButtonOpen
         });
       }
     //Add Pros Modal Toggle
@@ -219,6 +254,7 @@ class Manager extends Component {
                 .deleteMessage(data)
                 .then(res => console.log(res.status))//window.location.reload()
                 .catch(err => console.log(err));
+                this.loadUserData();
         }
     //All Properties Modal
     allPropertiesModal(){
@@ -290,7 +326,8 @@ class Manager extends Component {
     //
     inboxMessage(){
          this.setState({ inboxMessageModalOpen: !this.state.inboxMessageModalOpen });
-    }
+        }
+    //
     inboxMessageModal = (_ownerId, propertyAddress) => {
         this.inboxMessage();
         this.setState({id: _ownerId});
@@ -314,10 +351,10 @@ class Manager extends Component {
             this.loadUserData();
         }
     //Delete Inbox Message
-    //Add Property Modal Toggle
     myInboxModal() {
         this.setState({ myInboxModalOpen: !this.state.myInboxModalOpen });
         };
+    //
     deleteInboxMessage = (userId, messageId) => {
         console.log(userId, messageId);
         const data ={
@@ -344,7 +381,7 @@ class Manager extends Component {
     render() {
         return (
             <Body>
-{/*     Header              */}
+{/*     Header                  */}
                 <div className="fixed-top fixed-top-custom"></div>
                 <FixedHeader>
                     <Container>
@@ -361,9 +398,9 @@ class Manager extends Component {
                                         </strong>
                                     </span>    
                                 
-                                    <ButtonDropdown isOpen={this.state.dropdownOpen} toggle={this.dropDown}>
+                                    <ButtonDropdown className="hideMeAt768" isOpen={this.state.dropdownOpen} toggle={this.dropDown}>
                                         <DropdownToggle outline color="secondary">
-                                        <SettingsIcon/>
+                                        <SettingsIcon/>{this.state.inbox.length}
                                         </DropdownToggle>
                                         <DropdownMenu>
                                             <DropdownItem>Settings</DropdownItem>
@@ -380,18 +417,18 @@ class Manager extends Component {
                     </Container>
                 </FixedHeader>
                 <Margin/>
-{/*     My Buttons          */}
+{/*     My Buttons              */}
                 <Container>
                     <Row>
-                        <Col sm="3">
+                        <Col sm="3" className="hideMeAt768">
                             <Button className="col-sm-12" color="success" onClick={this.addProsModal} style={{ margin: '.5rem' }}>Add Pros</Button>
                             <Button className="col-sm-12" color="success" onClick={this.myPros} style={{ margin: '.5rem' }}>My Pros</Button>
                             <Button className="col-sm-12" color="success" onClick={this.findProperties} style={{ margin: '.5rem' }}>
                                 Find New Home
                             </Button>
                         </Col>
-{/*     My Home             */}
-                        <Col xs="auto" sm="9">
+{/*     My Home                 */}
+                        <Col s="12" sm="12" md="9">
                             {this.state.properties.length ? (
                                 <span>
                                 {this.state.properties.map(property => (
@@ -399,7 +436,7 @@ class Manager extends Component {
                                         <Container>
                                             <Row>
                                             {/* {this.state.owner.map(owner => ( */}
-                                                <Col xs="auto" sm="5" key={property.owner._id}>
+                                                <Col xs="12" sm="12" md="6" key={property.owner._id}>
                                                     <CardBody>
                                                         <CardTitle key={property.owner._id}>
                                                             Property:{" "}
@@ -421,8 +458,8 @@ class Manager extends Component {
                                                     </CardBody>
                                                 </Col>
                                             {/* ))} */}
-{/*     My Inbox            */}
-                                                <Col xs="auto" sm="5">
+{/*     My Inbox                */}
+                                                <Col xs="12" sm="12" md="6">
                                                     <CardBody>
                                                         <CardTitle>
                                                             <strong>My Inbox
@@ -452,7 +489,7 @@ class Manager extends Component {
                         </Col>
                     </Row>
                 </Container>
-{/*     My Pros Modal       */}
+{/*     My Pros Modal           */}
                 <Modal isOpen={this.state.myProsModalOpen} toggle={this.myPros}>
                     {this.state.pros.length ? (
                         <span>
@@ -484,9 +521,9 @@ class Manager extends Component {
                             </span>
                         ))}
                         </span>
-                    ) : ( <h3>Your Contact List is Empty</h3> )}
+                    ) : ( <ModalHeader toggle={this.myPros}>Your Professionals List is Empty</ModalHeader> )}
                 </Modal>
-{/*     Add Pros Modal      */}
+{/*     Add Pros Modal          */}
                 <Modal isOpen={this.state.addProsModalOpen} toggle={this.addProsModal} className={this.props.className}>
                         <ModalHeader toggle={this.addProsModal}>Add Service Provider</ModalHeader>
                         <ModalBody>
@@ -546,7 +583,7 @@ class Manager extends Component {
                             </Button>
                         </ModalFooter>
                     </Modal>
-{/*     Add Message Modal   */}
+{/*     Add Message Modal       */}
                 <Modal isOpen={this.state.addMessageModalOpen} toggle={this.addMessageModal} className={this.props.className}>
                     <ModalHeader toggle={this.addMessageModal}>Add Message</ModalHeader>
                     <ModalBody>
@@ -563,7 +600,7 @@ class Manager extends Component {
                         </Button>
                     </ModalFooter>
                 </Modal>
-{/*     Send Message Modal */}
+{/*     Send Message Modal      */}
                 <Modal isOpen={this.state.inboxMessageModalOpen} toggle={this.inboxMessageModal} className={this.props.className}>
                     <ModalHeader toggle={this.inboxMessageModal}>Message This Owner</ModalHeader>
                     <ModalBody>
@@ -582,7 +619,7 @@ class Manager extends Component {
                         </Button>
                     </ModalFooter>
                 </Modal>
-{/*     Find Propeties Modal     */}
+{/*     Find Propeties Modal    */}
                 <Modal isOpen={this.state.findPropertiesModalOpen} toggle={this.findProperties}>
                     <ModalHeader toggle={this.findProperties}>
                         <strong>
@@ -636,7 +673,7 @@ class Manager extends Component {
                         </Button>
                     </ModalFooter>
                 </Modal>
-{/*     Load My Propeties Modal     */}
+{/*     Load My Propeties Modal */}
                 <Modal isOpen={this.state.allPropertiesModalOpen} toggle={this.findAllProperties} style={{width: "100%"}}>
                     {this.state.searchProperties.length ? (
                         <span>
@@ -673,10 +710,9 @@ class Manager extends Component {
                             </span>
                         ))}
                         </span>
-                    ) : ( 
-                    <h3><Button onClick={ this.allPropertiesModal } > No Results </Button></h3> )}
+                    ) : ( <ModalHeader toggle={this.allPropertiesModal}>No Results </ModalHeader> )}
                 </Modal>
-{/*     Add Profile Picture         */}
+{/*     Add Profile Picture     */}
                 <Modal isOpen={this.state.addProfilePictureModalOpen} toggle={this.addProfilePictureModal} className={this.props.className}>
                     <ModalHeader toggle={this.addProfilePictureModal}>Add Your Profile Picture</ModalHeader>
                     <ModalBody>
@@ -695,7 +731,7 @@ class Manager extends Component {
                     </form>
                     </ModalBody>
                 </Modal>
-{/*     My Inbox Modal              */}
+{/*     My Inbox Modal          */}
                 <Modal isOpen={this.state.myInboxModalOpen} toggle={this.myInboxModal} className={this.props.className}>
                 {this.state.inbox.length ? (
                     <span>
@@ -714,8 +750,58 @@ class Manager extends Component {
                         </span>
                     ))}
                     </span>
-                ) : ( <h3>Your Inbox is Empty</h3> )}
+                ) : ( <ModalHeader toggle={this.myInboxModal}>Your Inbox is Empty</ModalHeader>)}
                 </Modal>
+{/* Footer */}
+                
+                <nav className="navbar fixed-bottom navbar-light visible" sm="12">
+                <PanelBox/>
+                <Row>
+                        <Col sm="4">
+                        <ButtonDropdown  isOpen={this.state.dropupButtonOpen} toggle={this.dropUpButton} dropup style={{ width: "100%"}}>
+                            <DropdownToggle outline color="secondary">
+                                <ButtonIcon/>
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                <DropdownItem>
+                                    <a onClick={this.addProsModal}>
+                                        Add Pros
+                                    </a>
+                                </DropdownItem>
+                                <DropdownItem >
+                                    <a onClick={this.myPros}>
+                                        My Pros
+                                    </a>
+                                </DropdownItem>
+                                <DropdownItem>
+                                    <a onClick={this.findProperties}>
+                                        Find New Home
+                                    </a>
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </ButtonDropdown>    
+                        </Col>
+                        <Col sm="4">
+                        <ButtonDropdown style={{ width: "100%"}} onClick={()=> window.location = "/"}>
+                            <DropdownToggle outline color="secondary">
+                            <HomeIcon/>
+                            </DropdownToggle>
+                        </ButtonDropdown>
+                        </Col>
+                        <Col sm="4">
+                        <ButtonDropdown isOpen={this.state.dropupOpen} toggle={this.dropUp} dropup style={{ margin: '.5rem' }}>
+                            <DropdownToggle caret outline color="secondary">
+                            <SettingsIcon/>{this.state.inbox.length}
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                <DropdownItem >Edit Profile Info</DropdownItem>
+                                <DropdownItem><a onClick={this.addProfilePictureModal}>Edit Profile Picture</a></DropdownItem>
+                                <DropdownItem><a onClick={this.myInboxModal}>You Have {this.state.inbox.length} Messages</a></DropdownItem>
+                            </DropdownMenu>
+                        </ButtonDropdown>
+                        </Col>
+                </Row>
+                </nav>
             </Body>
         );
     }

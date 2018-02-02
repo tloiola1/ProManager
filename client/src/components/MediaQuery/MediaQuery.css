@@ -1,8 +1,0 @@
-@media (min-height: 768px), screen and (orientation: portrait){
-    .container{
-        width: 90%;
-    }
-    .btn-success{
-        background-color: blue !important;
-    }
-}
