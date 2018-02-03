@@ -412,7 +412,7 @@ class Manager extends Component {
                                         <DropdownMenu>
                                             <DropdownItem>Settings</DropdownItem>
                                             <DropdownItem/>
-                                            <DropdownItem >Eddit Profile Info</DropdownItem>
+                                            <DropdownItem >Edit Profile Info</DropdownItem>
                                             <DropdownItem><a onClick={this.addProfilePictureModal}>Edit Profile Picture</a></DropdownItem>
                                             
                                             <DropdownItem><a onClick={this.myInboxModal}>You Have {this.state.inbox.length} Messages</a></DropdownItem>
@@ -499,7 +499,23 @@ class Manager extends Component {
                                     </Card>
                                 ))}
                                 </span>
-                            ) : <span/>}
+                            ) : (<span ><ModalHeader className="col-md-8" style={{color: "white"}}>
+                            <h2>
+                                Welcome to ProManager!
+                            </h2>
+                        </ModalHeader> 
+                        <ModalBody className="col-md-8 " body inverse style={{ backgroundColor: '#333', borderColor: '#333' }}>
+                            <h4 style={{color: "white"}}>
+                                As a tenant, you will have direct and fast communication
+                                with your landlord and when any unwanted event happen in your
+                                home you will have a directory of Home Repair Service
+                                Professionals that can help you when you much most need it.
+                                <br />
+                                With ProManager eveybody wins!!!
+                            </h4>
+                        </ModalBody>
+                        </span>
+                        )}
                         </Col>
                     </Row>
                 </Container>
@@ -539,7 +555,7 @@ class Manager extends Component {
                 </Modal>
 {/*     Add Pros Modal          */}
                 <Modal isOpen={this.state.addProsModalOpen} toggle={this.addProsModal} className={this.props.className}>
-                        <ModalHeader toggle={this.addProsModal}>Add Service Provider</ModalHeader>
+                        <ModalHeader toggle={this.addProsModal}>Add Home Repair Service Professional</ModalHeader>
                         <ModalBody>
                             Name
                             <Input

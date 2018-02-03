@@ -631,7 +631,23 @@ class Manager extends Component {
                                     </Card>
                                 ))}
                                 </span>
-                            ) : ( <ModalHeader className="btn" style={{color: "white"}}>Add Property Here</ModalHeader> )}
+                            ) : (<span ><ModalHeader className="col-md-8" style={{color: "white"}}>
+                                <h2>
+                                    Welcome to ProManager!
+                                </h2>
+                            </ModalHeader> 
+                            <ModalBody className="col-md-8 " body inverse style={{ backgroundColor: '#333', borderColor: '#333' }}>
+                                <h4 style={{color: "white"}}>
+                                    Managing your properties and real estate 
+                                    is easier than ever before when using ProManager. 
+                                    You will have a better communication experience
+                                    with your tenants and Home Repair Service Professionals.
+                                    <br />
+                                    With ProManager eveybody wins!!!
+                                </h4>
+                            </ModalBody>
+                            </span>
+                            )}
                         </Col>
                     </Row>
                 </Container>
@@ -900,7 +916,7 @@ class Manager extends Component {
                 </Modal>
 {/*     Add Pros Modal              */}
                 <Modal isOpen={this.state.addProsModalOpen} toggle={this.addProsModal} className={this.props.className}>
-                        <ModalHeader toggle={this.addProsModal}>Add Service Provider</ModalHeader>
+                        <ModalHeader toggle={this.addProsModal}>Add Home Repair Service Professional</ModalHeader>
                         <ModalBody>
                             Name
                             <Input
