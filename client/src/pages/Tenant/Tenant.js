@@ -110,6 +110,7 @@ class Manager extends Component {
                 }
                 this.setState({ownerId: data[0].foreignkey});
                 this.setState({ properties: data });
+                // console.log(this.state.properties);
                 console.log(res.status);
             })
             .catch(err => console.log(err));
@@ -125,6 +126,7 @@ class Manager extends Component {
                     }
                 }
                 this.setState({ pros: data });
+                // console.log(this.state.pros);
                 console.log(res.status);
             })
             .catch(err => console.log(err));
@@ -229,7 +231,7 @@ class Manager extends Component {
       };
     //
     addMessageModal = (id) => {
-        console.log(id);
+        // console.log(id);
         this.setState({ propertyId: id});
         this.setState({ addMessageModalOpen: !this.state.addMessageModalOpen });     
       };
@@ -252,7 +254,7 @@ class Manager extends Component {
         };
     //Delete Message
     deleteMessage = (propertyId, messageId) => {
-        console.log(propertyId, messageId);
+        // console.log(propertyId, messageId);
         const data ={
             propertyId,
             messageId
@@ -363,7 +365,7 @@ class Manager extends Component {
         };
     //
     deleteInboxMessage = (userId, messageId) => {
-        console.log(userId, messageId);
+        // console.log(userId, messageId);
         const data ={
             userId,
             messageId
@@ -812,7 +814,7 @@ class Manager extends Component {
                         </ButtonDropdown>    
                         </Col>
                         <Col sm="4">
-                        <ButtonDropdown style={{ width: "100%"}} onClick={()=> window.location = "/"}>
+                        <ButtonDropdown style={{ width: "100%"}} onClick={ ()=> {window.location = "/"}}>
                             <DropdownToggle outline color="secondary">
                             <HomeIcon/>
                             </DropdownToggle>
